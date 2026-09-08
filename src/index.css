@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-button: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-size-heading-scale: 1rem;
+    --font-size-body-scale: 0.9375rem;
+    --font-size-button-scale: 0.875rem;
+
+    /* SpoteraDeals Brand Tokens */
+    --color-spotera-blue: #0D9CFD;
+    --color-spotera-blue-dark: #0284C7;
+    --color-spotera-blue-light: #E0F2FE;
+    --color-spotera-orange: #FD9302;
+    --color-spotera-orange-soft: #FFF7ED;
+    --color-spotera-navy: #0F172A;
+    --color-spotera-slate: #475569;
+    --color-spotera-muted: #94A3B8;
+    --color-spotera-border: #E2E8F0;
+    --color-spotera-bg: #F8FAFC;
+
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    background-color: var(--color-spotera-bg);
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-scale);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    color: #0D1B3E;
+    background-color: #F7FAFD;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  button {
+    font-family: var(--font-button);
+  }
+
+  /* Language & RTL font overrides */
+  [dir="rtl"], [dir="rtl"] body, [dir="rtl"] button, [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] textarea {
+    font-family: 'Cairo', 'Noto Sans Arabic', 'Poppins', Tahoma, sans-serif;
+    letter-spacing: 0;
+  }
+
+  [lang="zh"], [lang="zh"] body, [lang="zh"] button, [lang="zh"] input, [lang="zh"] select, [lang="zh"] textarea {
+    font-family: 'Noto Sans SC', 'Poppins', 'PingFang SC', sans-serif;
+  }
+
+  /* Safe Area Helpers */
+  .pt-safe {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .pb-safe {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  button, input, select, textarea {
+    font-family: inherit;
+  }
+}
+
+/* Ticket Stub Motif Styles */
+.ticket-stub {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-stub:hover {
+  border-color: #0D9CFD;
+  box-shadow: 0 8px 24px -6px rgba(13, 156, 253, 0.12);
+}
+
+.ticket-divider {
+  position: relative;
+  border-top: 1.5px dashed #E2E8F0;
+  margin: 0.75rem 0;
+}
+
+.ticket-divider::before,
+.ticket-divider::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 14px;
+  height: 14px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  border: 1px solid #E2E8F0;
+}
+
+.ticket-divider::before {
+  left: -21px;
+}
+
+.ticket-divider::after {
+  right: -21px;
+}
+
+/* Hide scrollbar for clean horizontal chip scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Subtle, family-friendly app-wide background treatment */
+.spotera-mesh-canvas {
+  background-color: #F8FAFC;
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(13, 156, 253, 0.035) 0px, transparent 55%),
+    radial-gradient(at 85% 20%, rgba(253, 147, 2, 0.04) 0px, transparent 55%),
+    radial-gradient(at 50% 60%, rgba(241, 245, 249, 0.6) 0px, transparent 100%),
+    radial-gradient(at 80% 85%, rgba(13, 156, 253, 0.03) 0px, transparent 50%),
+    radial-gradient(at 20% 90%, rgba(253, 147, 2, 0.03) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Skeleton Shimmer Highlight Animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.8s infinite;
+  pointer-events: none;
+}
+
+/* Wishlist Heart Animation */
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.38);
+  }
+  65% {
+    transform: scale(0.9);
+  }
+  85% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart-pop {
+  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+

@@ -1,0 +1,6 @@
+{
+  "name": "SpoteraDeals",
+  "description": "SpoteraDeals connects families and residents in the UAE with verified deals, dining offers, attractions, kids play areas, and instant passes in AED.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

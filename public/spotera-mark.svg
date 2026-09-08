@@ -1,0 +1,59 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="spoteraPinGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stopColor="#00C0FF" />
+      <stop offset="45%" stopColor="#0096FF" />
+      <stop offset="100%" stopColor="#0066FF" />
+    </linearGradient>
+    <linearGradient id="spoteraTagGrad" x1="20%" y1="10%" x2="80%" y2="95%">
+      <stop offset="0%" stopColor="#FFB300" />
+      <stop offset="50%" stopColor="#FF8000" />
+      <stop offset="100%" stopColor="#FF5100" />
+    </linearGradient>
+    <linearGradient id="spoteraFoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FF5500" />
+      <stop offset="100%" stopColor="#D93800" />
+    </linearGradient>
+    <linearGradient id="spoteraSmileGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#00B2FE" />
+      <stop offset="100%" stopColor="#0088FF" />
+    </linearGradient>
+    <filter id="spoteraTagShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="-1.2" dy="1.5" stdDeviation="1.5" floodColor="#002D80" floodOpacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Blue Location Pin -->
+  <path
+    d="M 50 86 C 44 78, 22 59, 22 41 C 22 24, 35 15, 51 15 C 64 15, 75 23, 76 36 C 77 45, 73 54, 66 63 C 60 71, 55 79, 50 86 Z"
+    fill="url(#spoteraPinGrad)"
+  />
+
+  <!-- White Circular Center -->
+  <circle cx="47" cy="45" r="18.5" fill="#FFFFFF" />
+
+  <!-- Playful Smile -->
+  <path
+    d="M 37.5 48 C 40 56, 54 56, 56.5 48"
+    fill="none"
+    stroke="url(#spoteraSmileGrad)"
+    stroke-width="4.2"
+    stroke-linecap="round"
+  />
+
+  <!-- Orange Deal Tag -->
+  <g filter="url(#spoteraTagShadow)">
+    <path
+      d="M 54.5 22 L 64 15 C 66.5 13.2, 69.5 13.5, 71.5 15.2 L 78.5 21.5 C 80.5 23.2, 80.8 26.2, 79.5 28.5 L 71.5 61 C 70.5 64, 67.5 65.5, 64.5 64.5 L 56.5 60 C 53.5 58.5, 52.5 55.5, 53.5 52.5 L 54.5 22 Z"
+      fill="url(#spoteraTagGrad)"
+    />
+    <!-- Punch Hole -->
+    <circle cx="68" cy="24" r="4.3" fill="#FFFFFF" />
+  </g>
+
+  <!-- Tag Fold / Peel Dimension -->
+  <path
+    d="M 56.5 60 C 60.5 60.5, 65.5 56.5, 66.5 48.5 C 63.5 52.5, 59.5 57, 56.5 60 Z"
+    fill="url(#spoteraFoldGrad)"
+  />
+</svg>
