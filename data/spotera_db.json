@@ -1,8 +1,321 @@
 {
-  "adminConfigured": false,
-  "users": [],
-  "vouchers": [],
+  "adminConfigured": true,
+  "users": [
+    {
+      "id": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "password": "SpoteraMaster2026!",
+      "name": "Spotera Master Administrator",
+      "phone": "+971 4 000 9999",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "membership": "Premium VIP",
+      "createdAt": "2026-09-12T14:28:42.725Z"
+    },
+    {
+      "email": "expired.tester@spoteradeals.com",
+      "password": "familyPassword123",
+      "name": "Expired Tester",
+      "phone": "",
+      "role": "CUSTOMER",
+      "membership": "Free",
+      "authProvider": "email",
+      "id": "usr_1789223404394_sjen",
+      "createdAt": "2026-09-12T14:30:04.394Z"
+    }
+  ],
+  "vouchers": [
+    {
+      "id": "v-1",
+      "code": "TEST-VALID-001",
+      "dealId": "deal-1",
+      "dealTitle": "Atlantis Aquaventure Pass",
+      "businessName": "Atlantis The Palm",
+      "userId": "user-1",
+      "userName": "Test User",
+      "claimedAt": "2026-09-10T16:09:42.226Z",
+      "expiryDate": "2026-09-10T18:09:42.223Z",
+      "flashDealExpiresAt": "2026-09-10T18:09:42.223Z",
+      "status": "redeemed",
+      "qrCodeData": "TEST-VALID-001",
+      "redemptionInstructions": "Present at turnstile",
+      "redeemedAt": "2026-09-10 16:09:42",
+      "redeemedByPartnerId": "partner-1"
+    },
+    {
+      "id": "v-2",
+      "code": "TEST-EXPIRED-002",
+      "dealId": "deal-2",
+      "dealTitle": "IMG Worlds of Adventure",
+      "businessName": "IMG Theme Park",
+      "userId": "user-1",
+      "userName": "Test User",
+      "claimedAt": "2026-09-10T16:09:42.226Z",
+      "expiryDate": "2026-09-10T16:09:41.223Z",
+      "flashDealExpiresAt": "2026-09-10T16:09:41.223Z",
+      "status": "expired",
+      "qrCodeData": "TEST-EXPIRED-002",
+      "redemptionInstructions": "Present at counter"
+    },
+    {
+      "id": "v-3",
+      "code": "TEST-UPCOMING-003",
+      "dealId": "deal-3",
+      "dealTitle": "Ski Dubai Snow Classic",
+      "businessName": "Ski Dubai",
+      "userId": "user-1",
+      "userName": "Test User",
+      "claimedAt": "2026-09-10T16:09:42.226Z",
+      "expiryDate": "2026-09-11T02:09:42.223Z",
+      "flashDealStartsAt": "2026-09-10T17:09:42.223Z",
+      "status": "active",
+      "qrCodeData": "TEST-UPCOMING-003",
+      "redemptionInstructions": "Present at ski counter"
+    }
+  ],
   "bookings": [],
-  "sessions": {},
-  "auditLogs": []
+  "sessions": {
+    "spt_sess_1789223351635_ukspp3zfz": {
+      "token": "spt_sess_1789223351635_ukspp3zfz",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789223351635
+    },
+    "spt_sess_1789223367307_82bogmze1": {
+      "token": "spt_sess_1789223367307_82bogmze1",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789223367307
+    },
+    "spt_sess_1789223371370_jtc4hoe16": {
+      "token": "spt_sess_1789223371370_jtc4hoe16",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789223371370
+    },
+    "spt_sess_1789223375150_cixji8a6n": {
+      "token": "spt_sess_1789223375150_cixji8a6n",
+      "userId": "usr_1789223375150_bi32",
+      "email": "test.family@spoteradeals.com",
+      "role": "CUSTOMER",
+      "name": "Rashid Al Nuaimi",
+      "createdAt": 1789223375150
+    },
+    "spt_sess_1789223375201_n4vj84j80": {
+      "token": "spt_sess_1789223375201_n4vj84j80",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789223375201
+    },
+    "spt_sess_1789223399092_9npnueosk": {
+      "token": "spt_sess_1789223399092_9npnueosk",
+      "userId": "usr_1789223399091_oonp",
+      "email": "deep.test.family@spoteradeals.com",
+      "role": "CUSTOMER",
+      "name": "Rashid Al Nuaimi",
+      "createdAt": 1789223399092
+    },
+    "spt_sess_1789223399143_1wa6490hc": {
+      "token": "spt_sess_1789223399143_1wa6490hc",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789223399143
+    },
+    "spt_sess_1789223404395_19iettyp1": {
+      "token": "spt_sess_1789223404395_19iettyp1",
+      "userId": "usr_1789223404394_sjen",
+      "email": "expired.tester@spoteradeals.com",
+      "role": "CUSTOMER",
+      "name": "Expired Tester",
+      "createdAt": 1789223404395
+    },
+    "spt_sess_1789373305601_jj32a35cl": {
+      "token": "spt_sess_1789373305601_jj32a35cl",
+      "userId": "usr_admin_master",
+      "email": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "adminSubRole": "SUPER_ADMIN",
+      "name": "Spotera Master Administrator",
+      "createdAt": 1789373305601
+    }
+  },
+  "auditLogs": [
+    {
+      "id": "log_1789373305601_pgue",
+      "timestamp": "2026-09-14T08:08:25.601Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223404395_41fk",
+      "timestamp": "2026-09-12T14:30:04.395Z",
+      "actorEmail": "expired.tester@spoteradeals.com",
+      "role": "CUSTOMER",
+      "action": "New CUSTOMER account registered",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223399198_9vc7",
+      "timestamp": "2026-09-12T14:29:59.198Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "QR Redeemed [BK-399120-981]: Booking (BK-399120-981) was ALREADY redeemed on 2026-09-12 14:29:59. Duplicate entry prevented!",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223399180_akps",
+      "timestamp": "2026-09-12T14:29:59.180Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "QR Redeemed [BK-399120-981]: SUCCESS",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223399143_gi7l",
+      "timestamp": "2026-09-12T14:29:59.143Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223399120_wf3f",
+      "timestamp": "2026-09-12T14:29:59.120Z",
+      "actorEmail": "deep.test.family@spoteradeals.com",
+      "role": "CUSTOMER",
+      "action": "Booked activity for [undefined]",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223399092_0mxr",
+      "timestamp": "2026-09-12T14:29:59.092Z",
+      "actorEmail": "deep.test.family@spoteradeals.com",
+      "role": "CUSTOMER",
+      "action": "New CUSTOMER account registered",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223375202_s98b",
+      "timestamp": "2026-09-12T14:29:35.202Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223375150_2jxd",
+      "timestamp": "2026-09-12T14:29:35.150Z",
+      "actorEmail": "test.family@spoteradeals.com",
+      "role": "CUSTOMER",
+      "action": "New CUSTOMER account registered",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223371370_v5hf",
+      "timestamp": "2026-09-12T14:29:31.370Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223367307_ctl1",
+      "timestamp": "2026-09-12T14:29:27.307Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "log_1789223351635_uvkq",
+      "timestamp": "2026-09-12T14:29:11.636Z",
+      "actorEmail": "admin@spoteradeals.com",
+      "role": "ADMIN",
+      "action": "Logged in successfully via ADMIN Portal",
+      "resource": "SYSTEM",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    }
+  ],
+  "backups": [],
+  "versions": [],
+  "contentState": {
+    "intro": {
+      "enabled": true,
+      "durationSeconds": 4.5,
+      "animationStyle": "smooth-combined",
+      "backgroundType": "video",
+      "solidGradient": {
+        "from": "#0A2540",
+        "via": "#0E3D6E",
+        "to": "#125492",
+        "accent": "#FD9302",
+        "showSkyline": true
+      },
+      "backgroundImageUrl": "",
+      "slideshowImages": [
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1200",
+        "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&q=80&w=1200",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=1200"
+      ],
+      "slideshowIntervalSeconds": 1.5,
+      "slideshowTransition": "fade",
+      "videoUrl": "/spotera-intro.mp4",
+      "videoMuted": true,
+      "videoLoop": true,
+      "logoUrl": "/spoteradeals-logo.png",
+      "logoSize": "medium",
+      "logoPosition": "center",
+      "text": "More Fun, More Together",
+      "textAr": "متعة أكثر، معاً أكثر",
+      "textFr": "Plus de Plaisir, Plus Ensemble",
+      "textRu": "Больше Веселья, Больше Вместе",
+      "textSize": "medium",
+      "textColor": "#FFE082",
+      "textPosition": "below-logo",
+      "textAlignment": "center",
+      "textAnimationStyle": "fade-in",
+      "updatedAt": "2026-09-10T15:40:57.063Z",
+      "publishedAt": "2026-09-10T15:40:57.063Z"
+    }
+  }
 }

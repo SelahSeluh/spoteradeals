@@ -5,7 +5,7 @@ import { DealCard } from '../components/DealCard';
 import { EmptyState } from '../components/EmptyState';
 
 export const FavoritesPage: React.FC = () => {
-  const { deals, user, toggleFavoriteDeal, setActiveView, setSelectedDealId } = useApp();
+  const { deals, user, toggleFavoriteDeal, setActiveView, setSelectedDealId, t } = useApp();
 
   const savedDealIds = user.savedDealIds || [];
   const favoriteDeals = deals.filter((deal) => savedDealIds.includes(deal.id));
@@ -14,22 +14,22 @@ export const FavoritesPage: React.FC = () => {
     <div className="min-h-screen bg-[#F5F7FA] pb-28">
       {/* Page Header */}
       <PageHeader
-        title="Favorites"
+        title={t('favorites')}
         showBack={false}
       />
 
       <div className="max-w-2xl mx-auto px-5 pt-1">
         {/* Subtitle */}
         <p className="text-[13px] text-[#5F6B82] font-normal leading-5 mb-3.5">
-          {favoriteDeals.length} saved {favoriteDeals.length === 1 ? 'deal' : 'deals'} ready for your next day out.
+          {favoriteDeals.length} {t('dealsCount')}
         </p>
 
         {favoriteDeals.length === 0 ? (
           <EmptyState
             icon="heart"
-            title="Your favorites are waiting"
-            description="Save the experiences your family loves so they are always easy to find."
-            actionText="Browse deals"
+            title={t('emptyStateFavoritesTitle')}
+            description={t('emptyStateFavoritesDesc')}
+            actionText={t('emptyStateBrowseDeals')}
             onAction={() => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
               setActiveView('explore');

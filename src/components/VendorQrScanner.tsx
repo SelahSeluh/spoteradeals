@@ -54,10 +54,6 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const isProcessingRef = useRef(false);
 
-  // Active pending items for quick 1-click test scanning
-  const pendingBookings = bookings.filter((b) => b.status === 'confirmed');
-  const activeCoupons = coupons.filter((c) => c.status === 'active');
-
   const handleVerify = (codeToTest: string) => {
     if (!codeToTest.trim()) return;
     const res = redeemCode(codeToTest, businessName);
@@ -340,76 +336,13 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
           </div>
         )}
 
-        {/* Quick Demo Test Buttons */}
-        <div className="pt-3 border-t border-slate-100 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              Quick 1-Tap Test: Click any sample pass to simulate instant scan:
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {pendingBookings.slice(0, 2).map((bk) => (
-              <button
-                key={bk.id}
-                type="button"
-                onClick={() => handleVerify(bk.bookingCode)}
-                className="p-2.5 bg-blue-50/80 hover:bg-blue-100 border border-blue-200 rounded-xl text-left space-y-1 transition-all group cursor-pointer"
-              >
-                <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-blue-900 group-hover:text-blue-700 flex items-center gap-1">
-                    <CalendarCheck className="w-3 h-3 text-blue-600" /> Booking Pass
-                  </span>
-                  <span className="font-mono font-bold text-blue-700 bg-white px-1.5 py-0.5 rounded border border-blue-200">
-                    {bk.bookingCode}
-                  </span>
-                </div>
-                <div className="text-[11px] font-bold text-slate-900 truncate">{bk.dealTitle}</div>
-                <div className="text-[10px] text-slate-600">
-                  Pass: <span className="font-semibold text-slate-900">{bk.userName}</span>
-                </div>
-              </button>
-            ))}
-
-            {activeCoupons.slice(0, 2).map((cp) => (
-              <button
-                key={cp.id}
-                type="button"
-                onClick={() => handleVerify(cp.code)}
-                className="p-2.5 bg-emerald-50/80 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left space-y-1 transition-all group cursor-pointer"
-              >
-                <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-emerald-900 group-hover:text-emerald-700 flex items-center gap-1">
-                    <Ticket className="w-3 h-3 text-emerald-600" /> Coupon Pass
-                  </span>
-                  <span className="font-mono font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">
-                    {cp.code}
-                  </span>
-                </div>
-                <div className="text-[11px] font-bold text-slate-900 truncate">{cp.dealTitle}</div>
-                <div className="text-[10px] text-slate-600">
-                  Pass: <span className="font-semibold text-slate-900">{cp.userName}</span>
-                </div>
-              </button>
-            ))}
-
-            <button
-              type="button"
-              onClick={() => handleVerify('SPOTERA-KIDZANIA-1')}
-              className="p-2.5 bg-amber-50/80 hover:bg-amber-100 border border-amber-200 rounded-xl text-left space-y-1 transition-all group cursor-pointer"
-            >
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="font-bold text-amber-900 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600" /> Promo Voucher
-                </span>
-                <span className="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded border border-amber-200">
-                  SPOTERA-KIDZANIA-1
-                </span>
-              </div>
-              <div className="text-[11px] font-bold text-slate-900 truncate">KidZania Dubai Junior Pass</div>
-            </button>
-          </div>
+        {/* Real Venue Scanning Instructions */}
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+            Verified Spotera Merchant Redemption Protocol
+          </span>
+          <span>Camera or 10-char code</span>
         </div>
       </div>
     </div>

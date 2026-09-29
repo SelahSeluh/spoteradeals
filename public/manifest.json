@@ -21,9 +21,9 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/spotera-logo.jpg",
+      "src": "/spoteradeals-logo.png",
       "sizes": "1024x1024",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     }
   ]

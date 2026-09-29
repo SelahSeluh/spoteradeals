@@ -3,7 +3,7 @@ import { Home, Compass, Ticket, Heart, User, Users } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
-  const { activeView, setActiveView, user, bookings, t } = useApp();
+  const { activeView, setActiveView, user, isGuest, bookings, t } = useApp();
 
   // Hide on deal-detail, bookings-confirm, partners and admin
   if (
@@ -63,7 +63,7 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'profile',
-      label: t('navProfile') || 'Account',
+      label: isGuest ? (t('guestBadge') || 'Guest') : (t('navProfile') || 'Profile'),
       icon: User,
       isActive: activeView === 'profile' || activeView === 'auth' || activeView === 'rewards' || activeView === 'membership',
       onClick: () => {

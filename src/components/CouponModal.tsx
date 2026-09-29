@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import QRCode from 'qrcode';
 import {
   X,
@@ -28,6 +28,16 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
 
   const matchedDeal = coupon ? deals.find((d) => d.id === coupon.dealId) : null;
   const displayTitle = matchedDeal ? getLocalizedTitle(matchedDeal, language) : coupon?.dealTitle;
+
+  // Check expiration in real time
+  const isExpired = useMemo(() => {
+    if (!coupon) return false;
+    if (coupon.status === 'expired') return true;
+    const expiryTarget = (matchedDeal && (matchedDeal.flashDealExpiresAt || matchedDeal.expiryDate)) || coupon.expiryDate;
+    if (!expiryTarget) return false;
+    const t = new Date(expiryTarget).getTime();
+    return !isNaN(t) && Date.now() >= t;
+  }, [coupon, matchedDeal]);
 
   // Close on Escape key
   useEffect(() => {
@@ -104,10 +114,16 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
         <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
           {/* Status Badge & Header */}
           <div className="text-center space-y-1.5">
-            <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-              <CheckCircle2 className="w-3 h-3" />
-              Active Voucher • Ready to Redeem
-            </span>
+            {isExpired ? (
+              <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                Offer Expired • No Longer Redeemable
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                <CheckCircle2 className="w-3 h-3" />
+                Active Voucher • Ready to Redeem
+              </span>
+            )}
             <h3 className="text-base sm:text-lg font-black text-slate-900 leading-snug">
               {displayTitle}
             </h3>
@@ -128,7 +144,15 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
             {/* QR Code Presentation */}
             <div className="bg-slate-50 p-4 text-center space-y-3">
               <div className="flex items-center justify-center">
-                {qrUrl ? (
+                {isExpired ? (
+                  <div className="w-44 h-44 rounded-xl border border-rose-200 bg-rose-50/70 flex flex-col items-center justify-center p-4 text-center">
+                    <span className="text-2xl mb-1">⏱️</span>
+                    <span className="text-xs font-black text-rose-800 uppercase tracking-wider">Offer Expired</span>
+                    <span className="text-[10px] text-rose-600 mt-1 font-medium leading-tight">
+                      This voucher has passed its expiration time and cannot be redeemed.
+                    </span>
+                  </div>
+                ) : qrUrl ? (
                   <img
                     src={qrUrl}
                     alt="Coupon QR Code"
@@ -157,8 +181,10 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
                 </button>
               </div>
 
-              <p className="text-[11px] font-bold text-slate-700">
-                📲 Show this QR code to the cashier at the venue to redeem
+              <p className={`text-[11px] font-bold ${isExpired ? 'text-rose-600' : 'text-slate-700'}`}>
+                {isExpired
+                  ? '⛔ This deal has ended. The merchant scanner will reject this code.'
+                  : '📲 Show this QR code to the cashier at the venue to redeem'}
               </p>
             </div>
           </div>

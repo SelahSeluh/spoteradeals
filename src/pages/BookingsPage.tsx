@@ -4,14 +4,22 @@ import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 
 export const BookingsPage: React.FC = () => {
-  const { bookings, deals, cancelBooking, setActiveView, setSelectedBookingId } = useApp();
+  const { bookings, deals, cancelBooking, setActiveView, setSelectedBookingId, isLoggedIn, requireUserAuth, t, isRtl } = useApp();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
 
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      requireUserAuth(t('signInOrRegister') || 'Sign in or register to view and manage your bookings.', () => {
+        setActiveView('bookings');
+      });
+    }
+  }, [isLoggedIn, requireUserAuth, setActiveView, t]);
+
   const tabs: { label: string; value: 'upcoming' | 'completed' | 'cancelled' }[] = [
-    { label: 'Upcoming', value: 'upcoming' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' },
+    { label: t('upcomingTab'), value: 'upcoming' },
+    { label: t('completedTab'), value: 'completed' },
+    { label: t('cancelledTab'), value: 'cancelled' },
   ];
 
   const filteredBookings = useMemo(() => {
@@ -29,9 +37,9 @@ export const BookingsPage: React.FC = () => {
   );
 
   const handleCancel = (bookingId: string) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
+    if (window.confirm(t('confirm') + '?')) {
       cancelBooking(bookingId);
-      showToast('Booking cancelled successfully', 'info');
+      showToast(t('bookingCancelledToast') || 'Booking cancelled successfully', 'info');
     }
   };
 
@@ -50,9 +58,9 @@ export const BookingsPage: React.FC = () => {
             aria-label="Go back to profile"
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#0D1B3E] shadow-xs border border-[#E7EBF2] hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} />
           </button>
-          <h1 className="text-lg font-bold text-[#0D1B3E] tracking-tight">My Bookings</h1>
+          <h1 className="text-lg font-bold text-[#0D1B3E] tracking-tight">{t('myBookings')}</h1>
           <div className="w-10" />
         </div>
 
@@ -94,13 +102,12 @@ export const BookingsPage: React.FC = () => {
                       className="w-[72px] h-[72px] rounded-[14px] object-cover shrink-0 border border-slate-100"
                       loading="lazy"
                     />
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 text-start">
                       <h2 className="text-sm font-bold text-[#0D1B3E] line-clamp-2 leading-tight">
                         {booking.dealTitle}
                       </h2>
                       <p className="text-[11px] text-[#5F6B82] mt-1">
-                        {booking.date} · {booking.childrenCount || 1}{' '}
-                        {(booking.childrenCount || 1) === 1 ? 'ticket' : 'tickets'}
+                        {booking.date} · {booking.childrenCount || 1} {t('bookTickets')}
                       </p>
                       <div className="flex items-center gap-1.5 mt-2">
                         <span
@@ -113,7 +120,11 @@ export const BookingsPage: React.FC = () => {
                           }`}
                         />
                         <span className="text-[11px] font-semibold capitalize text-[#0D1B3E]">
-                          {booking.status === 'confirmed' ? 'Confirmed' : booking.status}
+                          {booking.status === 'confirmed'
+                            ? (t('confirmed') || 'Confirmed')
+                            : booking.status === 'completed'
+                            ? (t('completedTab') || 'Completed')
+                            : (t('cancelledTab') || 'Cancelled')}
                         </span>
                       </div>
                     </div>
@@ -134,7 +145,7 @@ export const BookingsPage: React.FC = () => {
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EBF2FF] text-[#1A4FBF] text-xs font-bold hover:bg-[#DCE7FC] transition-colors cursor-pointer"
                       >
                         <QrCode className="w-3.5 h-3.5" />
-                        <span>View QR</span>
+                        <span>{t('viewVoucher') || 'View QR'}</span>
                       </button>
 
                       {activeTab === 'upcoming' && (
@@ -142,7 +153,7 @@ export const BookingsPage: React.FC = () => {
                           onClick={() => handleCancel(booking.id)}
                           className="px-2.5 py-1.5 rounded-full text-xs font-semibold text-[#EF4444] hover:bg-red-50 transition-colors cursor-pointer"
                         >
-                          Cancel
+                          {t('cancel')}
                         </button>
                       )}
                     </div>
@@ -158,18 +169,16 @@ export const BookingsPage: React.FC = () => {
               <Calendar className="w-7 h-7" />
             </div>
             <h3 className="text-base font-bold text-[#0D1B3E] capitalize">
-              No {activeTab} bookings
+              {t('noUpcomingBookings')}
             </h3>
             <p className="text-xs text-[#5F6B82] max-w-xs leading-relaxed">
-              {activeTab === 'upcoming'
-                ? 'Book a family experience and it will appear here with your redemption QR.'
-                : 'Your booking history will appear here once you start exploring UAE experiences.'}
+              {t('noUpcomingBookingsDesc')}
             </p>
             <button
               onClick={() => setActiveView('explore')}
               className="mt-2 px-5 py-2.5 rounded-full bg-[#1A4FBF] text-white text-xs font-bold hover:bg-[#153FA0] transition-colors cursor-pointer"
             >
-              Explore deals
+              {t('emptyStateBrowseDeals')}
             </button>
           </div>
         )}

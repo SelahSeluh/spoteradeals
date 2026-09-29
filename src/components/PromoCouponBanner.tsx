@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Sparkles, ArrowRight, Gift } from 'lucide-react';
+import { Tag, ArrowRight, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 
@@ -15,23 +15,6 @@ export const PromoCouponBanner: React.FC = () => {
 
   return (
     <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#0052CC] via-[#0D9CFD] to-[#0070BA] p-4 sm:p-6 text-white shadow-xl select-none">
-      {/* Background playful doodle stars & smileys */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-25">
-        <div className="absolute top-2 left-6 text-white">
-          <Sparkles className="w-8 h-8" />
-        </div>
-        <div className="absolute bottom-1 right-28 text-white">
-          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a4 4 0 0 1-4-4h8a4 4 0 0 1-4 4z" />
-          </svg>
-        </div>
-        <div className="absolute top-1/2 right-1/4 text-yellow-300">
-          <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-          </svg>
-        </div>
-      </div>
-
       <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
         
         {/* Left: Text & Code */}

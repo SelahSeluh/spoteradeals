@@ -182,7 +182,7 @@ export const Navbar: React.FC = () => {
               className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#FD9302] to-[#F5820A] hover:from-[#e07f00] hover:to-[#df7203] text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Crown className="w-3.5 h-3.5 fill-white" />
-              <span>Spotera VIP Pass</span>
+              <span>{t('navMembership') || 'Spotera VIP Pass'}</span>
             </button>
 
             {/* Location Selector Pill */}
@@ -194,15 +194,15 @@ export const Navbar: React.FC = () => {
               >
                 <MapPin className="w-3.5 h-3.5 text-[#FD9302] shrink-0" />
                 <span className="capitalize">
-                  {String(selectedCity).toLowerCase() === 'all' ? 'Dubai, UAE' : `${selectedCity}, UAE`}
+                  {String(selectedCity).toLowerCase() === 'all' ? (t('allCities') || 'All UAE') : `${selectedCity}, UAE`}
                 </span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
               {cityDropdownOpen && (
-                <div className="absolute top-full right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Select Emirate Location
+                <div className="absolute top-full ltr:right-0 rtl:left-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-start">
+                    {t('location') || 'Select Emirate Location'}
                   </div>
                   {uaeEmirates.map((c) => (
                     <button
@@ -212,13 +212,13 @@ export const Navbar: React.FC = () => {
                         setSelectedCity(c as any);
                         setCityDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3.5 py-2 text-xs font-medium flex items-center justify-between hover:bg-slate-50 cursor-pointer ${
+                      className={`w-full text-start px-3.5 py-2 text-xs font-medium flex items-center justify-between hover:bg-slate-50 cursor-pointer ${
                         selectedCity.toLowerCase() === c.toLowerCase()
                           ? 'text-[#0D9CFD] font-bold bg-blue-50/60'
                           : 'text-slate-700'
                       }`}
                     >
-                      <span className="capitalize">{c === 'all' ? 'All UAE' : `${c}, UAE`}</span>
+                      <span className="capitalize">{c === 'all' ? (t('allCities') || 'All UAE') : `${c}, UAE`}</span>
                       {selectedCity.toLowerCase() === c.toLowerCase() && (
                         <Check className="w-3.5 h-3.5 text-[#0D9CFD]" />
                       )}
@@ -235,7 +235,7 @@ export const Navbar: React.FC = () => {
                 setActiveView('wishlist');
               }}
               className="relative p-2 text-slate-600 hover:text-[#FD9302] hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
-              title="Saved Deals"
+              title={t('saved') || 'Saved Deals'}
               aria-label="Wishlist"
             >
               <Heart className="w-5 h-5" />
@@ -260,7 +260,7 @@ export const Navbar: React.FC = () => {
               </button>
 
               {langDropdownOpen && (
-                <div className="absolute top-full right-0 mt-1.5 w-36 bg-white border border-slate-200 rounded-2xl shadow-xl py-1 z-50">
+                <div className="absolute top-full ltr:right-0 rtl:left-0 mt-1.5 w-36 bg-white border border-slate-200 rounded-2xl shadow-xl py-1 z-50">
                   {languages.map((l) => (
                     <button
                       key={l.code}
@@ -268,7 +268,7 @@ export const Navbar: React.FC = () => {
                         setLanguage(l.code);
                         setLangDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-1.5 text-xs font-semibold flex items-center justify-between hover:bg-slate-50 cursor-pointer ${
+                      className={`w-full text-start px-3 py-1.5 text-xs font-semibold flex items-center justify-between hover:bg-slate-50 cursor-pointer ${
                         language === l.code ? 'text-[#0D9CFD] bg-blue-50/60 font-bold' : 'text-slate-700'
                       }`}
                     >
@@ -304,14 +304,14 @@ export const Navbar: React.FC = () => {
                   className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span>Sign In</span>
+                  <span>{t('login') || 'Sign In'}</span>
                 </button>
               )}
 
               {/* Profile Dropdown Menu */}
               {profileDropdownOpen && isLoggedIn && (
-                <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 divide-y divide-slate-100">
-                  <div className="px-4 py-2.5">
+                <div className="absolute top-full ltr:right-0 rtl:left-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 divide-y divide-slate-100">
+                  <div className="px-4 py-2.5 text-start">
                     <p className="text-xs font-bold text-slate-900 truncate">{cleanNavDisplayName}</p>
                     <p className="text-[11px] text-slate-400 truncate">{user.email || 'Spotera Member'}</p>
                     <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FD9302] text-[10px] font-black border border-amber-200">
@@ -326,7 +326,7 @@ export const Navbar: React.FC = () => {
                         setActiveView('profile');
                         setProfileDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-start px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                     >
                       <User className="w-4 h-4 text-slate-400" />
                       <span>{t('navProfile') || 'My Profile'}</span>
@@ -336,7 +336,7 @@ export const Navbar: React.FC = () => {
                         setActiveView('bookings');
                         setProfileDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-start px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                     >
                       <Ticket className="w-4 h-4 text-slate-400" />
                       <span>{t('navCoupons') || 'My Tickets & Passes'}</span>
@@ -346,17 +346,17 @@ export const Navbar: React.FC = () => {
                         setActiveView('rewards');
                         setProfileDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-start px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                     >
                       <Sparkles className="w-4 h-4 text-slate-400" />
-                      <span>Rewards & Points</span>
+                      <span>{t('navRewards') || 'Rewards & Points'}</span>
                     </button>
                     <button
                       onClick={() => {
                         setActiveView('admin');
                         setProfileDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-start px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                     >
                       <Building2 className="w-4 h-4 text-slate-400" />
                       <span>{t('navAdmin') || 'Admin Portal'}</span>
@@ -369,7 +369,7 @@ export const Navbar: React.FC = () => {
                         logout();
                         setProfileDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
+                      className="w-full text-start px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>{t('logout') || 'Sign Out'}</span>
@@ -423,13 +423,13 @@ export const Navbar: React.FC = () => {
                 className="w-full py-3 px-4 bg-gradient-to-r from-[#FD9302] to-[#F5820A] text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-sm"
               >
                 <Crown className="w-4 h-4 fill-white" />
-                <span>Get Spotera VIP Pass</span>
+                <span>{t('navMembership') || 'Spotera VIP Pass'}</span>
               </button>
 
               {/* Location Select */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 text-start">
                 <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Current UAE Location
+                  {t('location') || 'Current UAE Location'}
                 </label>
                 <div className="relative">
                   <select
@@ -437,11 +437,11 @@ export const Navbar: React.FC = () => {
                     onChange={(e) => {
                       setSelectedCity(e.target.value as any);
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 outline-none text-start"
                   >
                     {uaeEmirates.map((c) => (
                       <option key={c} value={c}>
-                        {c === 'all' ? 'All UAE (Default)' : `${c}, UAE`}
+                        {c === 'all' ? (t('allCities') || 'All UAE') : `${c}, UAE`}
                       </option>
                     ))}
                   </select>
@@ -457,7 +457,7 @@ export const Navbar: React.FC = () => {
                       setActiveView(link.id as any);
                       setMobileMenuOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold flex items-center justify-between ${
+                    className={`w-full text-start px-3 py-2.5 rounded-xl text-sm font-bold flex items-center justify-between ${
                       activeView === link.id
                         ? 'bg-blue-50 text-[#0D9CFD]'
                         : 'text-slate-700 hover:bg-slate-50'
@@ -478,10 +478,10 @@ export const Navbar: React.FC = () => {
                     setActiveView('partners');
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full text-left px-3.5 py-2 text-xs font-bold text-[#FD9302] hover:bg-amber-50 rounded-xl flex items-center gap-2"
+                  className="w-full text-start px-3.5 py-2 text-xs font-bold text-[#FD9302] hover:bg-amber-50 rounded-xl flex items-center gap-2"
                 >
                   <Building2 className="w-4 h-4" />
-                  <span>Partner Desk (List Your Venue)</span>
+                  <span>{t('navPartners') || 'Partner Desk'}</span>
                 </button>
               </div>
             </div>

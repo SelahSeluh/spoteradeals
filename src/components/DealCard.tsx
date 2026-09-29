@@ -4,6 +4,7 @@ import { Deal } from '../types';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { getLocalizedTitle } from '../utils/i18nHelper';
+import { FlashDealCountdown } from './FlashDealCountdown';
 
 interface DealCardProps {
   deal: Deal;
@@ -13,6 +14,7 @@ interface DealCardProps {
   onToggleFavorite?: () => void;
   onClaimCoupon?: (deal: Deal) => void;
   onBookNow?: (deal: Deal) => void;
+  onExpire?: () => void;
   className?: string;
 }
 
@@ -22,9 +24,10 @@ export const DealCard: React.FC<DealCardProps> = ({
   saved,
   onPress,
   onToggleFavorite,
+  onExpire,
   className = '',
 }) => {
-  const { user, toggleFavoriteDeal, setSelectedDealId, setActiveView, language, isRtl } = useApp();
+  const { user, toggleFavoriteDeal, setSelectedDealId, setActiveView, requireUserAuth, language, isRtl } = useApp();
   const { showToast } = useToast();
   const [isPopping, setIsPopping] = useState(false);
 
@@ -33,24 +36,26 @@ export const DealCard: React.FC<DealCardProps> = ({
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPopping(true);
-    setTimeout(() => setIsPopping(false), 420);
+    requireUserAuth('Sign in or register to save deals to your favorites.', () => {
+      setIsPopping(true);
+      setTimeout(() => setIsPopping(false), 420);
 
-    if (onToggleFavorite) {
-      onToggleFavorite();
-    } else {
-      toggleFavoriteDeal(deal.id);
-      if (!isFavorite) {
-        showToast.success(isRtl ? 'تمت الإضافة إلى المفضلة' : 'Saved to your favorites');
+      if (onToggleFavorite) {
+        onToggleFavorite();
       } else {
-        showToast.info(isRtl ? 'تمت الإزالة من المفضلة' : 'Removed from favorites');
+        toggleFavoriteDeal(deal.id);
+        if (!isFavorite) {
+          showToast.success(isRtl ? 'تمت الإضافة إلى المفضلة' : 'Saved to your favorites');
+        } else {
+          showToast.info(isRtl ? 'تمت الإزالة من المفضلة' : 'Removed from favorites');
+        }
       }
-    }
+    });
   };
 
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const dealUrl = `${window.location.origin}${window.location.pathname}#deal/${deal.id}`;
+    const dealUrl = `${window.location.origin}/#deal/${deal.id}`;
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(dealUrl);
@@ -149,6 +154,13 @@ export const DealCard: React.FC<DealCardProps> = ({
             <span className="bg-[#0C5CAB] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs tracking-tight hidden sm:inline-block">
               FEATURED
             </span>
+          )}
+          {(deal.isFlashDeal || deal.flashDealExpiresAt) && (
+            <FlashDealCountdown
+              targetDate={deal.flashDealExpiresAt || deal.expiryDate}
+              variant="badge"
+              onExpire={onExpire}
+            />
           )}
         </div>
 

@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import { SpoteraLogo } from './SpoteraLogo';
 
 export const Footer: React.FC = () => {
-  const { setActiveView, setSelectedCategory, t, isRtl } = useApp();
+  const { setActiveView, setSelectedCategory, replaySplashAnimation, t, isRtl } = useApp();
 
   const handleCategoryNav = (catName: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -215,7 +215,7 @@ export const Footer: React.FC = () => {
 
           {/* App / Payments */}
           <div className="md:col-span-2 lg:col-span-1 space-y-2">
-            <h4 className="text-xs font-black uppercase tracking-wider text-white">Payment</h4>
+            <h4 className="text-xs font-black uppercase tracking-wider text-white">{t('payment') || 'Payment'}</h4>
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
               <span className="px-1.5 py-0.5 bg-white rounded text-[#1A1F71] font-black text-[9px]">VISA</span>
               <span className="px-1.5 py-0.5 bg-white rounded text-[#EB001B] font-black text-[9px]">Mastercard</span>
@@ -227,11 +227,20 @@ export const Footer: React.FC = () => {
 
         {/* Desktop Bottom Bar */}
         <div className="hidden md:flex items-center justify-between pt-4 text-xs text-slate-400">
-          <p>© 2026 SpoteraDeals. All rights reserved.</p>
-          <div className="flex items-center gap-2 text-slate-400 text-[11px]">
-            <span>Verified Deals</span>
+          <p>© 2026 SpoteraDeals. {t('allRightsReserved') || 'All rights reserved.'}</p>
+          <div className="flex items-center gap-3 text-slate-400 text-[11px]">
+            <button
+              type="button"
+              onClick={replaySplashAnimation}
+              className="text-amber-300 hover:text-amber-200 transition-colors font-medium flex items-center gap-1 cursor-pointer bg-amber-400/10 hover:bg-amber-400/20 px-2 py-0.5 rounded-md border border-amber-300/30"
+              title="Watch the intro video again"
+            >
+              <span>▶ Replay Intro Video</span>
+            </button>
             <span>•</span>
-            <span>AED Pricing</span>
+            <span>{t('whyVerifiedPartners') || 'Verified Deals'}</span>
+            <span>•</span>
+            <span>AED</span>
           </div>
         </div>
 
@@ -294,7 +303,7 @@ export const Footer: React.FC = () => {
 
           {/* Socials & Copyright Row */}
           <div className="flex items-center justify-between pt-2 border-t border-white/10 text-[10px] text-slate-400">
-            <p>© 2026 SpoteraDeals. All rights reserved.</p>
+            <p>© 2026 SpoteraDeals. {t('allRightsReserved') || 'All rights reserved.'}</p>
             <div className="flex items-center gap-2">
               <a
                 href="https://facebook.com"

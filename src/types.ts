@@ -105,7 +105,9 @@ export type FamilyTheme = 'sunshine' | 'oasis' | 'cosmic' | 'pastel';
 
 export type AdminSubRole = 'SUPER_ADMIN' | 'CONTENT_ADMIN' | 'MARKETING_ADMIN' | 'SUPPORT_ADMIN' | 'VIEWER';
 
-export type UserRole = 'customer' | 'partner' | 'admin' | AdminSubRole;
+export type StartupPhase = 'intro' | 'auth' | 'app';
+
+export type UserRole = 'customer' | 'partner' | 'admin' | 'ADMIN' | 'PARTNER' | 'CUSTOMER' | AdminSubRole;
 
 export interface SearchHistoryItem {
   id: string;
@@ -257,6 +259,7 @@ export interface User {
   walletEarnedTotalAED?: number;
   walletUsedTotalAED?: number;
   walletTransactions?: WalletTransaction[];
+  loyaltyHistory?: LoyaltyHistoryItem[];
 }
 
 export interface Business {
@@ -321,6 +324,10 @@ export interface Deal {
   reviewCount: number;
   isFeatured: boolean;
   isTrending?: boolean;
+  isFlashDeal?: boolean;
+  flashDealStartsAt?: string;
+  flashDealExpiresAt?: string;
+  startDate?: string;
   isNearYou?: boolean;
   isPublished?: boolean;
   displayOrder?: number;
@@ -338,6 +345,8 @@ export interface Deal {
   redemptionMethod?: 'in_store_qr' | 'online_promo' | 'direct_contact' | 'booking';
   promoCode?: string;
   distanceKm?: number;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Coupon {
@@ -373,8 +382,9 @@ export interface Booking {
   childrenCount: number;
   packageSelected: string;
   totalPrice: number;
-  status: 'confirmed' | 'completed' | 'cancelled';
+  status: 'confirmed' | 'completed' | 'cancelled' | 'redeemed';
   bookingCode: string;
+  qrCodeData?: string;
   createdAt: string;
   redeemedAt?: string;
   redeemedByBusiness?: string;
@@ -461,6 +471,46 @@ export interface SiteBrandingConfig {
   heroMediaType?: 'single' | 'slideshow' | 'video';
   heroSingleImage?: string;
   heroVideoUrl?: string;
+}
+
+export interface IntroAnimationConfig {
+  enabled: boolean;
+  durationSeconds: number; // 1 - 10 seconds, default 4.5
+  animationStyle: 'fade-in' | 'scale-in' | 'slide-up' | 'logo-reveal' | 'smooth-combined';
+  backgroundType: 'solid' | 'image' | 'slideshow' | 'video';
+  solidGradient: {
+    from: string;
+    via: string;
+    to: string;
+    accent: string;
+    showSkyline: boolean;
+  };
+  backgroundImageUrl?: string;
+  slideshowImages: string[];
+  slideshowIntervalSeconds: number;
+  slideshowTransition: 'fade' | 'slide' | 'zoom';
+  videoUrl?: string;
+  videoMuted: boolean;
+  videoLoop: boolean;
+  logoUrl: string;
+  logoSize: 'small' | 'medium' | 'large' | 'xlarge';
+  logoPosition: 'center' | 'top' | 'upper-third';
+  text: string;
+  textAr?: string;
+  textFr?: string;
+  textRu?: string;
+  fontFamily?: string;
+  fontSizeCustom?: number;
+  fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold' | 'black';
+  fontStyle?: 'normal' | 'italic';
+  accentColor?: string;
+  textSize: 'small' | 'medium' | 'large' | 'xlarge';
+  textColor: string;
+  textPosition: 'below-logo' | 'bottom' | 'stacked';
+  textAlignment: 'center' | 'left' | 'right';
+  textAnimationStyle: 'fade-in' | 'slide-up' | 'typewriter' | 'glow-pulse';
+  updatedAt?: string;
+  publishedAt?: string;
 }
 
 export interface CategoryItem {
@@ -578,4 +628,57 @@ export interface DailySpotlightData {
   savingsHighlight: string;
   deals?: Deal[];
   isLoading?: boolean;
+}
+
+// UAE Public Holidays & Date Range Filter Types
+export interface UaePublicHoliday {
+  id: string;
+  name: string;
+  nameAr?: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  description?: string;
+  isOfficial?: boolean;
+}
+
+export type DateFilterPreset = 'all' | 'this_weekend' | 'next_weekend' | 'holiday' | 'custom';
+
+export interface DateRangeFilterState {
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  preset: DateFilterPreset;
+  selectedHolidayId?: string;
+}
+
+// Loyalty Points System Types
+export type LoyaltyActionType =
+  | 'BOOKING_COMPLETED'
+  | 'DEAL_REDEMPTION'
+  | 'PURCHASE'
+  | 'REFERRAL'
+  | 'PROMOTION'
+  | 'ADMIN_GRANT'
+  | 'REVIEW_SUBMITTED';
+
+export interface LoyaltyHistoryItem {
+  id: string;
+  actionType: LoyaltyActionType;
+  referenceId: string;
+  points: number;
+  description: string;
+  createdAt: string; // ISO string
+}
+
+export interface LoyaltyRuleConfig {
+  bookingPoints: number;        // e.g. 100
+  redemptionPoints: number;     // e.g. 50
+  purchasePointsPerAED: number; // e.g. 1
+  referralPoints: number;       // e.g. 250
+  promotionPoints: number;      // e.g. 75
+  reviewPoints: number;         // e.g. 30
+}
+
+export interface LoyaltyTierConfig {
+  vipThreshold: number;       // e.g. 1000
+  premiumThreshold: number;   // e.g. 2500
 }

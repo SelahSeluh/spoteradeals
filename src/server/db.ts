@@ -36,6 +36,8 @@ export interface VoucherRecord {
   userName: string;
   claimedAt: string;
   expiryDate: string;
+  flashDealExpiresAt?: string;
+  flashDealStartsAt?: string;
   status: 'active' | 'redeemed' | 'expired';
   redeemedAt?: string;
   redeemedByPartnerId?: string;
@@ -117,6 +119,20 @@ export interface ServerVersionSnapshot {
   dataSnapshot: any;
 }
 
+export interface PushSubscriptionRecord {
+  id: string;
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+  userId?: string;
+  userEmail?: string;
+  emirate?: string;
+  subscribedAt: string;
+  active: boolean;
+}
+
 const DATA_DIR = path.join(process.cwd(), 'data');
 const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
 const DB_PATH = path.join(DATA_DIR, 'spotera_db.json');
@@ -130,6 +146,7 @@ interface DatabaseSchema {
   auditLogs: ServerAuditLog[];
   backups: ServerBackupRecord[];
   versions: ServerVersionSnapshot[];
+  pushSubscriptions?: PushSubscriptionRecord[];
   contentState: Record<string, any>;
 }
 
@@ -142,6 +159,7 @@ const initialDb: DatabaseSchema = {
   auditLogs: [],
   backups: [],
   versions: [],
+  pushSubscriptions: [],
   contentState: {},
 };
 
@@ -197,11 +215,70 @@ export class ServerDB {
         if (!Array.isArray(loaded.backups)) loaded.backups = [];
         if (!Array.isArray(loaded.versions)) loaded.versions = [];
         if (!loaded.contentState || typeof loaded.contentState !== 'object') loaded.contentState = {};
+        if (!loaded.contentState.intro) {
+          loaded.contentState.intro = {
+            enabled: true,
+            durationSeconds: 4.5,
+            animationStyle: 'smooth-combined',
+            backgroundType: 'video',
+            solidGradient: {
+              from: '#0A2540',
+              via: '#0E3D6E',
+              to: '#125492',
+              accent: '#FD9302',
+              showSkyline: true,
+            },
+            backgroundImageUrl: '',
+            slideshowImages: [
+              'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1200',
+              'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&q=80&w=1200',
+              'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=1200',
+            ],
+            slideshowIntervalSeconds: 1.5,
+            slideshowTransition: 'fade',
+            videoUrl: '/spotera-intro.mp4',
+            videoMuted: true,
+            videoLoop: true,
+            logoUrl: '/spoteradeals-logo.png',
+            logoSize: 'medium',
+            logoPosition: 'center',
+            text: 'More Fun, More Together',
+            textAr: 'متعة أكثر، معاً أكثر',
+            textFr: 'Plus de Plaisir, Plus Ensemble',
+            textRu: 'Больше Веселья, Больше Вместе',
+            textSize: 'medium',
+            textColor: '#FFE082',
+            textPosition: 'below-logo',
+            textAlignment: 'center',
+            textAnimationStyle: 'fade-in',
+            updatedAt: new Date().toISOString(),
+            publishedAt: new Date().toISOString(),
+          };
+        } else if (loaded.contentState.intro.durationSeconds < 3.5) {
+          loaded.contentState.intro.durationSeconds = 4.5;
+        }
         if (!Array.isArray(loaded.auditLogs)) loaded.auditLogs = [];
 
         ServerDB.data = loaded;
+
+        // Auto-initialize master administrator account if no admin exists
+        const hasAdmin = ServerDB.data.users.some((u) => u.role === 'ADMIN');
+        if (!hasAdmin) {
+          const adminEmail = (process.env.ADMIN_EMAIL || 'admin@spoteradeals.com').trim().toLowerCase();
+          const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'SpoteraMaster2026!';
+          ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
+          console.log(`[Spotera ServerDB] Initialized Master Administrator account (${adminEmail})`);
+        } else {
+          ServerDB.data.adminConfigured = true;
+        }
+
         ServerDB.save();
       } else {
+        // Fresh database initialization
+        const adminEmail = (process.env.ADMIN_EMAIL || 'admin@spoteradeals.com').trim().toLowerCase();
+        const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'SpoteraMaster2026!';
+        ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
+        console.log(`[Spotera ServerDB] Initialized Master Administrator account (${adminEmail}) in fresh DB`);
         ServerDB.save();
       }
     } catch (e) {
@@ -236,6 +313,14 @@ export class ServerDB {
 
   public static findUserById(id: string): UserAccount | undefined {
     return ServerDB.data.users.find((u) => u.id === id);
+  }
+
+  public static updateUserPassword(userId: string, newPasswordHash: string): boolean {
+    const usr = ServerDB.findUserById(userId);
+    if (!usr) return false;
+    usr.password = newPasswordHash;
+    ServerDB.save();
+    return true;
   }
 
   public static createUser(user: Omit<UserAccount, 'id' | 'createdAt'>): UserAccount {
@@ -298,14 +383,6 @@ export class ServerDB {
     ServerDB.data.users.push(newAccount);
     ServerDB.save();
     return newAccount;
-  }
-
-  public static updateUserPassword(userId: string, newPass: string) {
-    const usr = ServerDB.data.users.find((u) => u.id === userId);
-    if (usr) {
-      usr.password = newPass;
-      ServerDB.save();
-    }
   }
 
   public static upsertAdminAccount(email: string, pass: string, subRole: ServerAdminSubRole = 'SUPER_ADMIN'): UserAccount {
@@ -401,6 +478,7 @@ export class ServerDB {
   }
 
   public static redeemVoucherServer(code: string, partnerId: string): { success: boolean; reason?: string; message: string; record?: any } {
+    const now = Date.now();
     const v = ServerDB.findVoucherByCode(code);
     if (v) {
       if (v.status === 'redeemed') {
@@ -410,13 +488,32 @@ export class ServerDB {
           message: `Voucher (${v.code}) was ALREADY redeemed on ${v.redeemedAt || 'a previous visit'}. Duplicate redemption blocked!`,
         };
       }
-      if (v.status === 'expired') {
+
+      // Check future start time if scheduled deal
+      if (v.flashDealStartsAt) {
+        const startTime = new Date(v.flashDealStartsAt).getTime();
+        if (!isNaN(startTime) && now < startTime) {
+          return {
+            success: false,
+            reason: 'NOT_STARTED',
+            message: `Deal voucher (${v.code}) has not started yet. Valid from ${new Date(v.flashDealStartsAt).toLocaleString()}.`,
+          };
+        }
+      }
+
+      // Exact server-enforced timestamp expiration (prevents device clock bypass)
+      const expiryTarget = v.flashDealExpiresAt || v.expiryDate;
+      const expiryTime = expiryTarget ? new Date(expiryTarget).getTime() : NaN;
+      if ((!isNaN(expiryTime) && now >= expiryTime) || v.status === 'expired') {
+        v.status = 'expired';
+        ServerDB.save();
         return {
           success: false,
           reason: 'EXPIRED',
-          message: `Voucher (${v.code}) has expired on ${v.expiryDate}.`,
+          message: `Voucher (${v.code}) has expired. Redemption is strictly prohibited after deal expiration.`,
         };
       }
+
       v.status = 'redeemed';
       v.redeemedAt = new Date().toISOString().replace('T', ' ').substring(0, 19);
       v.redeemedByPartnerId = partnerId;
@@ -463,6 +560,290 @@ export class ServerDB {
       message: `Invalid code (${code}). Code does not exist in Spotera database.`,
     };
   }
+
+  // QR Code Inspection & Verification (without redeeming)
+  public static verifyQrCodeServer(rawCode: string): {
+    status: 'VALID' | 'ALREADY_USED' | 'EXPIRED' | 'NOT_STARTED' | 'INVALID';
+    message: string;
+    canRedeem: boolean;
+    record?: {
+      type: 'voucher' | 'booking';
+      code: string;
+      dealTitle: string;
+      businessName: string;
+      userName: string;
+      userEmail?: string;
+      dateOrClaimedAt: string;
+      expiryDate?: string;
+      status: string;
+      redeemedAt?: string;
+      terms?: string;
+      totalPrice?: number;
+    };
+  } {
+    if (!rawCode || !rawCode.trim()) {
+      return {
+        status: 'INVALID',
+        message: 'Empty QR code or reference provided.',
+        canRedeem: false,
+      };
+    }
+
+    let searchCode = rawCode.trim();
+
+    // Try parsing JSON payload if QR contains JSON string
+    try {
+      if (searchCode.startsWith('{') && searchCode.endsWith('}')) {
+        const parsed = JSON.parse(searchCode);
+        if (parsed.code) searchCode = parsed.code;
+        else if (parsed.bookingCode) searchCode = parsed.bookingCode;
+      }
+    } catch (_) {}
+
+    const now = Date.now();
+
+    // Check voucher
+    const v = ServerDB.findVoucherByCode(searchCode);
+    if (v) {
+      const expiryTarget = v.flashDealExpiresAt || v.expiryDate;
+      const expiryTime = expiryTarget ? new Date(expiryTarget).getTime() : NaN;
+      const isExpired = (!isNaN(expiryTime) && now >= expiryTime) || v.status === 'expired';
+
+      if (v.status === 'redeemed') {
+        return {
+          status: 'ALREADY_USED',
+          message: `This coupon voucher (${v.code}) was ALREADY redeemed on ${v.redeemedAt || 'a previous visit'}.`,
+          canRedeem: false,
+          record: {
+            type: 'voucher',
+            code: v.code,
+            dealTitle: v.dealTitle,
+            businessName: v.businessName,
+            userName: v.userName,
+            dateOrClaimedAt: v.claimedAt,
+            expiryDate: v.expiryDate,
+            status: 'redeemed',
+            redeemedAt: v.redeemedAt,
+            terms: v.redemptionInstructions,
+          },
+        };
+      }
+
+      if (isExpired) {
+        return {
+          status: 'EXPIRED',
+          message: `This voucher (${v.code}) has EXPIRED. Redemption is no longer permitted.`,
+          canRedeem: false,
+          record: {
+            type: 'voucher',
+            code: v.code,
+            dealTitle: v.dealTitle,
+            businessName: v.businessName,
+            userName: v.userName,
+            dateOrClaimedAt: v.claimedAt,
+            expiryDate: v.expiryDate,
+            status: 'expired',
+            terms: v.redemptionInstructions,
+          },
+        };
+      }
+
+      return {
+        status: 'VALID',
+        message: `Active & Valid Spotera Digital Voucher (${v.code})! Ready for redemption.`,
+        canRedeem: true,
+        record: {
+          type: 'voucher',
+          code: v.code,
+          dealTitle: v.dealTitle,
+          businessName: v.businessName,
+          userName: v.userName,
+          dateOrClaimedAt: v.claimedAt,
+          expiryDate: v.expiryDate,
+          status: 'active',
+          terms: v.redemptionInstructions,
+        },
+      };
+    }
+
+    // Check booking
+    const b = ServerDB.findBookingByCode(searchCode);
+    if (b) {
+      if (b.status === 'redeemed') {
+        return {
+          status: 'ALREADY_USED',
+          message: `This booking entry pass (${b.bookingCode}) was ALREADY redeemed on ${b.redeemedAt || 'a previous visit'}.`,
+          canRedeem: false,
+          record: {
+            type: 'booking',
+            code: b.bookingCode,
+            dealTitle: b.dealTitle,
+            businessName: b.businessName,
+            userName: b.userName,
+            userEmail: b.userEmail,
+            dateOrClaimedAt: `${b.date} at ${b.timeSlot}`,
+            status: 'redeemed',
+            redeemedAt: b.redeemedAt,
+            terms: `${b.childrenCount} Children Pass (${b.packageSelected})`,
+            totalPrice: b.totalPrice,
+          },
+        };
+      }
+
+      if (b.status === 'cancelled') {
+        return {
+          status: 'INVALID',
+          message: `This booking entry pass (${b.bookingCode}) was CANCELLED.`,
+          canRedeem: false,
+          record: {
+            type: 'booking',
+            code: b.bookingCode,
+            dealTitle: b.dealTitle,
+            businessName: b.businessName,
+            userName: b.userName,
+            userEmail: b.userEmail,
+            dateOrClaimedAt: `${b.date} at ${b.timeSlot}`,
+            status: 'cancelled',
+            totalPrice: b.totalPrice,
+          },
+        };
+      }
+
+      return {
+        status: 'VALID',
+        message: `Active & Valid Spotera Booking Entry Pass (${b.bookingCode})!`,
+        canRedeem: true,
+        record: {
+          type: 'booking',
+          code: b.bookingCode,
+          dealTitle: b.dealTitle,
+          businessName: b.businessName,
+          userName: b.userName,
+          userEmail: b.userEmail,
+          dateOrClaimedAt: `${b.date} at ${b.timeSlot}`,
+          status: 'confirmed',
+          terms: `${b.childrenCount} Children Pass (${b.packageSelected})`,
+          totalPrice: b.totalPrice,
+        },
+      };
+    }
+
+    return {
+      status: 'INVALID',
+      message: `Invalid or unrecognized code (${searchCode}). Not found in Spotera database.`,
+      canRedeem: false,
+    };
+  }
+
+  // Server-side safe Voucher Claim creation
+  public static createVoucherServer(params: {
+    dealId: string;
+    dealTitle: string;
+    businessName: string;
+    businessId?: string;
+    userId: string;
+    userName: string;
+    expiryDate: string;
+    flashDealExpiresAt?: string;
+    city?: string;
+  }): { success: boolean; voucher?: VoucherRecord; error?: string } {
+    const now = Date.now();
+    const expiryTarget = params.flashDealExpiresAt || params.expiryDate;
+    const expiryTime = expiryTarget ? new Date(expiryTarget).getTime() : NaN;
+    if (!isNaN(expiryTime) && now >= expiryTime) {
+      return { success: false, error: 'DEAL_EXPIRED' };
+    }
+
+    const cityPrefix = (params.city || 'UAE').substring(0, 3).toUpperCase();
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const code = `SPOTERA-${cityPrefix}-${randomSuffix}`;
+    const qrPayload = JSON.stringify({
+      code,
+      dealId: params.dealId,
+      userId: params.userId,
+      expiryDate: params.expiryDate,
+      type: 'voucher',
+    });
+
+    const newVoucher: VoucherRecord = {
+      id: 'vouch_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      code,
+      dealId: params.dealId,
+      dealTitle: params.dealTitle,
+      businessName: params.businessName,
+      businessId: params.businessId,
+      userId: params.userId,
+      userName: params.userName,
+      claimedAt: new Date().toISOString().split('T')[0],
+      expiryDate: params.expiryDate,
+      flashDealExpiresAt: params.flashDealExpiresAt,
+      status: 'active',
+      qrCodeData: qrPayload,
+      redemptionInstructions: `Present this verified QR pass or code "${code}" at ${params.businessName} to redeem.`,
+    };
+
+    if (!Array.isArray(ServerDB.data.vouchers)) ServerDB.data.vouchers = [];
+    ServerDB.data.vouchers.unshift(newVoucher);
+    ServerDB.save();
+
+    return { success: true, voucher: newVoucher };
+  }
+
+  // Server-side safe Booking creation
+  public static createBookingServer(params: {
+    dealId: string;
+    dealTitle: string;
+    businessName: string;
+    businessId?: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
+    date: string;
+    timeSlot: string;
+    childrenCount: number;
+    packageSelected: string;
+    unitPrice: number;
+    expiryDate?: string;
+  }): { success: boolean; booking?: BookingRecord; error?: string } {
+    const now = Date.now();
+    if (params.expiryDate) {
+      const expiryTime = new Date(params.expiryDate).getTime();
+      if (!isNaN(expiryTime) && now >= expiryTime) {
+        return { success: false, error: 'DEAL_EXPIRED' };
+      }
+    }
+
+    const bookingCode = `BK-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    const totalPrice = Math.round(params.unitPrice * Math.max(1, params.childrenCount) * 100) / 100;
+
+    const newBooking: BookingRecord = {
+      id: 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      bookingCode,
+      dealId: params.dealId,
+      dealTitle: params.dealTitle,
+      businessName: params.businessName,
+      businessId: params.businessId,
+      userId: params.userId,
+      userName: params.userName,
+      userEmail: params.userEmail,
+      userPhone: params.userPhone,
+      date: params.date,
+      timeSlot: params.timeSlot,
+      childrenCount: params.childrenCount,
+      packageSelected: params.packageSelected,
+      totalPrice,
+      status: 'confirmed',
+      createdAt: new Date().toISOString(),
+    };
+
+    if (!Array.isArray(ServerDB.data.bookings)) ServerDB.data.bookings = [];
+    ServerDB.data.bookings.unshift(newBooking);
+    ServerDB.save();
+
+    return { success: true, booking: newBooking };
+  }
+
 
   // Enhanced Admin Audit Logging (supports both object and positional args)
   public static logAudit(
@@ -867,6 +1248,64 @@ export class ServerDB {
     }
     const limit = filter?.limit || 100;
     return logs.slice(0, limit);
+  }
+
+  public static savePushSubscription(sub: {
+    endpoint: string;
+    keys: { p256dh: string; auth: string };
+    userId?: string;
+    userEmail?: string;
+    emirate?: string;
+  }): { success: boolean; id: string } {
+    if (!ServerDB.data.pushSubscriptions) {
+      ServerDB.data.pushSubscriptions = [];
+    }
+    // Check if endpoint already exists
+    const existingIndex = ServerDB.data.pushSubscriptions.findIndex((s) => s.endpoint === sub.endpoint);
+    const now = new Date().toISOString();
+    if (existingIndex >= 0) {
+      ServerDB.data.pushSubscriptions[existingIndex] = {
+        ...ServerDB.data.pushSubscriptions[existingIndex],
+        keys: sub.keys,
+        userId: sub.userId || ServerDB.data.pushSubscriptions[existingIndex].userId,
+        userEmail: sub.userEmail || ServerDB.data.pushSubscriptions[existingIndex].userEmail,
+        emirate: sub.emirate || ServerDB.data.pushSubscriptions[existingIndex].emirate,
+        active: true,
+      };
+      ServerDB.save();
+      return { success: true, id: ServerDB.data.pushSubscriptions[existingIndex].id };
+    }
+
+    const newSub: PushSubscriptionRecord = {
+      id: 'sub_' + crypto.randomBytes(8).toString('hex'),
+      endpoint: sub.endpoint,
+      keys: sub.keys,
+      userId: sub.userId,
+      userEmail: sub.userEmail,
+      emirate: sub.emirate || 'all',
+      subscribedAt: now,
+      active: true,
+    };
+    ServerDB.data.pushSubscriptions.push(newSub);
+    ServerDB.save();
+    return { success: true, id: newSub.id };
+  }
+
+  public static removePushSubscription(endpoint: string): { success: boolean } {
+    if (!ServerDB.data.pushSubscriptions) return { success: true };
+    ServerDB.data.pushSubscriptions = ServerDB.data.pushSubscriptions.filter((s) => s.endpoint !== endpoint);
+    ServerDB.save();
+    return { success: true };
+  }
+
+  public static getPushSubscriptions(emirate?: string): PushSubscriptionRecord[] {
+    const list = ServerDB.data.pushSubscriptions || [];
+    if (!emirate || emirate.toLowerCase() === 'all') {
+      return list.filter((s) => s.active);
+    }
+    return list.filter(
+      (s) => s.active && (!s.emirate || s.emirate.toLowerCase() === 'all' || s.emirate.toLowerCase() === emirate.toLowerCase())
+    );
   }
 }
 

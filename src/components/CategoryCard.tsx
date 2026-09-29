@@ -1,5 +1,6 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export interface CategoryInfo {
   id: string;
@@ -23,6 +24,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   onPress,
   className = '',
 }) => {
+  const { t } = useApp();
   const defaultBg = category.color || '#1A4FBF';
   const defaultImg =
     category.imageUrl ||
@@ -51,7 +53,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           }}
         />
         <div
-          className="absolute left-[9px] bottom-[8px] w-[26px] h-[26px] rounded-lg flex items-center justify-center text-white shadow-xs"
+          className="absolute ltr:left-[9px] rtl:right-[9px] bottom-[8px] w-[26px] h-[26px] rounded-lg flex items-center justify-center text-white shadow-xs"
           style={{ backgroundColor: defaultBg }}
         >
           <Compass className="w-3.5 h-3.5 text-white" />
@@ -62,7 +64,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           {category.name}
         </h4>
         <p className="text-[10px] text-[#5F6B82] mt-0.5">
-          {category.dealCount || 12} deals
+          {category.dealCount || 12} {t('dealsCount') || 'deals'}
         </p>
       </div>
     </div>

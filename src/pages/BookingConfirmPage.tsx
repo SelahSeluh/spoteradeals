@@ -25,27 +25,17 @@ export const BookingConfirmPage: React.FC = () => {
       const found = bookings.find((b) => b.id === selectedBookingId);
       if (found) return found;
     }
-    // Default to newest booking or mock reference booking SPD-84213
-    return bookings[bookings.length - 1] || {
-      id: 'bk_ref_84213',
-      dealId: 'deal_aquaplay',
-      businessName: 'AquaPlay Waterpark',
-      date: 'Sat 12 Sep',
-      timeSlot: '11:00',
-      childrenCount: 2,
-      totalPrice: 99,
-      bookingCode: 'SPD-84213',
-      status: 'confirmed' as const,
-    };
+    return bookings[bookings.length - 1] || null;
   }, [bookings, selectedBookingId]);
 
   const deal = useMemo(() => {
-    if (!booking) return deals[0];
+    if (!booking) return null;
     return deals.find((d) => d.id === booking.dealId) || deals[0];
   }, [booking, deals]);
 
   const handleShareTicket = async () => {
-    const shareText = `SpoteraDeals Ticket: AquaPlay Waterpark — 2 Kids Entry. Reference: ${booking?.bookingCode || 'SPD-84213'}`;
+    if (!booking) return;
+    const shareText = `SpoteraDeals Ticket: ${deal?.title || 'Family Activity'} — Reference: ${booking.bookingCode}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -62,11 +52,33 @@ export const BookingConfirmPage: React.FC = () => {
     }
   };
 
-  const bookingRef = booking?.bookingCode || 'SPD-84213';
-  const dealTitle = deal?.title || 'AquaPlay Waterpark — 2 Kids Entry';
-  const displayDate = booking?.date ? `${booking.date} · ${booking.timeSlot || '11:00'}` : 'Sat 12 Sep · 11:00';
-  const guestsLabel = `${booking?.childrenCount || 2} guests`;
-  const paidPrice = booking?.totalPrice || 99;
+  if (!booking) {
+    return (
+      <div className="min-h-screen bg-[#F7FAFD] text-[#0D1B3E] font-sans pb-16 flex flex-col items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-[#E2EDF9] p-8 text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#0D9CFD] flex items-center justify-center mx-auto">
+            <Ticket className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-black text-[#0D1B3E]">No Booking Found</h2>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            You do not have an active booking to display. Browse our verified family deals and activities across the UAE to book your passes.
+          </p>
+          <button
+            onClick={() => setActiveView('explore')}
+            className="w-full py-3 px-6 bg-[#0D9CFD] hover:bg-[#0B8AE0] text-white text-xs font-extrabold rounded-2xl shadow-xs transition-all cursor-pointer"
+          >
+            Explore Verified Deals
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const bookingRef = booking.bookingCode;
+  const dealTitle = deal?.title || booking.dealTitle || 'Family Activity';
+  const displayDate = booking.date ? `${booking.date} · ${booking.timeSlot || '11:00'}` : 'Scheduled Experience';
+  const guestsLabel = `${booking.childrenCount || 1} guests`;
+  const paidPrice = booking.totalPrice || 0;
 
   return (
     <div className="min-h-screen bg-[#F7FAFD] text-[#0D1B3E] font-sans pb-16">

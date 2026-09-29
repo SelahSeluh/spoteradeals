@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
   User,
   Business,
@@ -27,7 +27,20 @@ import {
   RequestQuote,
   FindMeProduct,
   FindMeService,
+  IntroAnimationConfig,
+  StartupPhase,
+  UaePublicHoliday,
+  LoyaltyRuleConfig,
+  LoyaltyTierConfig,
+  LoyaltyHistoryItem,
+  LoyaltyActionType,
 } from '../types';
+import { defaultIntroConfig } from '../lib/defaultConfigs';
+import {
+  defaultUaeHolidays,
+  defaultLoyaltyRules,
+  defaultLoyaltyTiers,
+} from '../lib/loyaltyAndHolidayDefaults';
 import { safeTranslate } from '../utils/i18nHelper';
 import {
   initialUser,
@@ -221,6 +234,8 @@ interface AppContextType {
   setSelectedCity: (city: City | 'All') => void;
   selectedCategory: Category | 'All';
   setSelectedCategory: (cat: Category | 'All') => void;
+  startupPhase: StartupPhase;
+  setStartupPhase: React.Dispatch<React.SetStateAction<StartupPhase>>;
   showOpeningAnimation: boolean;
   dismissOpeningAnimation: () => void;
   replaySplashAnimation: () => void;
@@ -249,7 +264,7 @@ interface AppContextType {
   adminSubRole?: string;
   hasAdminPasswordSet: boolean;
   sessionToken: string | null;
-  adminLoginWithCreds: (email: string, pass: string) => { success: boolean; message: string };
+  adminLoginWithCreds: (email: string, pass: string) => Promise<{ success: boolean; message: string }>;
   setupAdminAccount: (email: string, pass: string) => void;
   changeAdminPassword: (newPass: string) => void;
   adminLogout: () => void;
@@ -281,6 +296,7 @@ interface AppContextType {
     totalPrice: number
   ) => Booking;
   cancelBooking: (bookingId: string) => void;
+  updateBookingStatus: (bookingId: string, status: Booking['status']) => void;
   toggleFavoriteDeal: (dealId: string) => void;
   addReview: (dealId: string, rating: number, comment: string) => void;
   upgradeMembership: (plan?: 'Free' | 'Spotera VIP' | 'Premium VIP' | 'VIP Family Pass' | string) => void;
@@ -335,6 +351,10 @@ interface AppContextType {
   // Site Branding CMS
   brandingConfig: SiteBrandingConfig;
   updateBrandingConfig: (config: Partial<SiteBrandingConfig>) => void;
+  // Intro Animation Config
+  introConfig: IntroAnimationConfig;
+  updateIntroConfig: (config: Partial<IntroAnimationConfig>) => void;
+  publishIntroConfig: (config: IntroAnimationConfig) => Promise<boolean>;
   // AI Daily Family Spotlight
   dailySpotlight: DailySpotlightData;
   refreshDailySpotlight: () => Promise<void>;
@@ -362,61 +382,81 @@ interface AppContextType {
 
   // Family Profile Management
   updateFamilyProfile: (profile: FamilyProfile) => void;
+
+  // UAE Public Holidays & Date Filtering
+  holidays: UaePublicHoliday[];
+  updateHolidays: (holidays: UaePublicHoliday[]) => void;
+
+  // Loyalty Points & VIP Membership System
+  loyaltyRules: LoyaltyRuleConfig;
+  updateLoyaltyRules: (rules: LoyaltyRuleConfig) => void;
+  loyaltyTiers: LoyaltyTierConfig;
+  updateLoyaltyTiers: (tiers: LoyaltyTierConfig) => void;
+  loyaltyHistory: LoyaltyHistoryItem[];
+  awardLoyaltyPoints: (
+    actionType: LoyaltyActionType,
+    referenceId: string,
+    customPoints?: number,
+    description?: string
+  ) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User>(() => {
+  // Helper to reliably check if a user stored in local storage is a genuinely authenticated user
+  const getStoredAuthUser = (): User | null => {
     const saved = safeStorage.getItem('spotera_user');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (
-          parsed &&
-          parsed.email &&
-          parsed.email !== 'customer@spoteradeals.com' &&
-          parsed.email !== 'rashid.family@spoteradeals.com' &&
-          !parsed.name?.toLowerCase().includes('rashid') &&
-          !parsed.name?.toLowerCase().includes('sara al mansoori')
-        ) {
-          // Sanitize any legacy Google User label
-          const rawName = (parsed.name || '').trim();
-          if (!rawName || ['google user', 'google', 'g', 'guest user'].includes(rawName.toLowerCase())) {
-            const handle = parsed.email.split('@')[0].replace(/[._-]/g, ' ');
-            parsed.name = handle ? handle.charAt(0).toUpperCase() + handle.slice(1) : 'Spotera Member';
-          }
-          return parsed;
+    if (!saved) return null;
+    try {
+      const parsed = JSON.parse(saved);
+      if (
+        parsed &&
+        parsed.email &&
+        !parsed.email.includes('guest') &&
+        parsed.email !== 'customer@spoteradeals.com' &&
+        parsed.email !== 'rashid.family@spoteradeals.com' &&
+        !parsed.name?.toLowerCase().includes('rashid') &&
+        !parsed.name?.toLowerCase().includes('sara al mansoori')
+      ) {
+        // Sanitize any legacy Google User label
+        const rawName = (parsed.name || '').trim();
+        if (!rawName || ['google user', 'google', 'g', 'guest user'].includes(rawName.toLowerCase())) {
+          const handle = parsed.email.split('@')[0].replace(/[._-]/g, ' ');
+          parsed.name = handle ? handle.charAt(0).toUpperCase() + handle.slice(1) : 'Spotera Member';
         }
-      } catch (e) {
-        // ignore
+        return parsed;
       }
+    } catch (_) {}
+    return null;
+  };
+
+  const initialAuthUser = getStoredAuthUser();
+
+  const [user, setUser] = useState<User>(() => {
+    if (initialAuthUser) {
+      return initialAuthUser;
     }
     safeStorage.removeItem('spotera_user');
     return defaultGuestUser;
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    const saved = safeStorage.getItem('spotera_user');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Boolean(parsed && parsed.email && !parsed.email.includes('guest'));
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
+    return Boolean(initialAuthUser);
   });
 
   const [hasEnteredApp, setHasEnteredApp] = useState<boolean>(() => {
-    try {
-      const entered = safeStorage.getItem('spotera_has_entered');
-      if (entered === 'false') return false;
-      return true;
-    } catch (_) {
-      return true;
-    }
+    return safeStorage.getItem('spotera_has_entered') === 'true';
+  });
+
+  const [startupPhase, setStartupPhase] = useState<StartupPhase>(() => {
+    const alreadySeen = safeSessionStorage.getItem('spotera_animated');
+    return alreadySeen ? 'app' : 'intro';
+  });
+
+  const [showOpeningAnimation, setShowOpeningAnimation] = useState<boolean>(() => {
+    const alreadySeen = safeSessionStorage.getItem('spotera_animated');
+    return !alreadySeen;
   });
 
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(false);
@@ -519,20 +559,95 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     safeStorage.setItem('spotera_footer_config', JSON.stringify(newConfig));
   };
 
+  // UAE Public Holidays State (Configurable by Admin)
+  const [holidays, setHolidays] = useState<UaePublicHoliday[]>(() => {
+    const saved = safeStorage.getItem('spotera_uae_holidays');
+    return safeJsonParse(saved, defaultUaeHolidays);
+  });
+
+  const updateHolidays = (newHolidays: UaePublicHoliday[]) => {
+    setHolidays(newHolidays);
+    safeStorage.setItem('spotera_uae_holidays', JSON.stringify(newHolidays));
+  };
+
+  // Loyalty Points Rules State (Configurable by Admin)
+  const [loyaltyRules, setLoyaltyRules] = useState<LoyaltyRuleConfig>(() => {
+    const saved = safeStorage.getItem('spotera_loyalty_rules');
+    return safeJsonParse(saved, defaultLoyaltyRules);
+  });
+
+  const updateLoyaltyRules = (newRules: LoyaltyRuleConfig) => {
+    setLoyaltyRules(newRules);
+    safeStorage.setItem('spotera_loyalty_rules', JSON.stringify(newRules));
+  };
+
+  // Membership Tier Thresholds State (Configurable by Admin)
+  const [loyaltyTiers, setLoyaltyTiers] = useState<LoyaltyTierConfig>(() => {
+    const saved = safeStorage.getItem('spotera_loyalty_tiers');
+    return safeJsonParse(saved, defaultLoyaltyTiers);
+  });
+
+  const updateLoyaltyTiers = (newTiers: LoyaltyTierConfig) => {
+    setLoyaltyTiers(newTiers);
+    safeStorage.setItem('spotera_loyalty_tiers', JSON.stringify(newTiers));
+  };
+
+  const parseDealIdFromLocation = (): string | null => {
+    try {
+      if (typeof window === 'undefined') return null;
+
+      // 1. Search params (?deal=, ?id=, ?dealId=)
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryDeal = urlParams.get('deal') || urlParams.get('dealId') || urlParams.get('id');
+      if (queryDeal) return queryDeal.trim();
+
+      // 2. Hash (#deal/..., #/deal/..., #deal-detail?id=...)
+      const rawHash = window.location.hash.replace(/^[#\/]+/, '').trim();
+      if (rawHash.toLowerCase().startsWith('deal/')) {
+        const id = rawHash.replace(/^deal\//i, '').split('?')[0].split('&')[0].trim();
+        if (id) return id;
+      }
+      if (rawHash.toLowerCase().startsWith('deal-detail')) {
+        if (rawHash.includes('id=')) {
+          const id = rawHash.split('id=')[1]?.split('&')[0].trim();
+          if (id) return id;
+        }
+        const parts = rawHash.split('/');
+        if (parts.length > 1 && parts[1]) return parts[1].split('?')[0].trim();
+      }
+
+      // 3. Pathname (/deal/:id or /deals/:id)
+      const rawPath = window.location.pathname.replace(/^\/+/, '').trim();
+      if (rawPath.toLowerCase().startsWith('deal/')) {
+        const id = rawPath.replace(/^deal\//i, '').split('/')[0].trim();
+        if (id) return id;
+      }
+      if (rawPath.toLowerCase().startsWith('deals/')) {
+        const id = rawPath.replace(/^deals\//i, '').split('/')[0].trim();
+        if (id) return id;
+      }
+    } catch (_) {
+      // ignore
+    }
+    return null;
+  };
+
   const parseViewFromLocation = (): ViewMode => {
     const rawHash = window.location.hash.replace(/^[#\/]+/, '').replace(/\/+$/, '').trim();
     const rawPath = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').trim().toLowerCase();
     
     let queryView: string | null = null;
+    let queryDeal: string | null = null;
     try {
       const urlParams = new URLSearchParams(window.location.search);
       queryView = urlParams.get('view') || urlParams.get('page');
+      queryDeal = urlParams.get('deal') || urlParams.get('dealId') || urlParams.get('id');
     } catch (e) {
       // ignore
     }
 
-    // Direct deal link support: #deal/deal_1 or #deal-detail?id=deal_1
-    if (rawHash.toLowerCase().startsWith('deal/') || rawHash.toLowerCase().startsWith('deal-detail')) {
+    // Direct deal link support: ?deal=..., #deal/..., #/deal/..., /deal/...
+    if (queryDeal || rawHash.toLowerCase().startsWith('deal/') || rawHash.toLowerCase().startsWith('deal-detail') || rawPath.startsWith('deal/') || rawPath.startsWith('deals/')) {
       return 'deal-detail';
     }
 
@@ -580,7 +695,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return normalize(rawHash) || normalize(queryView) || normalize(rawPath) || 'home';
   };
 
-  const [activeView, setActiveViewState] = useState<ViewMode>(() => parseViewFromLocation());
+  const [activeView, setActiveViewState] = useState<ViewMode>(() => {
+    const locationView = parseViewFromLocation();
+    if (initialAuthUser) {
+      return initialAuthUser.role === 'ADMIN' || initialAuthUser.role === 'admin' ? 'admin' : (locationView || 'home');
+    }
+    if (locationView) {
+      return locationView;
+    }
+    return 'home';
+  });
 
   const [sessionToken, setSessionToken] = useState<string | null>(() => {
     return safeStorage.getItem('spotera_session_token');
@@ -679,7 +803,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (onAuthorized) {
       pendingAuthCallbackRef.current = onAuthorized;
     }
-    setShowWelcomeModal(true);
+    setStartupPhase('auth');
+    setActiveViewState('auth');
     return false;
   };
 
@@ -692,10 +817,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     setIsLoggedIn(true);
     setHasEnteredApp(true);
+    setStartupPhase('app');
     safeStorage.setItem('spotera_has_entered', 'true');
     setShowWelcomeModal(false);
     setAuthModalReason('');
     safeSessionStorage.setItem('spotera_auth_chosen', 'true');
+    if (authUser.role === 'ADMIN' || (authUser.role as string) === 'admin') {
+      setActiveViewState('admin');
+    } else {
+      setActiveViewState('home');
+    }
 
     if (pendingAuthCallbackRef.current) {
       const cb = pendingAuthCallbackRef.current;
@@ -712,7 +843,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(defaultGuestUser);
     setIsLoggedIn(false);
     setHasEnteredApp(true);
-    safeStorage.setItem('spotera_has_entered', 'true');
+    setStartupPhase('app');
+    setActiveViewState('home');
     setShowWelcomeModal(false);
     setAuthModalReason('');
     pendingAuthCallbackRef.current = null;
@@ -727,12 +859,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(defaultGuestUser);
     setIsLoggedIn(false);
     setHasEnteredApp(false);
+    setStartupPhase('auth');
     setSessionToken(null);
     safeStorage.removeItem('spotera_session_token');
     safeStorage.removeItem('spotera_user');
     safeStorage.removeItem('spotera_has_entered');
     safeSessionStorage.removeItem('spotera_welcome_modal_seen');
-    setActiveView('home');
+    safeSessionStorage.removeItem('spotera_auth_chosen');
+    setActiveViewState('auth');
   };
 
   const setupAdminAccount = async (email: string, pass: string) => {
@@ -765,26 +899,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsAdminAuthenticated(true);
   };
 
-  const adminLoginWithCreds = (email: string, pass: string) => {
+  const adminLoginWithCreds = async (email: string, pass: string): Promise<{ success: boolean; message: string }> => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail, password: cleanPass, requestedRole: 'ADMIN' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.token) {
+        setSessionToken(data.token);
+        safeStorage.setItem('spotera_session_token', data.token);
+        setAdminEmail(cleanEmail);
+        setIsAdminAuthenticated(true);
+        safeStorage.setItem('spotera_admin_auth', 'true');
+        safeStorage.setItem('spotera_admin_email', cleanEmail);
+        setHasAdminPasswordSet(true);
+        return { success: true, message: 'Admin authentication verified.' };
+      }
+      if (data.error === 'SETUP_REQUIRED' || data.message === 'SETUP_REQUIRED') {
+        return { success: false, message: 'SETUP_REQUIRED' };
+      }
+    } catch {
+      // Server offline fallback
+    }
+
     const storedPass = safeStorage.getItem('spotera_admin_pass');
     const storedEmail = safeStorage.getItem('spotera_admin_email') || 'admin@spoteradeals.com';
-
-    // Synchronous local + server API attempt
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: cleanEmail, password: cleanPass, requestedRole: 'ADMIN' }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.token) {
-          setSessionToken(data.token);
-          safeStorage.setItem('spotera_session_token', data.token);
-        }
-      })
-      .catch(() => {});
 
     if (!storedPass && !safeStorage.getItem('spotera_admin_configured')) {
       return { success: false, message: 'SETUP_REQUIRED' };
@@ -792,19 +936,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (
       (cleanEmail === storedEmail.toLowerCase() || cleanEmail === 'admin@spoteradeals.com') &&
+      storedPass &&
       cleanPass === storedPass
     ) {
       setIsAdminAuthenticated(true);
       safeStorage.setItem('spotera_admin_auth', 'true');
       return { success: true, message: 'Authenticated successfully.' };
-    }
-
-    if (cleanPass === 'admin123' || cleanPass === 'spotera2026') {
-      safeStorage.setItem('spotera_admin_pass', cleanPass);
-      setHasAdminPasswordSet(true);
-      setIsAdminAuthenticated(true);
-      safeStorage.setItem('spotera_admin_auth', 'true');
-      return { success: true, message: 'Authenticated successfully. Password saved.' };
     }
 
     return { success: false, message: 'Invalid Admin Email or Password. Please check your credentials.' };
@@ -897,14 +1034,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, message: 'Authenticated successfully.' };
     }
 
-    if (cleanPass === 'partner123' || cleanPass === 'vendor2026') {
-      safeStorage.setItem('spotera_partner_pass', cleanPass);
-      setHasPartnerPasswordSet(true);
-      setIsPartnerAuthenticated(true);
-      safeStorage.setItem('spotera_partner_auth', 'true');
-      return { success: true, message: 'Authenticated successfully.' };
-    }
-
     return { success: false, message: 'Invalid Partner Email or Password. Please try again.' };
   };
 
@@ -927,25 +1056,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setSessionToken(null);
   };
 
-  const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
+  const [selectedDealId, setSelectedDealIdState] = useState<string | null>(() => parseDealIdFromLocation());
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<City | 'All'>('All');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
 
-  const [showOpeningAnimation, setShowOpeningAnimation] = useState<boolean>(false);
+  const setSelectedDealId = (id: string | null) => {
+    setSelectedDealIdState(id);
+    if (id) {
+      window.location.hash = `#deal/${id}`;
+      setActiveViewState('deal-detail');
+    }
+  };
 
-  const [isAppInitializing, setIsAppInitializing] = useState<boolean>(true);
+  const [isAppInitializing, setIsAppInitializing] = useState<boolean>(false);
   const [isViewLoading, setIsViewLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    // Initial mount hydration window so skeleton renders seamlessly rather than a blank white screen
-    const timer = setTimeout(() => {
-      setIsAppInitializing(false);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, []);
 
   const [previousView, setPreviousView] = useState<ViewMode>('home');
 
@@ -982,17 +1109,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLocationChange = () => {
       const matched = parseViewFromLocation();
-      setActiveViewState(matched);
+      if (initialAuthUser || hasEnteredApp || isLoggedIn) {
+        setActiveViewState(matched);
+      }
 
       // Extract deal ID if present
-      const rawHash = window.location.hash.replace(/^[#\/]+/, '');
-      if (rawHash.startsWith('deal/')) {
-        const id = rawHash.replace('deal/', '').split('?')[0].split('&')[0];
-        if (id) setSelectedDealId(id);
-      } else if (rawHash.includes('id=')) {
-        const parts = rawHash.split('id=');
-        const id = parts[1]?.split('&')[0];
-        if (id) setSelectedDealId(id);
+      const detectedDealId = parseDealIdFromLocation();
+      if (detectedDealId) {
+        setSelectedDealIdState(detectedDealId);
       }
     };
 
@@ -1047,24 +1171,100 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return safeTranslate(key, language);
   };
 
-  const dismissOpeningAnimation = () => {
+  const dismissOpeningAnimation = useCallback(() => {
     setShowOpeningAnimation(false);
+    setStartupPhase('app');
+    setHasEnteredApp(true);
     safeSessionStorage.setItem('spotera_animated', 'true');
-    const isGuestUser = !isLoggedIn || !user || !user.email || user.email.includes('guest');
-    const hasChosenAuth = safeSessionStorage.getItem('spotera_auth_chosen');
-    if (isGuestUser && !hasChosenAuth) {
-      setActiveView('auth');
-    }
-  };
+    safeStorage.setItem('spotera_has_entered', 'true');
+    setActiveViewState((curr) => (curr === 'auth' ? 'home' : curr));
+  }, []);
 
   const replaySplashAnimation = () => {
+    setStartupPhase('intro');
     setShowOpeningAnimation(true);
   };
 
   const returnToAuthScreen = () => {
-    setHasEnteredApp(false);
-    safeStorage.removeItem('spotera_has_entered');
+    setActiveViewState('auth');
     setShowOpeningAnimation(false);
+  };
+
+  // Loyalty Points Engine: Award points with duplicate protection
+  const loyaltyHistory = user.loyaltyHistory || [];
+
+  const awardLoyaltyPoints = (
+    actionType: LoyaltyActionType,
+    referenceId: string,
+    customPoints?: number,
+    description?: string
+  ): boolean => {
+    if (!referenceId) return false;
+
+    // Prevent duplicate points from being awarded for the same transaction or redemption
+    const alreadyAwarded = (user.loyaltyHistory || []).some((item) => item.referenceId === referenceId);
+    if (alreadyAwarded) {
+      return false;
+    }
+
+    let pts = customPoints;
+    if (pts === undefined) {
+      switch (actionType) {
+        case 'BOOKING_COMPLETED':
+          pts = loyaltyRules.bookingPoints;
+          break;
+        case 'DEAL_REDEMPTION':
+          pts = loyaltyRules.redemptionPoints;
+          break;
+        case 'REFERRAL':
+          pts = loyaltyRules.referralPoints;
+          break;
+        case 'PROMOTION':
+          pts = loyaltyRules.promotionPoints;
+          break;
+        case 'REVIEW_SUBMITTED':
+          pts = loyaltyRules.reviewPoints;
+          break;
+        default:
+          pts = 50;
+      }
+    }
+
+    const defaultDesc =
+      actionType === 'BOOKING_COMPLETED' ? 'Experience booking confirmed' :
+      actionType === 'DEAL_REDEMPTION' ? 'Digital pass / voucher redeemed' :
+      actionType === 'REFERRAL' ? 'Friend referral completed' :
+      actionType === 'PROMOTION' ? 'Spotera promotion reward' :
+      actionType === 'ADMIN_GRANT' ? 'VIP membership bonus' :
+      actionType === 'REVIEW_SUBMITTED' ? 'Business review submitted' : 'Loyalty activity';
+
+    const newItem: LoyaltyHistoryItem = {
+      id: `loyalty_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      actionType,
+      referenceId,
+      points: pts,
+      description: description || defaultDesc,
+      createdAt: new Date().toISOString(),
+    };
+
+    const newTotal = (user.rewardsPoints || 0) + pts;
+    const newHistory = [newItem, ...(user.loyaltyHistory || [])];
+
+    let newTier: 'Free' | 'Spotera VIP' | 'Premium VIP' = 'Free';
+    if (newTotal >= loyaltyTiers.premiumThreshold) {
+      newTier = 'Premium VIP';
+    } else if (newTotal >= loyaltyTiers.vipThreshold) {
+      newTier = 'Spotera VIP';
+    }
+
+    setUser((prev) => ({
+      ...prev,
+      rewardsPoints: newTotal,
+      membership: newTier,
+      loyaltyHistory: newHistory,
+    }));
+
+    return true;
   };
 
   // Actions
@@ -1109,12 +1309,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
     if (targetIndex !== -1 && coupons[targetIndex].status === 'active') {
       const updated = [...coupons];
+      const targetC = updated[targetIndex];
       updated[targetIndex] = {
-        ...updated[targetIndex],
+        ...targetC,
         status: 'redeemed',
         redeemedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
       };
       setCoupons(updated);
+
+      // Award Loyalty Points for verified redemption with duplicate protection
+      awardLoyaltyPoints(
+        'DEAL_REDEMPTION',
+        targetC.id,
+        loyaltyRules.redemptionPoints,
+        `Redeemed Voucher: ${targetC.dealTitle}`
+      );
+
       return true;
     }
     return false;
@@ -1169,6 +1379,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setBookings(updatedBk);
 
+      // Award Loyalty Points
+      awardLoyaltyPoints(
+        'DEAL_REDEMPTION',
+        targetBk.id,
+        loyaltyRules.redemptionPoints,
+        `Pass Redeemed at Venue: ${targetBk.dealTitle}`
+      );
+
       return {
         success: true,
         type: 'booking' as const,
@@ -1209,6 +1427,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         redeemedByBusiness: businessNameParam || targetCoup.businessName,
       };
       setCoupons(updatedC);
+
+      // Award Loyalty Points
+      awardLoyaltyPoints(
+        'DEAL_REDEMPTION',
+        targetCoup.id,
+        loyaltyRules.redemptionPoints,
+        `Voucher Redeemed: ${targetCoup.dealTitle}`
+      );
 
       return {
         success: true,
@@ -1291,12 +1517,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       notifications: [notif, ...prev.notifications],
     }));
 
+    // Award Loyalty Points for completed booking with duplicate protection
+    awardLoyaltyPoints(
+      'BOOKING_COMPLETED',
+      newBooking.id,
+      loyaltyRules.bookingPoints,
+      `Pass Booking: ${deal.title} (${deal.businessName})`
+    );
+
     return newBooking;
   };
 
   const cancelBooking = (bookingId: string) => {
     setBookings((prev) =>
       prev.map((b) => (b.id === bookingId ? { ...b, status: 'cancelled' as const } : b))
+    );
+  };
+
+  const updateBookingStatus = (bookingId: string, status: Booking['status']) => {
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status,
+              redeemedAt: status === 'redeemed' || status === 'completed' ? new Date().toISOString() : b.redeemedAt,
+            }
+          : b
+      )
     );
   };
 
@@ -1628,9 +1876,109 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setBrandingConfig((prev) => {
       const updated = { ...prev, ...newBranding };
       safeStorage.setItem('spotera_branding_config', JSON.stringify(updated));
+
+      const token = sessionToken || safeStorage.getItem('spotera_session_token');
+      fetch('/api/admin/content/branding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          data: updated,
+          summary: `Updated site branding (${updated.siteName})`,
+        }),
+      }).catch(() => {});
+
       return updated;
     });
   };
+
+  // 4. Intro Animation CMS
+  const [introConfig, setIntroConfig] = useState<IntroAnimationConfig>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = safeStorage.getItem('spotera_intro_config');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          return { ...defaultIntroConfig, ...parsed };
+        }
+      } catch (e) {
+        // fallback
+      }
+    }
+    return defaultIntroConfig;
+  });
+
+  const updateIntroConfig = (patch: Partial<IntroAnimationConfig>) => {
+    setIntroConfig((prev) => {
+      const updated = { ...prev, ...patch, updatedAt: new Date().toISOString() };
+      safeStorage.setItem('spotera_intro_config', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const publishIntroConfig = async (configToPublish: IntroAnimationConfig): Promise<boolean> => {
+    try {
+      const published = {
+        ...configToPublish,
+        updatedAt: new Date().toISOString(),
+        publishedAt: new Date().toISOString(),
+      };
+      setIntroConfig(published);
+      safeStorage.setItem('spotera_intro_config', JSON.stringify(published));
+
+      const token = sessionToken || safeStorage.getItem('spotera_session_token');
+      const res = await fetch('/api/admin/content/intro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          data: published,
+          summary: `Published intro animation config (${published.durationSeconds}s, ${published.backgroundType})`,
+        }),
+      });
+      const resData = await res.json();
+      return Boolean(res.ok && resData.success);
+    } catch (e) {
+      console.error('Failed to publish intro config to server:', e);
+      return false;
+    }
+  };
+
+  // Sync published app config from server
+  useEffect(() => {
+    fetch('/api/app-config?t=' + Date.now())
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success) {
+          if (data.intro) {
+            setIntroConfig((prev) => {
+              const merged = { ...prev, ...data.intro };
+              safeStorage.setItem('spotera_intro_config', JSON.stringify(merged));
+              return merged;
+            });
+          }
+          if (data.branding) {
+            setBrandingConfig((prev) => {
+              const merged = { ...prev, ...data.branding };
+              safeStorage.setItem('spotera_branding_config', JSON.stringify(merged));
+              return merged;
+            });
+          }
+          if (data.footer) {
+            setFooterConfig((prev) => {
+              const merged = { ...prev, ...data.footer };
+              safeStorage.setItem('spotera_footer_config', JSON.stringify(merged));
+              return merged;
+            });
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Synchronize CSS Typography variables whenever brandingConfig changes
   useEffect(() => {
@@ -2060,6 +2408,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isAppInitializing,
         isViewLoading,
         setIsViewLoading,
+        startupPhase,
+        setStartupPhase,
         isLoggedIn,
         setIsLoggedIn,
         hasEnteredApp,
@@ -2094,6 +2444,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         redeemCode,
         createBooking,
         cancelBooking,
+        updateBookingStatus,
         selectedBookingId,
         setSelectedBookingId,
         toggleFavoriteDeal,
@@ -2140,6 +2491,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteMediaItem,
         brandingConfig,
         updateBrandingConfig,
+        introConfig,
+        updateIntroConfig,
+        publishIntroConfig,
         userRequests,
         requestQuotes,
         postUserRequest,
@@ -2159,6 +2513,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateReferralConfig,
         sendReferralInvite,
         updateFamilyProfile,
+        holidays,
+        updateHolidays,
+        loyaltyRules,
+        updateLoyaltyRules,
+        loyaltyTiers,
+        updateLoyaltyTiers,
+        loyaltyHistory,
+        awardLoyaltyPoints,
       }}
     >
       {children}

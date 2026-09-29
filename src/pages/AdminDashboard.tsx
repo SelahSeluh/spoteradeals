@@ -32,6 +32,8 @@ import {
   Mail,
   Phone,
   Star,
+  Trophy,
+  Calendar,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
@@ -45,9 +47,12 @@ import { AdminCategoriesManager } from '../components/admin/AdminCategoriesManag
 import { AdminLocationsManager } from '../components/admin/AdminLocationsManager';
 import { AdminMediaLibrary } from '../components/admin/AdminMediaLibrary';
 import { AdminBrandingManager } from '../components/admin/AdminBrandingManager';
+import { AdminIntroAnimationManager } from '../components/admin/AdminIntroAnimationManager';
 import { AdminBackupManager } from '../components/admin/AdminBackupManager';
 import { AdminAuditLogsManager } from '../components/admin/AdminAuditLogsManager';
 import { AdminRbacManager } from '../components/admin/AdminRbacManager';
+import { AdminHolidaysManager } from '../components/admin/AdminHolidaysManager';
+import { AdminLoyaltyManager } from '../components/admin/AdminLoyaltyManager';
 import { Database, UserCog } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -82,6 +87,13 @@ export const AdminDashboard: React.FC = () => {
     replyToSupportMessage,
     referralConfig,
     updateReferralConfig,
+    holidays,
+    updateHolidays,
+    loyaltyRules,
+    updateLoyaltyRules,
+    loyaltyTiers,
+    updateLoyaltyTiers,
+    awardLoyaltyPoints,
     sessionToken,
     adminSubRole = 'SUPER_ADMIN',
     t,
@@ -110,11 +122,14 @@ export const AdminDashboard: React.FC = () => {
     | 'locations'
     | 'media'
     | 'branding'
+    | 'intro'
     | 'homepage'
     | 'reviews'
     | 'footer'
     | 'support'
     | 'referrals'
+    | 'holidays'
+    | 'loyalty'
     | 'backups'
     | 'audit-logs'
     | 'rbac'
@@ -174,7 +189,7 @@ export const AdminDashboard: React.FC = () => {
   const [newDealCity, setNewDealCity] = useState<City>('Dubai');
 
   // Admin Auth Gate
-  const handleAdminAuthSubmit = (e: React.FormEvent) => {
+  const handleAdminAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPassError(null);
 
@@ -194,7 +209,7 @@ export const AdminDashboard: React.FC = () => {
       return;
     }
 
-    const res = adminLoginWithCreds(adminEmail, adminPasscode);
+    const res = await adminLoginWithCreds(adminEmail, adminPasscode);
     if (res.success) {
       setAdminPasscode('');
     } else if (res.message === 'SETUP_REQUIRED') {
@@ -477,6 +492,15 @@ export const AdminDashboard: React.FC = () => {
           <Building2 className="w-4 h-4 text-amber-400" /> Site Branding
         </button>
 
+        <button
+          onClick={() => setActiveTab('intro')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+            activeTab === 'intro' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-[#FD9302]" /> Intro Animation
+        </button>
+
         {/* Operations & Bookings */}
         <button
           onClick={() => setActiveTab('bookings')}
@@ -560,6 +584,24 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <Sparkles className="w-4 h-4 text-amber-400" /> Referrals
+        </button>
+
+        <button
+          onClick={() => setActiveTab('holidays')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+            activeTab === 'holidays' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          <CalendarCheck className="w-4 h-4 text-emerald-400" /> UAE Holidays ({holidays.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('loyalty')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+            activeTab === 'loyalty' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
+          }`}
+        >
+          <Trophy className="w-4 h-4 text-amber-400" /> Loyalty & VIP Points
         </button>
 
         <button
@@ -918,6 +960,9 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB: Branding & Settings */}
       {activeTab === 'branding' && <AdminBrandingManager />}
+
+      {/* TAB: Intro & Opening Animation CMS */}
+      {activeTab === 'intro' && <AdminIntroAnimationManager />}
 
       {/* TAB: Coupon Scanner Simulator */}
       {activeTab === 'coupons' && (
@@ -1677,6 +1722,27 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* TAB: UAE Public Holidays & Holiday Periods Management */}
+      {activeTab === 'holidays' && (
+        <AdminHolidaysManager
+          holidays={holidays}
+          onUpdateHolidays={updateHolidays}
+        />
+      )}
+
+      {/* TAB: Loyalty Points Engine & VIP Membership Tiers */}
+      {activeTab === 'loyalty' && (
+        <AdminLoyaltyManager
+          loyaltyRules={loyaltyRules}
+          loyaltyTiers={loyaltyTiers}
+          onUpdateRules={updateLoyaltyRules}
+          onUpdateTiers={updateLoyaltyTiers}
+          onGrantPoints={(targetEmail, pts, reason) => {
+            awardLoyaltyPoints('ADMIN_GRANT', `admin_grant_${Date.now()}`, pts, reason);
+          }}
+        />
       )}
 
       {/* TAB: Homepage & Hero Visual CMS */}

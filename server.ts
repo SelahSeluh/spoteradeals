@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import path from "path";
+import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
@@ -372,6 +373,40 @@ app.post("/api/auth/logout", (req, res) => {
   res.json({ success: true, message: "Logged out from server." });
 });
 
+app.post("/api/auth/change-password", requireAuth(["CUSTOMER", "PARTNER", "ADMIN"]), (req, res) => {
+  try {
+    const session = (req as any).userSession;
+    const { currentPassword, newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      res.status(400).json({ error: "New password must be at least 6 characters." });
+      return;
+    }
+
+    const user = ServerDB.findUserById(session.userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    // Verify current password if provided
+    if (user.password && currentPassword) {
+      const hashedCurrent = crypto.createHash("sha256").update(currentPassword).digest("hex");
+      if (user.password !== hashedCurrent && user.password !== currentPassword) {
+        res.status(401).json({ error: "Current password does not match." });
+        return;
+      }
+    }
+
+    const hashedNew = crypto.createHash("sha256").update(newPassword).digest("hex");
+    ServerDB.updateUserPassword(user.id, hashedNew);
+    ServerDB.logAudit(session.email, session.role, "Updated account password");
+
+    res.json({ success: true, message: "Password updated successfully." });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message || "Failed to update password." });
+  }
+});
+
 // PROTECTED ADMIN ROUTE - SERVER ENFORCED
 app.get("/api/admin/overview", requireAdminSubRole(["SUPER_ADMIN", "CONTENT_ADMIN", "MARKETING_ADMIN", "SUPPORT_ADMIN", "VIEWER"]), (req, res) => {
   const session = (req as any).userSession;
@@ -508,8 +543,64 @@ app.post("/api/admin/versions/rollback", requireAdminSubRole(["SUPER_ADMIN"]), (
   }
 });
 
+// Public Published App Config (Intro Animation, Branding, Footer, Homepage)
+app.get("/api/app-config", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  res.json({
+    success: true,
+    intro: ServerDB.getContent("intro"),
+    branding: ServerDB.getContent("branding"),
+    homepage: ServerDB.getContent("homepage"),
+    footer: ServerDB.getContent("footer"),
+    timestamp: Date.now(),
+  });
+});
+
+app.get("/api/app-config/:scope", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  const { scope } = req.params;
+  const data = ServerDB.getContent(scope);
+  res.json({ success: true, scope, data, timestamp: Date.now() });
+});
+
+// Admin Media Upload Endpoint
+app.post("/api/admin/upload-media", requireAdminSubRole(["SUPER_ADMIN", "CONTENT_ADMIN", "MARKETING_ADMIN"]), (req, res) => {
+  try {
+    const { dataUrl, fileName, fileType } = req.body;
+    if (!dataUrl) {
+      res.status(400).json({ error: "Missing dataUrl" });
+      return;
+    }
+    res.json({
+      success: true,
+      url: dataUrl,
+      fileName: fileName || `upload_${Date.now()}`,
+      fileType: fileType || "image/png",
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message || "Failed to process upload" });
+  }
+});
+
+// Public Content Retrieval (e.g. Published Intro configuration)
+app.get("/api/content/:scope", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  const { scope } = req.params;
+  const data = ServerDB.getContent(scope);
+  res.json({ success: true, scope, data });
+});
+
 // Admin Content Management with Automatic Version History
 app.get("/api/admin/content/:scope", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
   const { scope } = req.params;
   const data = ServerDB.getContent(scope);
   res.json({ success: true, scope, data });
@@ -523,8 +614,8 @@ app.post("/api/admin/content/:scope", requireAdminSubRole(["SUPER_ADMIN", "CONTE
 
     // RBAC Scope Check
     const subRole = session.adminSubRole || "SUPER_ADMIN";
-    if (subRole === "MARKETING_ADMIN" && !["homepage", "promotions", "branding"].includes(scope.toLowerCase())) {
-      res.status(403).json({ error: "FORBIDDEN", message: "Marketing Admins can only edit homepage, promotions, or branding content." });
+    if (subRole === "MARKETING_ADMIN" && !["homepage", "promotions", "branding", "intro"].includes(scope.toLowerCase())) {
+      res.status(403).json({ error: "FORBIDDEN", message: "Marketing Admins can only edit homepage, promotions, branding, or intro content." });
       return;
     }
 
@@ -557,7 +648,145 @@ app.get("/api/partner/overview", requireAuth(["PARTNER", "ADMIN"]), (req, res) =
   });
 });
 
-// SERVER-ENFORCED QR REDEMPTION API
+// SERVER-ENFORCED QR VERIFICATION API (Inspect without redeeming)
+app.post("/api/qr/verify", requireAuth(["PARTNER", "ADMIN"]), (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) {
+      res.status(400).json({ status: "INVALID", message: "Code or QR content is required." });
+      return;
+    }
+    const result = ServerDB.verifyQrCodeServer(code);
+    res.json(result);
+  } catch (e: any) {
+    res.status(500).json({ status: "INVALID", message: e.message || "Verification failed." });
+  }
+});
+
+// SERVER-ENFORCED QR REDEEM API
+app.post("/api/qr/redeem", requireAuth(["PARTNER", "ADMIN"]), (req, res) => {
+  try {
+    const session = (req as any).userSession;
+    const { code } = req.body;
+    if (!code) {
+      res.status(400).json({ success: false, message: "Code is required." });
+      return;
+    }
+    const result = ServerDB.redeemVoucherServer(code, session.userId);
+    ServerDB.logAudit(session.email, session.role, `QR Redeemed [${code}]: ${result.success ? "SUCCESS" : result.message}`);
+    if (!result.success) {
+      res.status(400).json(result);
+      return;
+    }
+    res.json(result);
+  } catch (e: any) {
+    res.status(500).json({ success: false, message: e.message || "Failed to redeem code." });
+  }
+});
+
+// SERVER-ENFORCED DEAL CLAIM (Customer coupon creation)
+app.post("/api/deals/claim", requireAuth(["CUSTOMER", "PARTNER", "ADMIN"]), (req, res) => {
+  try {
+    const session = (req as any).userSession;
+    const { dealId, dealTitle, businessName, businessId, expiryDate, flashDealExpiresAt, city } = req.body;
+
+    if (!dealId || !dealTitle || !businessName) {
+      res.status(400).json({ error: "Missing required deal parameters." });
+      return;
+    }
+
+    const result = ServerDB.createVoucherServer({
+      dealId,
+      dealTitle,
+      businessName,
+      businessId,
+      userId: session.userId,
+      userName: session.name || "Spotera Member",
+      expiryDate: expiryDate || "2026-12-31",
+      flashDealExpiresAt,
+      city,
+    });
+
+    if (!result.success) {
+      if (result.error === "DEAL_EXPIRED") {
+        res.status(400).json({ error: "DEAL_EXPIRED", message: "This deal has expired and cannot be claimed." });
+        return;
+      }
+      res.status(400).json({ error: result.error || "Failed to claim deal." });
+      return;
+    }
+
+    ServerDB.logAudit(session.email, session.role, `Claimed coupon for [${dealTitle}]`);
+    res.json({ success: true, voucher: result.voucher });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message || "Failed to claim deal." });
+  }
+});
+
+// SERVER-ENFORCED DEAL BOOKING
+app.post("/api/deals/book", requireAuth(["CUSTOMER", "PARTNER", "ADMIN"]), (req, res) => {
+  try {
+    const session = (req as any).userSession;
+    const {
+      dealId,
+      dealTitle,
+      businessName,
+      businessId,
+      date,
+      bookingDate,
+      timeSlot,
+      bookingTime,
+      childrenCount,
+      guestsCount,
+      packageSelected,
+      unitPrice,
+      expiryDate,
+      userPhone,
+    } = req.body;
+
+    const finalDate = date || bookingDate;
+    const finalTime = timeSlot || bookingTime;
+    const finalCount = Number(childrenCount || guestsCount) || 1;
+
+    if (!dealId || !finalDate || !finalTime) {
+      res.status(400).json({ error: "Missing required booking details." });
+      return;
+    }
+
+    const result = ServerDB.createBookingServer({
+      dealId,
+      dealTitle,
+      businessName,
+      businessId,
+      userId: session.userId,
+      userName: session.name || "Spotera Member",
+      userEmail: session.email,
+      userPhone: userPhone || session.phone || "+971 50 000 0000",
+      date: finalDate,
+      timeSlot: finalTime,
+      childrenCount: finalCount,
+      packageSelected: packageSelected || "Standard Pass",
+      unitPrice: Number(unitPrice) || 99,
+      expiryDate,
+    });
+
+    if (!result.success) {
+      if (result.error === "DEAL_EXPIRED") {
+        res.status(400).json({ error: "DEAL_EXPIRED", message: "This deal has expired and cannot be booked." });
+        return;
+      }
+      res.status(400).json({ error: result.error || "Failed to create booking." });
+      return;
+    }
+
+    ServerDB.logAudit(session.email, session.role, `Booked activity for [${dealTitle}]`);
+    res.json({ success: true, booking: result.booking });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message || "Failed to create booking." });
+  }
+});
+
+// SERVER-ENFORCED QR REDEMPTION API (Legacy partner endpoint alias)
 app.post("/api/partner/redeem-code", requireAuth(["PARTNER", "ADMIN"]), (req, res) => {
   try {
     const session = (req as any).userSession;
@@ -716,7 +945,72 @@ Respond ONLY with valid JSON in this exact structure:
   }
 });
 
+// WEB PUSH API ENDPOINTS
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSPOeWfNBxeQmA09Nd_0061xeS2JeAZ64CXk";
+
+app.get("/api/push/public-key", (_req, res) => {
+  res.json({
+    publicKey: VAPID_PUBLIC_KEY,
+  });
+});
+
+app.post("/api/push/subscribe", (req, res) => {
+  try {
+    const { subscription, emirate, userId, userEmail } = req.body;
+    if (!subscription || !subscription.endpoint || !subscription.keys) {
+      res.status(400).json({ error: "Invalid push subscription object" });
+      return;
+    }
+    const result = ServerDB.savePushSubscription({
+      endpoint: subscription.endpoint,
+      keys: subscription.keys,
+      emirate: emirate || "all",
+      userId,
+      userEmail,
+    });
+    res.json({ success: true, id: result.id, message: "Push notifications enabled successfully" });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || "Failed to save push subscription" });
+  }
+});
+
+app.post("/api/push/unsubscribe", (req, res) => {
+  try {
+    const { endpoint } = req.body;
+    if (endpoint) {
+      ServerDB.removePushSubscription(endpoint);
+    }
+    res.json({ success: true, message: "Push notifications unsubscribed" });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || "Failed to unsubscribe" });
+  }
+});
+
+app.post("/api/push/broadcast", (req, res) => {
+  try {
+    const { title, body, url, emirate, dealId } = req.body;
+    const subs = ServerDB.getPushSubscriptions(emirate);
+    
+    ServerDB.logAudit(
+      "system@spoteradeals.com",
+      "ADMIN",
+      `Web Push Broadcast: "${title || 'Deal Alert'}" sent to ${subs.length} subscriber(s) for emirate [${emirate || 'all'}]`
+    );
+
+    res.json({
+      success: true,
+      recipientsCount: subs.length,
+      message: `Alert dispatched to ${subs.length} active device(s) in ${emirate ? emirate.toUpperCase() : 'UAE'}.`,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || "Failed to dispatch push notification" });
+  }
+});
+
 async function startServer() {
+  const publicPath = path.join(process.cwd(), "public");
+  app.use(express.static(publicPath));
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -725,8 +1019,26 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    
+    // Serve hashed assets with immutable cache, but NEVER cache index.html or sw.js
+    app.use(
+      express.static(distPath, {
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith("index.html") || filePath.endsWith("sw.js")) {
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Expires", "0");
+          } else if (filePath.includes("/assets/")) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          }
+        },
+      })
+    );
+
     app.get("*", (_req, res) => {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       res.sendFile(path.join(distPath, "index.html"));
     });
   }

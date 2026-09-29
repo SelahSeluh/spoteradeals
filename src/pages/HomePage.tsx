@@ -5,6 +5,7 @@ import { SpoteraPlayfulHero } from '../components/SpoteraPlayfulHero';
 import { WhySpoteraSection } from '../components/WhySpoteraSection';
 import { TopCategoriesSection } from '../components/TopCategoriesSection';
 import { FeaturedDealsSection } from '../components/FeaturedDealsSection';
+import { FlashDealsSection } from '../components/FlashDealsSection';
 import { DailySpotlightSection } from '../components/DailySpotlightSection';
 import { PromoCouponBanner } from '../components/PromoCouponBanner';
 
@@ -29,7 +30,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onClaimCoupon, onBookNow }) 
         <TopCategoriesSection />
       </div>
 
-      {/* 4. Featured Deals Grid */}
+      {/* 4. Real-time Flash Deals with Live Countdown */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FlashDealsSection />
+      </div>
+
+      {/* 5. Featured Deals Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FeaturedDealsSection />
       </div>

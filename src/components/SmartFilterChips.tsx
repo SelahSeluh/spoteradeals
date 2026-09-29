@@ -15,6 +15,7 @@ import {
   X,
   SlidersHorizontal,
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export interface FilterState {
   category?: string;
@@ -46,6 +47,7 @@ export const SmartFilterChips: React.FC<SmartFilterChipsProps> = ({
   className = '',
   isRtl = false,
 }) => {
+  const { t } = useApp();
   const activeFiltersCount = Object.values(filterState).filter(Boolean).length;
 
   const handleClearAll = () => {
@@ -62,84 +64,70 @@ export const SmartFilterChips: React.FC<SmartFilterChipsProps> = ({
   const chips = [
     {
       id: 'all',
-      label: isRtl ? 'الكل' : 'All',
+      label: t('filterAll') || 'All',
       icon: SlidersHorizontal,
       active: activeFiltersCount === 0,
       onClick: handleClearAll,
     },
     {
       id: 'nearMe',
-      label: isRtl ? 'بالقرب مني' : 'Near Me',
+      label: t('filterNearby') || 'Near Me',
       icon: MapPin,
       active: !!filterState.nearMe,
       onClick: () => toggleBoolean('nearMe'),
     },
     {
       id: 'mostPopular',
-      label: isRtl ? 'الأكثر طلباً' : 'Most Popular',
+      label: t('filterPopular') || 'Most Popular',
       icon: Flame,
       active: !!filterState.mostPopular,
       onClick: () => toggleBoolean('mostPopular'),
     },
     {
       id: 'bestRated',
-      label: isRtl ? 'الأعلى تقييماً (★ 4.7+)' : 'Best Rated (★ 4.7+)',
+      label: `${t('rating') || 'Rated'} 4.7+`,
       icon: Star,
       active: !!filterState.bestRated,
       onClick: () => toggleBoolean('bestRated'),
     },
     {
       id: 'kidsOnly',
-      label: isRtl ? 'ألعاب أطفال' : 'Kids & Soft Play',
+      label: t('familyExperiences') || 'Kids & Family',
       icon: Baby,
       active: !!filterState.kidsOnly,
       onClick: () => toggleBoolean('kidsOnly'),
     },
     {
-      id: 'familyOnly',
-      label: isRtl ? 'تجارب عائلية' : 'Family',
-      icon: Users,
-      active: !!filterState.familyOnly,
-      onClick: () => toggleBoolean('familyOnly'),
-    },
-    {
       id: 'attractionsOnly',
-      label: isRtl ? 'معالم وترفيه' : 'Attractions',
+      label: t('exploreUae') || 'Attractions',
       icon: Compass,
       active: !!filterState.attractionsOnly,
       onClick: () => toggleBoolean('attractionsOnly'),
     },
     {
       id: 'foodOnly',
-      label: isRtl ? 'مطاعم وبوفيه' : 'Food & Dining',
+      label: t('filterByCategory') || 'Dining',
       icon: Utensils,
       active: !!filterState.foodOnly,
       onClick: () => toggleBoolean('foodOnly'),
     },
     {
-      id: 'activitiesOnly',
-      label: isRtl ? 'أنشطة وورش' : 'Activities',
-      icon: Smile,
-      active: !!filterState.activitiesOnly,
-      onClick: () => toggleBoolean('activitiesOnly'),
-    },
-    {
       id: 'under100Aed',
-      label: isRtl ? 'أقل من 100 درهم' : 'Under 100 AED',
+      label: `< 100 ${t('currency') || 'AED'}`,
       icon: DollarSign,
       active: !!filterState.under100Aed,
       onClick: () => toggleBoolean('under100Aed'),
     },
     {
       id: 'highDiscount',
-      label: isRtl ? 'خصم 35%+ وأكثر' : '35%+ Discount',
+      label: `35%+ ${t('off') || 'OFF'}`,
       icon: Percent,
       active: !!filterState.highDiscount,
       onClick: () => toggleBoolean('highDiscount'),
     },
     {
       id: 'isNew',
-      label: isRtl ? 'عروض جديدة' : 'New Offers',
+      label: t('filterFeatured') || 'Featured',
       icon: Sparkles,
       active: !!filterState.isNew,
       onClick: () => toggleBoolean('isNew'),
@@ -159,11 +147,11 @@ export const SmartFilterChips: React.FC<SmartFilterChipsProps> = ({
             type="button"
             onClick={handleClearAll}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-all shrink-0 min-h-[44px] cursor-pointer shadow-2xs"
-            title={isRtl ? 'إعادة ضبط الفلاتر' : 'Reset all filters'}
+            title={t('resetFilters') || 'Reset'}
           >
             <X className="w-3.5 h-3.5" />
             <span>
-              {isRtl ? `إلغاء (${activeFiltersCount})` : `Clear (${activeFiltersCount})`}
+              {`${t('resetFilters') || 'Clear'} (${activeFiltersCount})`}
             </span>
           </button>
         )}
@@ -189,7 +177,7 @@ export const SmartFilterChips: React.FC<SmartFilterChipsProps> = ({
 
         {typeof totalResultsCount === 'number' && (
           <span className="text-[11px] font-medium text-slate-400 shrink-0 px-2">
-            {isRtl ? `${totalResultsCount} نتيجة` : `${totalResultsCount} results`}
+            {`${totalResultsCount} ${t('dealsCount') || 'deals'}`}
           </span>
         )}
       </div>

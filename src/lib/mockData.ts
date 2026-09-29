@@ -14,27 +14,10 @@ export const defaultGuestUser: User = {
   membership: 'Free',
   savedDealIds: [],
   notifications: [],
-  walletBalanceAED: 50,
-  walletEarnedTotalAED: 50,
+  walletBalanceAED: 0,
+  walletEarnedTotalAED: 0,
   walletUsedTotalAED: 0,
-  walletTransactions: [
-    {
-      id: 'tx_1',
-      type: 'referral_credit',
-      amountAED: 25,
-      description: 'Spotera Welcome Bonus Credit',
-      date: '2026-08-01',
-      status: 'completed',
-    },
-    {
-      id: 'tx_2',
-      type: 'referral_credit',
-      amountAED: 25,
-      description: 'Family Invite Reward Credit',
-      date: '2026-08-05',
-      status: 'completed',
-    },
-  ],
+  walletTransactions: [],
 };
 
 export const initialUser: User = defaultGuestUser;
@@ -244,6 +227,8 @@ export const initialDeals: Deal[] = [
     ],
     terms: ['Grip socks required', 'Adults enter free with child'],
     expiryDate: '2026-12-31',
+    isFlashDeal: true,
+    flashDealExpiresAt: new Date(Date.now() + 18 * 3600 * 1000).toISOString(),
     rating: 4.8,
     reviewCount: 320,
     isFeatured: true,
@@ -283,6 +268,8 @@ export const initialDeals: Deal[] = [
     ],
     terms: ['Valid 7 days a week', 'Towel and lockers included', 'Free entry for 2 accompanying adults'],
     expiryDate: '2026-12-31',
+    isFlashDeal: true,
+    flashDealExpiresAt: new Date(Date.now() + 26 * 3600 * 1000).toISOString(),
     rating: 4.8,
     reviewCount: 412,
     isFeatured: true,

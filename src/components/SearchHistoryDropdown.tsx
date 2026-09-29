@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock, X, Trash2, Sparkles, ArrowUpRight } from 'lucide-react';
 import { SearchHistoryItem } from '../types';
+import { useApp } from '../context/AppContext';
 
 interface SearchHistoryDropdownProps {
   history: SearchHistoryItem[];
@@ -33,6 +34,7 @@ export const SearchHistoryDropdown: React.FC<SearchHistoryDropdownProps> = ({
   className = '',
   isRtl = false,
 }) => {
+  const { t } = useApp();
   if (!isOpen) return null;
 
   return (
@@ -47,7 +49,7 @@ export const SearchHistoryDropdown: React.FC<SearchHistoryDropdownProps> = ({
           <div className="flex items-center justify-between px-2 pb-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
-              <span>{isRtl ? 'عمليات البحث الأخيرة' : 'Recent Searches'}</span>
+              <span>{t('recentSearches') || 'Recent Searches'}</span>
             </div>
             <button
               type="button"
@@ -59,7 +61,7 @@ export const SearchHistoryDropdown: React.FC<SearchHistoryDropdownProps> = ({
               className="text-[11px] font-semibold text-rose-600 hover:text-rose-700 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
             >
               <Trash2 className="w-3 h-3" />
-              <span>{isRtl ? 'مسح الكل' : 'Clear All'}</span>
+              <span>{t('clearAll') || 'Clear All'}</span>
             </button>
           </div>
 
@@ -98,7 +100,7 @@ export const SearchHistoryDropdown: React.FC<SearchHistoryDropdownProps> = ({
       <div className="p-3 bg-slate-50/70">
         <div className="flex items-center gap-1.5 px-2 pb-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>{isRtl ? 'الأكثر بحثاً في الإمارات' : 'Trending in UAE'}</span>
+          <span>{t('trendingInUae') || 'Trending in UAE'}</span>
         </div>
         <div className="flex flex-wrap gap-1.5 px-1 pt-1">
           {popularSearches.map((tag) => (

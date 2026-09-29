@@ -2,55 +2,87 @@
 <html lang="en">
   <head>
     <script>
-      /* Safe storage fallback for restricted third-party iframes */
+      /* Safe storage polyfill for restricted or sandboxed iframe environments */
       (function() {
-        var store = {};
-        function createStorage() {
+        function createStorageStore() {
+          var store = {};
           return {
-            getItem: function(k) { return Object.prototype.hasOwnProperty.call(store, k) ? store[k] : null; },
-            setItem: function(k, v) { store[k] = String(v); },
-            removeItem: function(k) { delete store[k]; },
-            clear: function() { store = {}; },
-            key: function(i) { return Object.keys(store)[i] || null; },
-            get length() { return Object.keys(store).length; }
+            getItem: function(k) {
+              return Object.prototype.hasOwnProperty.call(store, k) ? store[k] : null;
+            },
+            setItem: function(k, v) {
+              store[k] = String(v);
+            },
+            removeItem: function(k) {
+              delete store[k];
+            },
+            clear: function() {
+              store = {};
+            },
+            key: function(i) {
+              return Object.keys(store)[i] || null;
+            },
+            get length() {
+              return Object.keys(store).length;
+            }
           };
         }
-        try {
-          var t = '__spotera_test__';
-          window.localStorage.setItem(t, '1');
-          window.localStorage.removeItem(t);
-        } catch (e) {
+
+        function safePolyfill(name) {
           try {
-            var memL = createStorage();
-            Object.defineProperty(window, 'localStorage', {
-              get: function() { return memL; },
+            var s = window[name];
+            if (s) {
+              var t = '__spotera_' + name + '_probe__';
+              s.setItem(t, '1');
+              s.removeItem(t);
+              return; // native storage is fully functional
+            }
+          } catch (_) {}
+
+          var mem = createStorageStore();
+          try {
+            Object.defineProperty(window, name, {
+              get: function() { return mem; },
+              set: function() {},
               configurable: true,
               enumerable: true
             });
-          } catch (_) {}
+          } catch (_) {
+            try {
+              if (typeof Window !== 'undefined' && Window.prototype) {
+                Object.defineProperty(Window.prototype, name, {
+                  get: function() { return mem; },
+                  set: function() {},
+                  configurable: true,
+                  enumerable: true
+                });
+              }
+            } catch (_) {}
+          }
         }
-        try {
-          var st = '__spotera_stest__';
-          window.sessionStorage.setItem(st, '1');
-          window.sessionStorage.removeItem(st);
-        } catch (e) {
-          try {
-            var memS = createStorage();
-            Object.defineProperty(window, 'sessionStorage', {
-              get: function() { return memS; },
-              configurable: true,
-              enumerable: true
-            });
-          } catch (_) {}
-        }
+
+        safePolyfill('localStorage');
+        safePolyfill('sessionStorage');
+
+        // Global uncaught error listener to ensure diagnostics are visible if scripts fail
+        window.addEventListener('error', function(e) {
+          console.warn('[Spotera Runtime Warning]:', e.message || e);
+        });
       })();
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>SpoteraDeals — UAE Family Deals & Experiences</title>
     <meta name="description" content="SpoteraDeals connects families and residents in the UAE with verified deals, dining offers, attractions, kids play areas, and instant passes in AED." />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content="SpoteraDeals — UAE Family Deals & Experiences" />
     <meta property="og:description" content="SpoteraDeals connects families and residents in the UAE with verified deals, dining offers, attractions, kids play areas, and instant passes in AED." />
+    <meta property="og:image" content="/spoteradeals-logo.png" />
+    <meta property="og:site_name" content="SpoteraDeals" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SpoteraDeals — UAE Family Deals & Experiences" />
+    <meta name="twitter:description" content="SpoteraDeals connects families and residents in the UAE with verified deals, dining offers, attractions, kids play areas, and instant passes in AED." />
+    <meta name="twitter:image" content="/spoteradeals-logo.png" />
     <meta name="keywords" content="SpoteraDeals, Spotera, UAE deals, Dubai family deals, Abu Dhabi theme parks, Kids play areas, Dining discounts, Instant passes" />
     
     <!-- PWA & Mobile App Settings -->
@@ -62,8 +94,8 @@
     
     <!-- Icons & Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/jpeg" href="/spotera-logo.jpg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="/spoteradeals-logo.png" />
+    <link rel="apple-touch-icon" href="/spoteradeals-logo.png" />
     
     <!-- Fonts: Outfit, Plus Jakarta Sans, Poppins, Inter, Montserrat, Playfair Display + Cairo & Noto Sans Arabic for RTL -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,105 +104,13 @@
   </head>
   <body>
     <div id="root">
-      <!-- Instant pre-render skeleton to eliminate the blank white screen while scripts initialize -->
-      <style>
-        .spotera-pre-skeleton {
-          min-height: 100vh;
-          background-color: #F8FAFC;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          color: #0F172A;
-          overflow-x: hidden;
-        }
-        .spotera-pre-pulse {
-          animation: spoteraPulse 1.5s ease-in-out infinite;
-          background-color: #E2E8F0;
-        }
-        @keyframes spoteraPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        .spotera-pre-nav {
-          height: 64px;
-          border-bottom: 1px solid #E2E8F0;
-          background: #FFFFFF;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 1.5rem;
-        }
-        .spotera-pre-hero {
-          padding: 2.5rem 1.5rem;
-          background: linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%);
-          border-bottom: 1px solid #E2E8F0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          gap: 1rem;
-        }
-        .spotera-pre-grid {
-          max-width: 1280px;
-          margin: 2rem auto;
-          padding: 0 1.5rem;
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 1.5rem;
-        }
-        .spotera-pre-card {
-          background: #FFFFFF;
-          border-radius: 1rem;
-          border: 1px solid #E2E8F0;
-          overflow: hidden;
-        }
-      </style>
-      <div class="spotera-pre-skeleton" aria-hidden="true">
-        <header class="spotera-pre-nav">
-          <div style="display:flex;align-items:center;gap:0.75rem;">
-            <div class="spotera-pre-pulse" style="width:36px;height:36px;border-radius:0.5rem;background-color:#0D9CFD;"></div>
-            <div class="spotera-pre-pulse" style="width:120px;height:20px;border-radius:4px;"></div>
-          </div>
-          <div class="spotera-pre-pulse" style="width:140px;height:36px;border-radius:20px;"></div>
-        </header>
-        <section class="spotera-pre-hero">
-          <div class="spotera-pre-pulse" style="width:200px;height:24px;border-radius:12px;background-color:#BAE6FD;"></div>
-          <div class="spotera-pre-pulse" style="width:80%;max-width:540px;height:36px;border-radius:8px;"></div>
-          <div class="spotera-pre-pulse" style="width:60%;max-width:400px;height:18px;border-radius:4px;"></div>
-          <div class="spotera-pre-pulse" style="width:90%;max-width:600px;height:48px;border-radius:12px;margin-top:0.75rem;"></div>
-        </section>
-        <div class="spotera-pre-grid">
-          <div class="spotera-pre-card">
-            <div class="spotera-pre-pulse" style="height:180px;width:100%;"></div>
-            <div style="padding:1rem;display:flex;flex-direction:column;gap:0.75rem;">
-              <div class="spotera-pre-pulse" style="height:16px;width:60%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:20px;width:90%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:32px;width:100%;border-radius:8px;margin-top:0.5rem;"></div>
-            </div>
-          </div>
-          <div class="spotera-pre-card">
-            <div class="spotera-pre-pulse" style="height:180px;width:100%;"></div>
-            <div style="padding:1rem;display:flex;flex-direction:column;gap:0.75rem;">
-              <div class="spotera-pre-pulse" style="height:16px;width:50%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:20px;width:85%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:32px;width:100%;border-radius:8px;margin-top:0.5rem;"></div>
-            </div>
-          </div>
-          <div class="spotera-pre-card">
-            <div class="spotera-pre-pulse" style="height:180px;width:100%;"></div>
-            <div style="padding:1rem;display:flex;flex-direction:column;gap:0.75rem;">
-              <div class="spotera-pre-pulse" style="height:16px;width:70%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:20px;width:80%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:32px;width:100%;border-radius:8px;margin-top:0.5rem;"></div>
-            </div>
-          </div>
-          <div class="spotera-pre-card">
-            <div class="spotera-pre-pulse" style="height:180px;width:100%;"></div>
-            <div style="padding:1rem;display:flex;flex-direction:column;gap:0.75rem;">
-              <div class="spotera-pre-pulse" style="height:16px;width:55%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:20px;width:75%;border-radius:4px;"></div>
-              <div class="spotera-pre-pulse" style="height:32px;width:100%;border-radius:8px;margin-top:0.5rem;"></div>
-            </div>
-          </div>
-        </div>
+      <div id="spotera-initial-loader" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0A2540; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.15); border-top-color: #FD9302; border-radius: 50%; animation: spoteraSpin 0.7s linear infinite; margin-bottom: 1rem;"></div>
+        <div style="font-weight: 900; font-size: 18px; color: #FFFFFF; letter-spacing: 0.05em;">SPOTERA <span style="color: #FD9302;">DEALS</span></div>
+        <div style="font-size: 13px; color: #94A3B8; margin-top: 6px; font-weight: 500;">“More fun, more together.”</div>
+        <style>
+          @keyframes spoteraSpin { to { transform: rotate(360deg); } }
+        </style>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>

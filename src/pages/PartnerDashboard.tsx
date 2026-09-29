@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Bell,
   Calendar,
@@ -20,40 +20,12 @@ import { useToast } from '../context/ToastContext';
 import { VendorQrScanner } from '../components/VendorQrScanner';
 
 export const PartnerDashboard: React.FC = () => {
-  const { setActiveView } = useApp();
+  const { setActiveView, bookings, updateBookingStatus, user } = useApp();
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'bookings' | 'deals' | 'more'>('dashboard');
   const [showScanner, setShowScanner] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
-
-  // Recent bookings matching Screenshot 4
-  const [recentBookings, setRecentBookings] = useState([
-    {
-      id: 'bk_1',
-      code: 'SPD-84213',
-      title: '2 Kids Entry',
-      time: '11:00',
-      status: 'Awaiting',
-      statusColor: 'bg-[#FFF3E8] text-[#F5820A] border-[#F5820A]/30',
-    },
-    {
-      id: 'bk_2',
-      code: 'SPD-84209',
-      title: 'Family Pass',
-      time: '10:30',
-      status: 'Redeemed',
-      statusColor: 'bg-[#ECFDF5] text-[#10B981] border-[#10B981]/30',
-    },
-    {
-      id: 'bk_3',
-      code: 'SPD-84201',
-      title: '2 Kids Entry',
-      time: '10:00',
-      status: 'Redeemed',
-      statusColor: 'bg-[#ECFDF5] text-[#10B981] border-[#10B981]/30',
-    },
-  ]);
 
   // Weekly bar chart data
   const weekDays = [
@@ -66,22 +38,31 @@ export const PartnerDashboard: React.FC = () => {
     { day: 'Sun', count: 28, heightPct: 68 },
   ];
 
+  // Derive real partner bookings or platform bookings
+  const partnerBookings = useMemo(() => {
+    return bookings.map((b) => ({
+      id: b.id,
+      code: b.bookingCode,
+      title: b.dealTitle || 'Family Pass',
+      time: b.timeSlot || '11:00',
+      status: b.status === 'redeemed' ? 'Redeemed' : 'Awaiting',
+      statusColor:
+        b.status === 'redeemed'
+          ? 'bg-[#ECFDF5] text-[#10B981] border-[#10B981]/30'
+          : 'bg-[#FFF3E8] text-[#F5820A] border-[#F5820A]/30',
+      original: b,
+    }));
+  }, [bookings]);
+
   const handleToggleRedeem = (code: string) => {
-    setRecentBookings((prev) =>
-      prev.map((item) =>
-        item.code === code
-          ? {
-              ...item,
-              status: item.status === 'Redeemed' ? 'Awaiting' : 'Redeemed',
-              statusColor:
-                item.status === 'Redeemed'
-                  ? 'bg-[#FFF3E8] text-[#F5820A] border-[#F5820A]/30'
-                  : 'bg-[#ECFDF5] text-[#10B981] border-[#10B981]/30',
-            }
-          : item
-      )
-    );
-    showToast(`Booking ${code} status updated!`, 'success');
+    const found = bookings.find((b) => b.bookingCode === code);
+    if (found) {
+      const nextStatus = found.status === 'redeemed' ? 'confirmed' : 'redeemed';
+      updateBookingStatus(found.id, nextStatus);
+      showToast(`Booking ${code} marked as ${nextStatus}!`, 'success');
+    } else {
+      showToast(`Booking ${code} updated.`, 'info');
+    }
   };
 
   return (
@@ -262,32 +243,38 @@ export const PartnerDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-2.5">
-                {recentBookings.map((b) => (
-                  <div
-                    key={b.id}
-                    onClick={() => handleToggleRedeem(b.code)}
-                    className="bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-[#E8EEF5] p-3 shadow-2xs flex items-center justify-between gap-2 cursor-pointer hover:border-[#1060E2]/30 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-[#0D1B3E]">{b.code}</div>
-                        <div className="text-[11px] font-medium text-[#8D98AA]">
-                          {b.title} · {b.time}
+                {partnerBookings.length > 0 ? (
+                  partnerBookings.map((b) => (
+                    <div
+                      key={b.id}
+                      onClick={() => handleToggleRedeem(b.code)}
+                      className="bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-[#E8EEF5] p-3 shadow-2xs flex items-center justify-between gap-2 cursor-pointer hover:border-[#1060E2]/30 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-[#0D1B3E]">{b.code}</div>
+                          <div className="text-[11px] font-medium text-[#8D98AA]">
+                            {b.title} · {b.time}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${b.statusColor}`}>
-                        {b.status}
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-slate-300" />
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${b.statusColor}`}>
+                          {b.status}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-slate-300" />
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="p-6 text-center text-xs text-[#8D98AA] bg-slate-50/70 rounded-xl border border-dashed border-[#E8EEF5]">
+                    No customer bookings recorded yet. New voucher redemptions and purchases will show up here live.
                   </div>
-                ))}
+                )}
               </div>
             </div>
 

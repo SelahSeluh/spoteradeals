@@ -22,6 +22,7 @@ export const SearchPage: React.FC = () => {
     user,
     language,
     isRtl,
+    t,
   } = useApp();
 
   const [localQuery, setLocalQuery] = useState(searchQuery || '');
@@ -161,9 +162,9 @@ export const SearchPage: React.FC = () => {
               type="button"
               onClick={() => setActiveView('home')}
               className="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-              aria-label={isRtl ? 'العودة للرئيسية' : 'Back to Home'}
+              aria-label={t('back') || 'Back'}
             >
-              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+              <ArrowLeft className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Input Container with Search History Dropdown */}
@@ -172,7 +173,7 @@ export const SearchPage: React.FC = () => {
                 onSubmit={handleSearchSubmit}
                 className="flex items-center bg-slate-100 rounded-2xl px-3.5 py-2.5 border border-slate-200/80 focus-within:border-[#0D9CFD] focus-within:bg-white transition-all shadow-inner"
               >
-                <Search className="w-4 h-4 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                <Search className="w-4 h-4 text-slate-400 ltr:mr-2 rtl:ml-2 shrink-0" />
                 <input
                   type="text"
                   value={localQuery}
@@ -186,11 +187,7 @@ export const SearchPage: React.FC = () => {
                       handleSearchSubmit();
                     }
                   }}
-                  placeholder={
-                    isRtl
-                      ? 'ابحث عن العروض، المعالم، ألعاب الأطفال، المطاعم...'
-                      : 'Search deals, venues, kids play areas, dining...'
-                  }
+                  placeholder={t('searchPlaceholder') || 'Search deals, venues, kids play areas, dining...'}
                   className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
                   autoFocus
                 />
@@ -198,7 +195,7 @@ export const SearchPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleClear}
-                    className="p-1 text-slate-400 hover:text-slate-600 rounded-full cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
+                    className="p-1 text-slate-400 hover:text-slate-600 rounded-full cursor-pointer ltr:ml-1 rtl:mr-1"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -235,17 +232,11 @@ export const SearchPage: React.FC = () => {
           <div>
             <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
               {localQuery
-                ? isRtl
-                  ? `نتائج البحث عن "${localQuery}"`
-                  : `Results for “${localQuery}”`
-                : isRtl
-                ? 'جميع عروض وباقات الإمارات'
-                : 'All UAE Deals & Passes'}
+                ? `${t('resultsFor') || 'Results for'} "${localQuery}"`
+                : (t('allDeals') || 'All UAE Deals & Passes')}
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              {isRtl
-                ? `تم العثور على ${results.length} عرض مميز في الإمارات`
-                : `Found ${results.length} exclusive offers across UAE`}
+              {`${results.length} ${t('dealsCount') || 'deals'}`}
             </p>
           </div>
         </div>
@@ -278,14 +269,10 @@ export const SearchPage: React.FC = () => {
 
             <div className="space-y-1.5">
               <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                {isRtl
-                  ? `لم يتم العثور على عروض لـ "${localQuery}"`
-                  : `No deals found for “${localQuery}”`}
+                {t('emptyStateSearchTitle') || 'No deals found'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                {isRtl
-                  ? 'جرب البحث عن كلمة رئيسية أخرى مثل "مدينة مائية"، "بوفيه"، أو "ألعاب أطفال"، أو قم بمسح الفلاتر المحددة.'
-                  : 'Try searching for a different keyword like "waterpark", "brunch", or "kids play area", or clear your filter.'}
+                {t('emptyStateSearchDesc') || 'Try searching for a different keyword or explore trending categories below.'}
               </p>
             </div>
 
@@ -293,7 +280,7 @@ export const SearchPage: React.FC = () => {
               onClick={handleClear}
               className="px-5 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0284C7] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
             >
-              {isRtl ? 'استعراض كافة العروض' : 'Browse All Deals'}
+              {t('emptyStateBrowseDeals') || 'Browse All Deals'}
             </button>
           </div>
         )}

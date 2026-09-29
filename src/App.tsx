@@ -46,10 +46,15 @@ import { MainViewSkeleton } from './components/MainViewSkeleton';
 
 const MainAppContent: React.FC = () => {
   const {
+    user,
+    isLoggedIn,
     hasEnteredApp,
     activeView,
     isAppInitializing,
     isViewLoading,
+    startupPhase,
+    showOpeningAnimation,
+    dismissOpeningAnimation,
     claimCoupon,
     requireUserAuth,
     showLinksModal,
@@ -74,30 +79,39 @@ const MainAppContent: React.FC = () => {
     });
   };
 
-  // Pre-entry gate: Show startup splash animation & AuthPage (Apple / Guest)
-  // Home/Deals bottom navigation and header controls are excluded before entry
-  if (!hasEnteredApp) {
+  // 1. AUTHENTICATION VIEW: Render full Auth Page when activeView is explicitly 'auth'
+  if (activeView === 'auth') {
     return (
-      <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-300 relative spotera-mesh-canvas text-slate-900">
-        {/* Startup Splash Animation Overlay */}
-        <OpeningAnimation />
-
-        {/* Authentication Gateway: Sign in with Apple & Continue as Guest */}
+      <div id="spotera-auth-screen" className="min-h-screen w-full spotera-mesh-canvas flex flex-col justify-center items-center select-none relative">
         <AuthPage />
-
-        {/* Toast Notifications */}
         <ToastContainer />
       </div>
     );
   }
 
+  // 2. SECURE ADMIN APPLICATION: If signed in as Admin, strictly render the Admin Dashboard
+  if (user && user.role === 'ADMIN') {
+    return (
+      <div className="min-h-screen w-full flex flex-col font-sans bg-slate-50 text-slate-900">
+        <AdminDashboard />
+        <QrScannerModal />
+        <ToastContainer />
+      </div>
+    );
+  }
+
+  // 3. MAIN CUSTOMER & GUEST APPLICATION: Always mounted & rendered smoothly
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-300 relative spotera-mesh-canvas text-slate-900">
+      {/* Intro Video Animation Overlay (Smooth fade over pre-mounted app) */}
+      {(startupPhase === 'intro' || showOpeningAnimation) && (
+        <div id="spotera-intro-screen" className="fixed inset-0 z-[100] bg-[#0A2540] overflow-hidden flex flex-col items-center justify-center">
+          <OpeningAnimation onPreviewClose={dismissOpeningAnimation} />
+        </div>
+      )}
+
       {/* Offline Alert Sticky Banner */}
       <OfflineAlertBanner />
-
-      {/* Intro Animation (Overlay, if replayed or triggered) */}
-      <OpeningAnimation />
 
       {/* Top Navbar */}
       <Navbar />
@@ -140,7 +154,6 @@ const MainAppContent: React.FC = () => {
               {activeView === 'admin' && <AdminDashboard />}
               {activeView === 'partners' && <PartnerDashboard />}
               {activeView === 'membership' && <MembershipPage />}
-              {activeView === 'auth' && <AuthPage />}
               {activeView === 'about' && <AboutPage />}
               {activeView === 'contact' && <ContactPage />}
               {activeView === 'faq' && <FaqPage />}

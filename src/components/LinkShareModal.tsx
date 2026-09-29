@@ -25,10 +25,7 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Get current deployment origin
-  const appOrigin = window.location.origin;
-  const sharedAppOrigin = appOrigin.includes('ais-dev-') 
-    ? appOrigin.replace('ais-dev-', 'ais-pre-')
-    : appOrigin;
+  const sharedAppOrigin = window.location.origin;
 
   const links = [
     {
