@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotera-cool-picnic-v9';
+const CACHE_NAME = 'spotera-cool-picnic-photos-v10';
 const STATIC_ASSETS = [
   '/spoteradeals-logo.png',
   '/icon-192.png',

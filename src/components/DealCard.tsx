@@ -91,7 +91,7 @@ export const DealCard: React.FC<DealCardProps> = ({
     ? `${deal.district}, ${deal.city}`
     : deal.city || deal.location || 'Dubai';
 
-  const ageText = deal.ageRange || (deal as any).ageGroup || 'Ages 2+';
+  const ageText = deal.ageRange || (deal as any).ageGroup || 'See age policy';
 
   return (
     <div
@@ -116,9 +116,9 @@ export const DealCard: React.FC<DealCardProps> = ({
           referrerPolicy="no-referrer"
           onError={(e) => {
             const target = e.currentTarget;
-            if (!target.src.endsWith('/expedition/map.svg')) {
+            if (!target.src.endsWith('/places/skyline.jpg')) {
               target.src =
-                '/expedition/map.svg';
+                '/places/skyline.jpg';
             }
           }}
           className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-300 ease-out"

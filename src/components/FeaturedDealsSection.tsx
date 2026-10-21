@@ -9,11 +9,18 @@ export const FeaturedDealsSection: React.FC = () => {
   // Get top 4 featured deals matching the mockup layout
   const featuredDeals = React.useMemo(() => {
     const published = deals.filter((d) => d.isPublished !== false);
-    const featured = published.filter((d) => d.isFeatured || d.isTrending || (d.rating && d.rating >= 4.8));
-    if (featured.length >= 4) {
-      return featured.slice(0, 4);
+    const groups = [
+      (d: typeof published[number]) => /restaurant|cafe|café|dining|brunch|coffee/i.test(`${d.category} ${d.title}`),
+      (d: typeof published[number]) => /attraction|entertainment|tour|desert/i.test(`${d.category} ${d.title}`),
+      (d: typeof published[number]) => /family|outdoor|water|park/i.test(`${d.category} ${d.title}`),
+      (d: typeof published[number]) => /kids|play/i.test(`${d.category} ${d.title}`),
+    ];
+    const selected: typeof published = [];
+    for (const matches of groups) {
+      const next = published.find(d => !selected.includes(d) && matches(d));
+      if (next) selected.push(next);
     }
-    return published.slice(0, 4);
+    return [...selected, ...published.filter(d => !selected.includes(d))].slice(0, 4);
   }, [deals]);
 
   return (

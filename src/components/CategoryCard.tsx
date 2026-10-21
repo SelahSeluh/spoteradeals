@@ -45,9 +45,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           loading="lazy"
           onError={(e) => {
             const target = e.currentTarget;
-            if (!target.src.endsWith('/expedition/map.svg')) {
+            if (!target.src.endsWith('/places/skyline.jpg')) {
               target.src =
-                '/expedition/map.svg';
+                '/places/skyline.jpg';
             }
           }}
         />
