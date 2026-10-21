@@ -71,22 +71,7 @@ export const AuthPage: React.FC = () => {
   };
 
   const handleAppleAuth = () => {
-    const appleUser = {
-      id: 'usr_apple_' + Date.now(),
-      email: email && email.includes('@') ? email : 'member.apple@spoteradeals.com',
-      name: email && email.includes('@') ? email.split('@')[0] : 'Spotera Member',
-      phone: '',
-      role: 'CUSTOMER' as const,
-      membership: 'Free' as const,
-      savedDealIds: [],
-      notifications: [],
-      avatar: '',
-      authProvider: 'apple' as const,
-      username: 'spotera_member',
-    };
-    handleAuthSuccess(appleUser);
-    showToast.success('Signed in with Apple ID');
-    navigateToDestination();
+    setErrorMsg('Apple sign-in is not configured yet. You can continue as a guest.');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -178,7 +163,7 @@ export const AuthPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 font-sans select-none relative spotera-mesh-canvas py-6">
+    <div className="sunshine-auth min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 font-sans select-none relative spotera-mesh-canvas py-6">
       {/* Top Bar with Back Link & Language Selector */}
       <div className="w-full max-w-[400px] flex items-center justify-between mb-3 z-20 px-1">
         <button
@@ -211,6 +196,7 @@ export const AuthPage: React.FC = () => {
       </div>
 
       <div className="w-full max-w-[400px] bg-white rounded-2xl sm:rounded-3xl border border-[#D9E3F0] shadow-[0_8px_30px_rgba(13,79,165,0.08)] p-4 sm:p-6 space-y-4 relative z-10">
+        <div className="sunshine-auth-photo"><img src="/sunshine-family.jpg" alt="Happy family outdoors"/><span>Good things<br/>bring families<br/>together.</span></div>
         {/* Top Branding */}
         <div className="text-center flex flex-col items-center">
           <SpoteraLogo

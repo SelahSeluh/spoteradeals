@@ -26,16 +26,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onClaimCoupon, onBookNow }) 
       </div>
 
       {/* 3. Top Categories Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <TopCategoriesSection />
-      </div>
+
 
       {/* 4. Real-time Flash Deals with Live Countdown */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FlashDealsSection />
       </div>
 
-      {/* 5. Featured Deals Grid */}
+      {/* 5. Hot Deals for Families Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FeaturedDealsSection />
       </div>

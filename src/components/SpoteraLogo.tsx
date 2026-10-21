@@ -131,7 +131,7 @@ export const SpoteraLogo: React.FC<SpoteraLogoProps> = ({
   const logoContent = (
     <div
       onClick={onClick}
-      className={`inline-flex items-center ${sizeConfig.gap} ${onClick ? 'cursor-pointer select-none' : ''} ${className}`}
+      className={`sunshine-logo inline-flex items-center ${sizeConfig.gap} ${onClick ? 'cursor-pointer select-none' : ''} ${className}`}
     >
       {/* 1. Official Icon Mark (Pin + Smile + Deal Tag) */}
       {withIcon && (

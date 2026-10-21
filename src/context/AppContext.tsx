@@ -869,34 +869,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActiveViewState('auth');
   };
 
-  const setupAdminAccount = async (email: string, pass: string) => {
-    const cleanEmail = email.trim().toLowerCase() || 'admin@spoteradeals.com';
-    const cleanPass = pass.trim();
-
-    try {
-      const res = await fetch('/api/auth/setup-admin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail, password: cleanPass }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        if (data.token) {
-          setSessionToken(data.token);
-          safeStorage.setItem('spotera_session_token', data.token);
-        }
-      }
-    } catch (e) {
-      // client side fallback
-    }
-
-    safeStorage.setItem('spotera_admin_email', cleanEmail);
-    safeStorage.setItem('spotera_admin_pass', cleanPass);
-    safeStorage.setItem('spotera_admin_auth', 'true');
-    safeStorage.setItem('spotera_admin_configured', 'true');
-    setAdminEmail(cleanEmail);
-    setHasAdminPasswordSet(true);
-    setIsAdminAuthenticated(true);
+  const setupAdminAccount = async (_email: string, _pass: string) => {
+    throw new Error('Admin setup must be completed securely on the server.');
   };
 
   const adminLoginWithCreds = async (email: string, pass: string): Promise<{ success: boolean; message: string }> => {
@@ -927,30 +901,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Server offline fallback
     }
 
-    const storedPass = safeStorage.getItem('spotera_admin_pass');
-    const storedEmail = safeStorage.getItem('spotera_admin_email') || 'admin@spoteradeals.com';
-
-    if (!storedPass && !safeStorage.getItem('spotera_admin_configured')) {
-      return { success: false, message: 'SETUP_REQUIRED' };
-    }
-
-    if (
-      (cleanEmail === storedEmail.toLowerCase() || cleanEmail === 'admin@spoteradeals.com') &&
-      storedPass &&
-      cleanPass === storedPass
-    ) {
-      setIsAdminAuthenticated(true);
-      safeStorage.setItem('spotera_admin_auth', 'true');
-      return { success: true, message: 'Authenticated successfully.' };
-    }
-
-    return { success: false, message: 'Invalid Admin Email or Password. Please check your credentials.' };
+    return { success: false, message: 'Admin sign-in is unavailable until the server is configured.' };
   };
 
-  const changeAdminPassword = (newPass: string) => {
-    const cleanPass = newPass.trim();
-    safeStorage.setItem('spotera_admin_pass', cleanPass);
-    setHasAdminPasswordSet(true);
+  const changeAdminPassword = (_newPass: string) => {
+    throw new Error('Password changes require a verified server session.');
   };
 
   const adminLogout = () => {

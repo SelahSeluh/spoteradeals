@@ -22,7 +22,7 @@ export const FeaturedDealsSection: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Featured Deals
+            Hot Deals for Families
           </h2>
         </div>
 

@@ -23,26 +23,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   const [googleName, setGoogleName] = useState('');
 
   const handleClick = async () => {
-    setLoading(true);
-
-    // 1. Check if Google Identity Services (GSI) is loaded on window
-    if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-      try {
-        (window as any).google.accounts.id.prompt((notification: any) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            setShowPrompt(true);
-            setLoading(false);
-          }
-        });
-        return;
-      } catch (err) {
-        // Continue to interactive prompt
-      }
-    }
-
-    // 2. Open interactive verified Google flow prompt
-    setShowPrompt(true);
-    setLoading(false);
+    onError?.('Google sign-in is not configured yet. You can continue as a guest.');
   };
 
   const handleGoogleSubmit = async (e: React.FormEvent) => {
