@@ -35,6 +35,7 @@ import {
   LoyaltyHistoryItem,
   LoyaltyActionType,
 } from '../types';
+import { expeditionCatalog } from '../utils/expeditionImages';
 import { defaultIntroConfig } from '../lib/defaultConfigs';
 import {
   defaultUaeHolidays,
@@ -459,12 +460,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [businesses, setBusinesses] = useState<Business[]>(() => {
     const saved = safeStorage.getItem('spotera_businesses');
-    return safeJsonParse(saved, initialBusinesses);
+    return expeditionCatalog(safeJsonParse(saved, initialBusinesses));
   });
 
   const [deals, setDeals] = useState<Deal[]>(() => {
     const saved = safeStorage.getItem('spotera_deals');
-    return safeJsonParse(saved, initialDeals);
+    return expeditionCatalog(safeJsonParse(saved, initialDeals));
   });
 
   const [coupons, setCoupons] = useState<Coupon[]>(() => {

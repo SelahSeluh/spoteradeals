@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Heart, MapPin, Users, Link2 } from 'lucide-react';
+import { expeditionImage } from '../utils/expeditionImages';
 import { Deal } from '../types';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
@@ -84,10 +85,7 @@ export const DealCard: React.FC<DealCardProps> = ({
 
   const displayTitle = getLocalizedTitle(deal, language);
 
-  const dealImage =
-    (deal.images && deal.images[0]) ||
-    deal.imageUrl ||
-    'https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&q=80&w=800';
+  const dealImage = expeditionImage(`${deal.title} ${deal.category}`);
 
   const locationText = deal.district
     ? `${deal.district}, ${deal.city}`
@@ -114,13 +112,13 @@ export const DealCard: React.FC<DealCardProps> = ({
       >
         <img
           src={dealImage}
-          alt={deal.title}
+          alt={`Illustration for ${deal.title}`}
           referrerPolicy="no-referrer"
           onError={(e) => {
             const target = e.currentTarget;
-            if (!target.src.includes('photo-1511882150382')) {
+            if (!target.src.endsWith('/expedition/map.svg')) {
               target.src =
-                'https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&q=80&w=800';
+                '/expedition/map.svg';
             }
           }}
           className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-300 ease-out"

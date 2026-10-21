@@ -31,7 +31,7 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'explore',
-      label: t('navDeals') || 'Deals',
+      label: 'Explore',
       icon: Compass,
       isActive: activeView === 'explore' || activeView === 'categories' || activeView === 'search',
       onClick: () => {
@@ -65,7 +65,7 @@ export const BottomNav: React.FC = () => {
       id: 'profile',
       label: 'Profile',
       icon: User,
-      isActive: activeView === 'profile' || activeView === 'auth' || activeView === 'rewards' || activeView === 'membership',
+      isActive: activeView === 'profile' || activeView === 'settings' || activeView === 'auth' || activeView === 'membership',
       onClick: () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setActiveView('profile');
@@ -89,6 +89,7 @@ export const BottomNav: React.FC = () => {
               key={tab.id}
               onClick={tab.onClick}
               aria-label={tab.label}
+              aria-current={active ? 'page' : undefined}
               className="flex-1 flex flex-col items-center justify-center py-1 cursor-pointer transition-transform active:scale-95 group"
             >
               <div className="relative">

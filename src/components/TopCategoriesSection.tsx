@@ -1,3 +1,4 @@
+import { expeditionImage } from '../utils/expeditionImages';
 import React from 'react';
 import {
   Baby,
@@ -95,7 +96,7 @@ export const TopCategoriesSection: React.FC = () => {
             >
               {/* Background Lifestyle Image */}
               <img
-                src={cat.imageUrl}
+                src={expeditionImage(cat.name)}
                 alt={cat.name}
                 referrerPolicy="no-referrer"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"

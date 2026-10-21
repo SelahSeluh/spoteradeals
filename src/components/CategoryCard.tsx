@@ -1,5 +1,6 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
+import { expeditionImage } from '../utils/expeditionImages';
 import { useApp } from '../context/AppContext';
 
 export interface CategoryInfo {
@@ -26,9 +27,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 }) => {
   const { t } = useApp();
   const defaultBg = category.color || '#1A4FBF';
-  const defaultImg =
-    category.imageUrl ||
-    'https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&q=80&w=600';
+  const defaultImg = expeditionImage(category.name);
 
   return (
     <div
@@ -46,9 +45,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           loading="lazy"
           onError={(e) => {
             const target = e.currentTarget;
-            if (!target.src.includes('photo-1511882150382')) {
+            if (!target.src.endsWith('/expedition/map.svg')) {
               target.src =
-                'https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&q=80&w=600';
+                '/expedition/map.svg';
             }
           }}
         />

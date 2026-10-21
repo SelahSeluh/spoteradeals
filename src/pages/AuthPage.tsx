@@ -20,6 +20,8 @@ import { SpoteraLogo } from '../components/SpoteraLogo';
 import { GoogleSignInButton } from '../components/GoogleSignInButton';
 import { authService } from '../services/authService';
 import { safeSessionStorage } from '../utils/storage';
+import { PaperWordmark } from '../components/Navbar';
+import { ExpeditionSkyline } from '../components/ExpeditionScenery';
 import { Language } from '../types';
 
 export const AuthPage: React.FC = () => {
@@ -164,282 +166,27 @@ export const AuthPage: React.FC = () => {
     { code: 'ru', label: 'Русский', flag: '🇷🇺' },
   ];
 
-  return (
-    <div className="paper-auth min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 font-sans select-none relative spotera-mesh-canvas py-6">
-      {/* Top Bar with Back Link & Language Selector */}
-      <div className="w-full max-w-[400px] flex items-center justify-between mb-3 z-20 px-1">
-        <button
-          type="button"
-          onClick={handleGuest}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#0C5CAB] transition-colors cursor-pointer shadow-xs active:scale-95"
-        >
-          <ArrowRight className={`w-3.5 h-3.5 ${isRtl ? '' : 'rotate-180'} text-slate-500`} />
-          <span>{t('home')}</span>
-        </button>
-        <div className="relative inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200 shadow-xs text-xs font-semibold text-slate-700">
-          <Globe className="w-3.5 h-3.5 text-[#0C5CAB]" />
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="bg-transparent border-none text-xs font-bold text-slate-800 cursor-pointer focus:outline-hidden"
-          >
-            {languages.map((l) => (
-              <option key={l.code} value={l.code}>
-                {l.flag} {l.label}
-              </option>
-            ))}
-          </select>
+  return <div className="expedition-auth">
+    <aside className="expedition-auth-aside" aria-hidden="true"><div className="expedition-auth-map"/><p>Fold. Explore. Play.</p><h2>Your next adventure<br/>starts right here.</h2><ExpeditionSkyline/></aside>
+    <div className="expedition-auth-main">
+      <div className="expedition-auth-tools"><button type="button" onClick={handleGuest}>← Explore as a guest</button><label><Globe size={15}/><select aria-label="Choose language" value={language} onChange={e=>setLanguage(e.target.value as Language)}>{languages.map(l=><option key={l.code} value={l.code}>{l.label}</option>)}</select></label></div>
+      <section className="expedition-auth-card"><PaperWordmark/><span className="expedition-eyebrow">YOUR FAMILY ADVENTURE STARTS HERE</span><h1>Welcome, explorer.</h1><p className="expedition-auth-description">Find your next great day out in the UAE.</p>
+        {authModalReason && <p className="expedition-auth-notice">{authModalReason}</p>}
+        {targetDeal && <p className="expedition-auth-notice">Continue to {targetDeal.title}</p>}
+        {errorMsg && <p role="alert" className="expedition-form-error">{errorMsg}</p>}
+        <div className="expedition-auth-actions"><GoogleSignInButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} label={t('continueWithGoogle')} size="md"/>
+          <button type="button" onClick={handleAppleAuth}><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path fill="currentColor" d="M16.4 1c.1 1.3-.4 2.4-1.1 3.2-.8.9-1.9 1.4-3 1.3-.1-1.2.4-2.4 1.1-3.2.8-.8 2-1.3 3-1.3Zm3.8 16.3c-.5 1.2-.8 1.8-1.4 2.8-.9 1.3-2.2 2.9-3.8 2.9-1.4 0-1.8-.9-3.8-.9s-2.4.9-3.8.9c-1.6 0-2.8-1.5-3.7-2.8C1.2 16.6.8 12 2.3 9.5c1.1-1.8 2.8-2.8 4.4-2.8s2.6.9 3.9.9c1.3 0 2.1-.9 3.9-.9 1.4 0 2.9.8 3.9 2.1-3.5 1.9-2.9 6.8 1.8 8.5Z"/></svg>{t('continueWithApple')}</button>
+          <button type="button" aria-expanded={showOtherMethods} onClick={()=>setShowOtherMethods(!showOtherMethods)}><Mail size={18}/>Continue with email<ChevronDown size={14}/></button>
+          <button type="button" className="expedition-guest-button" onClick={handleGuest}><Compass size={18}/>{t('continueAsGuest')}<ArrowRight size={16}/></button>
         </div>
-      </div>
-      {/* Soft Ambient Background Elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#0D9CFD]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-1/3 w-[450px] h-[250px] bg-[#FD9302]/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="paper-auth-card w-full max-w-[400px] bg-white rounded-2xl sm:rounded-3xl border border-[#D9E3F0] shadow-[0_8px_30px_rgba(13,79,165,0.08)] p-4 sm:p-6 space-y-4 relative z-10">
-        <div className="paper-auth-collage"><span>Good to<br/>see you<br/>again!</span><span className="paper-photo paper-photo-family" role="img" aria-label="Family making happy memories"/></div>
-        {/* Top Branding */}
-        <div className="text-center flex flex-col items-center">
-          <SpoteraLogo
-            size="md"
-            variant="light"
-            showTagline={true}
-            taglineText="UAE DEALS & TICKETS"
-          />
-          <h1 className="text-lg sm:text-xl font-black text-[#0D1B3E] tracking-tight mt-2.5">
-            {t('authWelcome')}
-          </h1>
-          <p className="text-[11px] sm:text-xs text-[#5F6B82] mt-0.5 max-w-xs leading-relaxed">
-            {t('authTagline')}
-          </p>
-        </div>
-
-        {/* Action Trigger Banner if user was prompted to auth */}
-        {targetDeal && (
-          <div className="bg-[#EBF6FF] border border-[#B8E2FF] rounded-xl p-2.5 flex items-center gap-2.5">
-            {targetDeal.images?.[0] && (
-              <img
-                src={targetDeal.images[0]}
-                alt={targetDeal.title}
-                className="w-10 h-10 rounded-lg object-cover shrink-0 border border-blue-100"
-              />
-            )}
-            <div className="min-w-0 flex-1 text-start">
-              <div className="text-[9px] uppercase font-black tracking-wider text-[#0D9CFD]">{t('specialOffer') || 'Special Offer Pass'}</div>
-              <div className="text-xs font-bold text-slate-900 truncate">{targetDeal.title}</div>
-              <div className="text-[10px] text-slate-500">{targetDeal.city} • {t('save')} AED {targetDeal.originalPrice - targetDeal.discountPrice}</div>
-            </div>
-          </div>
-        )}
-
-        {authModalReason && (
-          <div className="bg-[#FFF8E6] border border-[#FFE082] rounded-xl px-3 py-2 flex items-center gap-2 text-[#8C5800] text-xs font-semibold">
-            <Ticket className="w-3.5 h-3.5 text-[#F5820A] shrink-0" />
-            <span className="text-[11px]">{authModalReason}</span>
-          </div>
-        )}
-
-        {/* Error message */}
-        {errorMsg && (
-          <div className="bg-rose-50 border border-rose-200 rounded-xl px-3 py-1.5 text-rose-700 text-xs font-semibold text-center">
-            {errorMsg}
-          </div>
-        )}
-
-        {/* PRIMARY AUTHENTICATION ACTIONS */}
-        <div className="space-y-2 pt-0.5">
-          {/* Continue with Apple Button */}
-          <button
-            type="button"
-            onClick={handleAppleAuth}
-            className="w-full h-10 sm:h-11 px-4 bg-black hover:bg-neutral-900 active:scale-[0.99] text-white rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-xs"
-          >
-            <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 170 170">
-              <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.08-7.7-7.92-12.04-14.5-5.99-9.13-10.66-19.48-14.01-31.06-3.35-11.57-5.03-22.75-5.03-33.52 0-14.35 3.63-26.33 10.89-35.95 7.26-9.62 16.5-14.52 27.71-14.7 4.9.12 10.3 1.34 16.2 3.68 5.9 2.34 9.58 3.56 11.04 3.68 2.02-.34 5.99-1.63 11.91-3.86 5.92-2.24 11.13-3.26 15.63-3.07 10.89.73 19.86 4.75 26.91 12.06-9.51 5.75-14.18 13.9-14.01 24.45.18 8.44 3.32 15.53 9.42 21.28 6.1 5.75 13.36 9.07 21.78 9.96-2.12 6.52-4.78 13.06-7.99 19.61zM119.22 31.02c0-7.25 2.66-13.9 7.98-19.95 5.32-6.05 11.75-9.69 19.29-10.92.23 1.36.35 2.61.35 3.75 0 7.25-2.77 14.12-8.31 20.61-5.54 6.49-12.18 10.13-19.91 10.92-.2-1.36-.31-2.61-.31-3.75z" />
-            </svg>
-            <span>{t('continueWithApple')}</span>
-          </button>
-
-          {/* Continue with Google Button */}
-          <div className="w-full">
-            <GoogleSignInButton
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              label={t('continueWithGoogle')}
-              size="md"
-            />
-          </div>
-
-          {/* Continue as Guest Button */}
-          <button
-            type="button"
-            onClick={handleGuest}
-            className="w-full h-10 sm:h-11 px-4 bg-[#F1F6FB] hover:bg-[#E5F0FA] active:scale-[0.99] text-[#0D1B3E] rounded-xl text-xs font-bold border border-[#D9E3F0] hover:border-[#0D9CFD]/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
-          >
-            <Compass className="w-3.5 h-3.5 text-[#0D9CFD]" />
-            <span>{t('continueAsGuest')}</span>
-            <ArrowRight className={`w-3.5 h-3.5 text-[#8D98AA] ${isRtl ? 'rotate-180' : ''}`} />
-          </button>
-        </div>
-
-        <button type="button" aria-expanded={showOtherMethods} onClick={()=>setShowOtherMethods(!showOtherMethods)} className="paper-email-toggle"><Mail size={16}/> Continue with email <ChevronDown size={14}/></button>
-        {showOtherMethods && <>
-        {/* Divider */}
-        <div className="relative flex items-center justify-center pt-1">
-          <div className="border-t border-slate-200 w-full" />
-          <span className="bg-white px-2.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider absolute">
-            {t('authOrEmail')}
-          </span>
-        </div>
-
-        {/* Email & Password Authentication: Sign In / Sign Up */}
-        <div className="space-y-3">
-          {/* Segmented Switch: Sign In vs Sign Up */}
-          <div className="flex bg-[#F0F4F8] p-1 rounded-xl border border-[#E2E8F0]">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('login');
-                setErrorMsg(null);
-              }}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'login'
-                  ? 'bg-white text-[#0D1B3E] shadow-xs'
-                  : 'text-[#5F6B82] hover:text-[#0D1B3E]'
-              }`}
-            >
-              {t('signInTab')}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('register');
-                setErrorMsg(null);
-              }}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'register'
-                  ? 'bg-white text-[#0D1B3E] shadow-xs'
-                  : 'text-[#5F6B82] hover:text-[#0D1B3E]'
-              }`}
-            >
-              {t('signUpTab')}
-            </button>
-          </div>
-
-          {/* Compact Email/Password Form */}
-          <form onSubmit={handleSubmit} className="space-y-2.5">
-            {activeTab === 'register' && (
-              <div>
-                <label className="block text-[10px] font-bold text-[#0D1B3E] uppercase tracking-wider mb-1">
-                  {t('fullNameLabel')}
-                </label>
-                <div className="relative">
-                  <User className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-[#8D98AA] ${isRtl ? 'right-3' : 'left-3'}`} />
-                  <input
-                    type="text"
-                    required
-                    placeholder={t('fullNamePlaceholder')}
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className={`w-full py-2 bg-[#F8FAFC] border border-[#D9E3F0] rounded-xl text-xs text-[#0D1B3E] placeholder-[#8D98AA] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#0D9CFD] focus:border-transparent transition-all ${isRtl ? 'pr-9 pl-3 text-right' : 'pl-9 pr-3 text-left'}`}
-                  />
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-[10px] font-bold text-[#0D1B3E] uppercase tracking-wider mb-1">
-                {t('emailLabel')}
-              </label>
-              <div className="relative">
-                <Mail className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-[#8D98AA] ${isRtl ? 'right-3' : 'left-3'}`} />
-                <input
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full py-2 bg-[#F8FAFC] border border-[#D9E3F0] rounded-xl text-xs text-[#0D1B3E] placeholder-[#8D98AA] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#0D9CFD] focus:border-transparent transition-all ${isRtl ? 'pr-9 pl-3 text-right' : 'pl-9 pr-3 text-left'}`}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-[10px] font-bold text-[#0D1B3E] uppercase tracking-wider">
-                  {t('passwordLabel')}
-                </label>
-                {activeTab === 'login' && (
-                  <button
-                    type="button"
-                    onClick={() => showToast.info(t('forgotPasswordMsg'))}
-                    className="text-[10px] font-semibold text-[#0D9CFD] hover:underline"
-                  >
-                    {t('forgotPasswordLink')}
-                  </button>
-                )}
-              </div>
-              <div className="relative">
-                <Lock className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-[#8D98AA] ${isRtl ? 'right-3' : 'left-3'}`} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  minLength={6}
-                  placeholder={t('passwordPlaceholder')}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full py-2 bg-[#F8FAFC] border border-[#D9E3F0] rounded-xl text-xs text-[#0D1B3E] placeholder-[#8D98AA] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#0D9CFD] focus:border-transparent transition-all ${isRtl ? 'pr-9 pl-9 text-right' : 'pl-9 pr-9 text-left'}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute top-1/2 -translate-y-1/2 text-[#8D98AA] hover:text-[#0D1B3E] cursor-pointer ${isRtl ? 'left-2.5' : 'right-2.5'}`}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full h-10 px-4 bg-gradient-to-r from-[#0C5CAB] to-[#0D9CFD] hover:from-[#0B5096] hover:to-[#0C8FE8] active:scale-[0.99] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-            >
-              {isSubmitting ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{t('processing')}</span>
-                </span>
-              ) : (
-                <span>
-                  {activeTab === 'register' ? t('signUpTab') : t('signInTab')}
-                </span>
-              )}
-            </button>
-          </form>
-        </div>
-
-        </>}
-        {/* Value Highlights for Family Trust */}
-        <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-[#F0F4F8] text-center">
-          <div className="p-1.5 rounded-xl bg-[#F8FAFC] flex flex-col items-center">
-            <Users className="w-3.5 h-3.5 text-[#0D9CFD] mb-0.5" />
-            <span className="text-[9px] font-bold text-[#0D1B3E]">{t('familyFirst')}</span>
-            <span className="text-[8px] text-[#8D98AA]">{t('familyFirstDesc')}</span>
-          </div>
-          <div className="p-1.5 rounded-xl bg-[#F8FAFC] flex flex-col items-center">
-            <Ticket className="w-3.5 h-3.5 text-[#F5820A] mb-0.5" />
-            <span className="text-[9px] font-bold text-[#0D1B3E]">{t('instantPasses')}</span>
-            <span className="text-[8px] text-[#8D98AA]">{t('instantPassesDesc')}</span>
-          </div>
-          <div className="p-1.5 rounded-xl bg-[#F8FAFC] flex flex-col items-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 mb-0.5" />
-            <span className="text-[9px] font-bold text-[#0D1B3E]">{t('bestRates')}</span>
-            <span className="text-[8px] text-[#8D98AA]">{t('bestRatesDesc')}</span>
-          </div>
-        </div>
-      </div>
+        {showOtherMethods && <div className="expedition-email"><div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div><form onSubmit={handleSubmit}>
+          {activeTab==='register' && <label>Full name<input required autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
+          <label>Email<input type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/></label>
+          <label>Password<span className="expedition-password"><input type={showPassword?'text':'password'} required minLength={6} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
+          <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':activeTab==='login'?'Sign in':'Create account'}</button>
+        </form></div>}
+        <p className="expedition-auth-legal">By continuing, you agree to our <button onClick={()=>setActiveView('terms')}>Terms</button> and <button onClick={()=>setActiveView('privacy')}>Privacy Policy</button>.</p>
+      </section><ExpeditionSkyline/><small className="expedition-auth-caption">Small expeditions. Big family moments.</small>
     </div>
-  );
+  </div>;
 };

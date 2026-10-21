@@ -102,9 +102,7 @@ export const ProfilePage: React.FC = () => {
   const currentLangLabel =
     languages.find((l) => l.code === language)?.label || 'EN';
 
-  const avatarUrl =
-    user.avatar ||
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';
+  const avatarUrl = '/expedition/compass.svg';
 
   return (
     <div className="paper-profile min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6">

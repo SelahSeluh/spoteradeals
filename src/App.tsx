@@ -4,6 +4,7 @@ import { ToastProvider } from './context/ToastContext';
 import { ToastContainer } from './components/ToastContainer';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { Navbar } from './components/Navbar';
+import { ExpeditionSkyline } from './components/ExpeditionScenery';
 import { Footer } from './components/Footer';
 import { CouponModal } from './components/CouponModal';
 import { BookingModal } from './components/BookingModal';
@@ -162,6 +163,7 @@ const MainAppContent: React.FC = () => {
             </React.Suspense>
           )}
         </main>
+        <div className="expedition-page-footer" aria-hidden="true"><ExpeditionSkyline/></div>
       </ErrorBoundary>
 
       {/* Claimed Coupon Modal */}
