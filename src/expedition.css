@@ -14,3 +14,8 @@ main[data-paper-page]>div{background-color:transparent!important}main h1{font-si
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 .expedition-page-footer{display:none}@media(max-width:767px){.expedition-page-footer{display:block;padding:0 16px 90px;margin-top:-50px;pointer-events:none}.expedition-page-footer .expedition-skyline{height:55px;opacity:.6}.expedition-page-footer:has(+.paper-footer){padding-bottom:90px}}
+/* Keep the main map title distinct from smaller utility-page headings. */
+main .expedition-hero h1{font-size:38px!important}
+@media(min-width:768px) and (max-width:1100px){main .expedition-hero h1{font-size:34px!important}}
+@media(max-width:767px){main .expedition-hero h1{font-size:32px!important}}
+@media(max-width:360px){.paper-nav-inner{padding-inline:9px;gap:3px}.paper-wordmark{font-size:20px}.expedition-pin{width:20px}.wordmark-name small{font-size:5px}.paper-nav-actions{gap:0}.paper-icon{width:27px}.paper-account{min-width:30px;padding:5px}main .expedition-hero h1{font-size:29px!important}.expedition-categories button{font-size:7px}.expedition-stop-label strong{font-size:12px}.expedition-stop-bottom{font-size:8px;padding-left:25px}}
