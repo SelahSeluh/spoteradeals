@@ -167,7 +167,7 @@ export const AuthPage: React.FC = () => {
   ];
 
   return <div className="expedition-auth">
-    <aside className="expedition-auth-aside" aria-hidden="true"><div className="expedition-auth-map"/><p>Fold. Explore. Play.</p><h2>Your next adventure<br/>starts right here.</h2><ExpeditionSkyline/></aside>
+    <aside className="expedition-auth-aside" aria-hidden="true"><div className="expedition-auth-map"/><p>Explore. Discover. Together.</p><h2>Your next adventure<br/>starts right here.</h2><ExpeditionSkyline/></aside>
     <div className="expedition-auth-main">
       <div className="expedition-auth-tools"><button type="button" onClick={handleGuest}>← Explore as a guest</button><label><Globe size={15}/><select aria-label="Choose language" value={language} onChange={e=>setLanguage(e.target.value as Language)}>{languages.map(l=><option key={l.code} value={l.code}>{l.label}</option>)}</select></label></div>
       <section className="expedition-auth-card"><PaperWordmark/><span className="expedition-eyebrow">YOUR FAMILY ADVENTURE STARTS HERE</span><h1>Welcome, explorer.</h1><p className="expedition-auth-description">Find your next great day out in the UAE.</p>
@@ -186,7 +186,7 @@ export const AuthPage: React.FC = () => {
           <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':activeTab==='login'?'Sign in':'Create account'}</button>
         </form></div>}
         <p className="expedition-auth-legal">By continuing, you agree to our <button onClick={()=>setActiveView('terms')}>Terms</button> and <button onClick={()=>setActiveView('privacy')}>Privacy Policy</button>.</p>
-      </section><ExpeditionSkyline/><small className="expedition-auth-caption">Small expeditions. Big family moments.</small>
+      </section><ExpeditionSkyline/><small className="expedition-auth-caption">More discovery. More together.</small>
     </div>
   </div>;
 };

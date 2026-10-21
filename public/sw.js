@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotera-pocket-expedition-v7';
+const CACHE_NAME = 'spotera-playful-cutouts-v8';
 const STATIC_ASSETS = [
   '/spoteradeals-logo.png',
   '/icon-192.png',

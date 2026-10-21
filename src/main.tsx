@@ -8,6 +8,7 @@ import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 import './expedition.css';
+import './playful-cutouts.css';
 
 // Safely unregister stale service workers in development to prevent caching issues in iframe preview
 if (import.meta.env.DEV) {

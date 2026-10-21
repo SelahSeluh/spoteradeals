@@ -1,10 +1,27 @@
 import React from 'react';
-import {Search,ArrowUpRight,Waves,Compass,Utensils,Trees,Shapes,MapPin} from 'lucide-react';
-import {useApp} from '../context/AppContext';
-import {ExpeditionSkyline} from './ExpeditionScenery';
-const stops=[{title:'Water adventures',note:'Make a splash together',category:'Attractions',image:'waterpark',icon:Waves},{title:'Indoor play',note:'A little play. A lot of discovery.',category:'Kids Play Areas',image:'play',icon:Shapes},{title:'Parks & outdoors',note:'Take the scenic route',category:'Family Experiences',image:'outdoors',icon:Trees}] as const;
-export const SpoteraPlayfulHero:React.FC=()=>{
+import { Search, ArrowRight, Waves, Compass, Utensils, Trees, Shapes } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+const categories = [
+ {label:'All experiences',value:'All',icon:Compass},
+ {label:'Water adventures',value:'Attractions',icon:Waves},
+ {label:'Indoor play',value:'Kids Play Areas',icon:Shapes},
+ {label:'Parks & outdoors',value:'Family Experiences',icon:Trees},
+ {label:'Food & dining',value:'Restaurants',icon:Utensils},
+];
+export const SpoteraPlayfulHero: React.FC = () => {
  const {searchQuery,setSearchQuery,setSelectedCategory,setActiveView}=useApp();
- const explore=(category:string)=>{setSelectedCategory(category as any);setActiveView('explore')};
- return <section className="expedition-hero"><div className="expedition-hero-copy"><span className="expedition-eyebrow"><Compass size={15}/> YOUR FAMILY ADVENTURE MAP</span><h1>Small expeditions.<br/><em>Big family moments.</em></h1><p>Find your next day out across the UAE.<br/>Pick a place. Follow your curiosity.</p><form className="expedition-search" onSubmit={e=>{e.preventDefault();setActiveView('search')}}><Search size={19}/><input aria-label="Search activities" placeholder="Search activities, areas or keywords" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/><button aria-label="Search experiences" type="submit"><ArrowUpRight size={21}/></button></form><div className="expedition-categories">{[["All","All",Compass],["Waterparks","Attractions",Waves],["Indoor play","Kids Play Areas",Shapes],["Food & dining","Restaurants",Utensils]].map(([label,key,Icon]:any)=><button key={label} onClick={()=>explore(key)}><Icon size={19}/>{label}</button>)}</div></div><div className="expedition-route" aria-label="Choose an adventure"><svg className="expedition-route-line" viewBox="0 0 760 470" preserveAspectRatio="none" aria-hidden="true"><path d="M35 270C180 500 205-10 380 220S520 500 730 90"/></svg>{stops.map((stop,i)=>{const Icon=stop.icon;return <button key={stop.title} className={`expedition-stop stop-${i+1}`} onClick={()=>explore(stop.category)}><span className="expedition-stop-label"><b>{i+1}</b><span><strong>{stop.title}</strong><small>{stop.note}</small></span></span><span className="expedition-stop-picture"><img src={`/expedition/${stop.image}.svg`} alt={`Illustrated ${stop.title.toLowerCase()} without people`}/><span className="expedition-stop-flag"><MapPin size={12}/> EXPLORE UAE</span></span><span className="expedition-stop-bottom"><Icon size={23}/><span>Explore this route</span><ArrowUpRight size={18}/></span></button>})}<span className="expedition-map-note">Plan less.<br/>Discover more.</span></div><ExpeditionSkyline/></section>
+ return <section className="cutouts-hero" aria-labelledby="cutouts-title">
+  <div className="cutouts-photo" role="img" aria-label="Dubai skyline and waterfront gardens"/>
+  <div className="cutouts-shape cutouts-turquoise" aria-hidden="true"/>
+  <div className="cutouts-shape cutouts-orange" aria-hidden="true"/>
+  <div className="cutouts-copy"><span className="cutouts-eyebrow">YOUR NEXT UAE FAMILY DAY OUT</span>
+   <h1 id="cutouts-title">Explore more.<br/>Make memories.<br/><em>Together.</em></h1>
+   <p>Discover activities, parks and family deals<br/>across the UAE.</p>
+   <button className="cutouts-cta" onClick={()=>{setSelectedCategory('All');setActiveView('explore')}}>Explore experiences <ArrowRight size={20}/></button>
+  </div>
+  <form className="cutouts-search" onSubmit={e=>{e.preventDefault();setActiveView('search')}}>
+   <span className="cutouts-location">UAE adventures</span><Search size={20}/><input aria-label="Search activities" placeholder="Search activities, areas or keywords" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/><button type="submit">Search <ArrowRight size={18}/></button>
+  </form>
+  <div className="cutouts-categories">{categories.map(({label,value,icon:Icon})=><button key={value} onClick={()=>{setSelectedCategory(value as Parameters<typeof setSelectedCategory>[0]);setActiveView('explore')}}><span><Icon size={25}/></span>{label}</button>)}</div>
+ </section>;
 };
