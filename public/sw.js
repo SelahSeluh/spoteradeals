@@ -1,10 +1,12 @@
-const CACHE_NAME = 'spotera-cool-picnic-photos-v10';
+const CACHE_NAME = 'spotera-official-logo-v11';
 const STATIC_ASSETS = [
   '/spoteradeals-logo.png',
   '/icon-192.png',
   '/icon-512.png',
   '/apple-touch-icon.png',
   '/favicon.ico',
+  '/favicon-48.png',
+  '/favicon-96.png',
   '/manifest.json'
 ];
 
