@@ -9,12 +9,13 @@ import { CouponModal } from './components/CouponModal';
 import { BookingModal } from './components/BookingModal';
 import { LinkShareModal } from './components/LinkShareModal';
 import { BottomNav } from './components/BottomNav';
-import { WhatsAppButton } from './components/WhatsAppButton';
+import { PaperChat } from './components/PaperChat';
 import { WelcomeAuthModal } from './components/WelcomeAuthModal';
 import { QrScannerModal } from './components/QrScannerModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineAlertBanner } from './components/OfflineAlertBanner';
 
+import { SettingsPage } from './pages/SettingsPage';
 import { HomePage } from './pages/HomePage';
 import { ExplorePage } from './pages/ExplorePage';
 import { FamilyPage } from './pages/FamilyPage';
@@ -79,6 +80,11 @@ const MainAppContent: React.FC = () => {
     });
   };
 
+  // Startup overlay takes precedence over the authentication page.
+  if (startupPhase === 'intro' || showOpeningAnimation) {
+    return <OpeningAnimation onPreviewClose={dismissOpeningAnimation} />;
+  }
+
   // 1. AUTHENTICATION VIEW: Render full Auth Page when activeView is explicitly 'auth'
   if (activeView === 'auth') {
     return (
@@ -103,13 +109,6 @@ const MainAppContent: React.FC = () => {
   // 3. MAIN CUSTOMER & GUEST APPLICATION: Always mounted & rendered smoothly
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-300 relative spotera-mesh-canvas text-slate-900">
-      {/* Intro Video Animation Overlay (Smooth fade over pre-mounted app) */}
-      {(startupPhase === 'intro' || showOpeningAnimation) && (
-        <div id="spotera-intro-screen" className="fixed inset-0 z-[100] bg-[#0A2540] overflow-hidden flex flex-col items-center justify-center">
-          <OpeningAnimation onPreviewClose={dismissOpeningAnimation} />
-        </div>
-      )}
-
       {/* Offline Alert Sticky Banner */}
       <OfflineAlertBanner />
 
@@ -118,7 +117,7 @@ const MainAppContent: React.FC = () => {
 
       {/* Main View Area */}
       <ErrorBoundary>
-        <main className="flex-1 w-full max-w-full overflow-x-hidden pb-20 md:pb-8">
+        <main data-paper-page={activeView} className="flex-1 w-full max-w-full overflow-x-hidden pb-20 md:pb-8">
           {isAppInitializing || isViewLoading ? (
             <MainViewSkeleton activeView={activeView} />
           ) : (
@@ -127,7 +126,7 @@ const MainAppContent: React.FC = () => {
                 'explore', 'requests', 'family', 'categories', 'wishlist', 'deal-detail',
                 'profile', 'bookings', 'rewards', 'search', 'booking-confirm', 'coupons',
                 'admin', 'partners', 'membership', 'auth', 'about', 'contact', 'faq',
-                'privacy', 'terms'
+                'privacy', 'terms', 'settings'
               ].includes(activeView))) && (
                 <HomePage onClaimCoupon={handleClaimCoupon} onBookNow={handleBookNow} />
               )}
@@ -144,6 +143,7 @@ const MainAppContent: React.FC = () => {
                 <DealDetailPage onClaimCoupon={handleClaimCoupon} onBookNow={handleBookNow} />
               )}
               {activeView === 'profile' && <ProfilePage />}
+              {activeView === 'settings' && <SettingsPage />}
               {activeView === 'bookings' && <BookingsPage />}
               {activeView === 'rewards' && <RewardsPage />}
               {activeView === 'search' && <SearchPage />}
@@ -193,7 +193,7 @@ const MainAppContent: React.FC = () => {
       />
 
       {/* WhatsApp Floating Contact Button */}
-      <WhatsAppButton />
+      <PaperChat />
 
       {/* Global QR Code Scanner Modal */}
       <QrScannerModal />

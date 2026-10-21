@@ -140,7 +140,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
       role="dialog"
       aria-modal="true"
       aria-label="Activity Booking and Digital Pass"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in overflow-y-auto"
+      className="paper-booking fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

@@ -46,7 +46,7 @@ export const ProfilePage: React.FC = () => {
   const [editName, setEditName] = useState(user.name || '');
   const [editEmail, setEditEmail] = useState(user.email || '');
   const [editPhone, setEditPhone] = useState(user.phone || '');
-  const [editAddress, setEditAddress] = useState(user.address || 'Dubai Marina, Dubai, UAE');
+  const [editAddress, setEditAddress] = useState(user.address || '');
 
   const languages: { code: Language; label: string }[] = [
     { code: 'en', label: 'EN' },
@@ -95,11 +95,9 @@ export const ProfilePage: React.FC = () => {
   };
 
   const isAdmin =
-    user.role === 'admin' ||
-    isAdminAuthenticated ||
-    user.email?.toLowerCase().includes('admin');
+    user.role === 'admin' || user.role === 'ADMIN' || isAdminAuthenticated;
 
-  const points = user.rewardsPoints ?? 120;
+  const points = user.rewardsPoints ?? 0;
   const savedCount = user.savedDealIds ? user.savedDealIds.length : 0;
   const currentLangLabel =
     languages.find((l) => l.code === language)?.label || 'EN';
@@ -109,7 +107,7 @@ export const ProfilePage: React.FC = () => {
     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';
 
   return (
-    <div className="min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6">
+    <div className="paper-profile min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6">
       <div className="max-w-xl mx-auto flex flex-col gap-3.5">
         {/* Page Header */}
         <div className="flex items-center justify-between min-h-[46px]">
@@ -128,10 +126,10 @@ export const ProfilePage: React.FC = () => {
             />
             <div className="flex flex-col gap-0.5 min-w-0">
               <h2 className="text-lg font-bold text-white truncate leading-tight">
-                {user.name || 'Mariam Al Hashemi'}
+                {user.name || 'Guest explorer'}
               </h2>
               <p className="text-[11px] text-[#C9D8FF] truncate">
-                {user.email || 'mariam.family@spoteradeals.ae'}
+                {user.email || 'Browsing as a guest'}
               </p>
               <div className="inline-flex items-center gap-1.5 self-start mt-1 px-2.5 py-1 rounded-full bg-white text-[#F5820A] shadow-xs">
                 <Gift className="w-3.5 h-3.5 text-[#F5820A]" />
@@ -211,6 +209,7 @@ export const ProfilePage: React.FC = () => {
             </div>
           </button>
 
+          <button onClick={()=>setActiveView('settings')} className="w-full min-h-[57px] px-4 flex items-center justify-between text-sm font-semibold"><span>Settings</span><ChevronRight className="w-4 h-4"/></button>
           {/* Address */}
           <button
             onClick={() => setShowAddressModal(true)}
@@ -385,7 +384,7 @@ export const ProfilePage: React.FC = () => {
                   type="tel"
                   value={editPhone}
                   onChange={(e) => setEditPhone(e.target.value)}
-                  placeholder="+971 50 123 4567"
+                  placeholder="Your phone number"
                   className="w-full h-10 px-3 rounded-[12px] bg-[#F5F7FA] border border-[#E7EBF2] text-xs font-semibold text-[#0D1B3E] focus:outline-none focus:border-[#1A4FBF]"
                 />
               </div>
@@ -545,37 +544,7 @@ export const ProfilePage: React.FC = () => {
               For assistance with your bookings or passes, have your booking reference ready and contact our customer care team or the partner venue shown on your ticket.
             </p>
 
-            <div className="flex flex-col gap-2.5">
-              <a
-                href="https://wa.me/971503048978"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-[14px] bg-[#E8F8F5] border border-[#C5EFE8] flex items-center justify-between text-[#00B5A5] hover:bg-[#DCF5F0] transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <MessageCircle className="w-5 h-5 text-[#25D366]" />
-                  <div>
-                    <h4 className="text-xs font-bold text-[#0D1B3E]">WhatsApp Support</h4>
-                    <p className="text-[10px] text-[#5F6B82]">Instant chat with our UAE team</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-[#8D98AA]" />
-              </a>
-
-              <a
-                href="tel:+971503048978"
-                className="p-3 rounded-[14px] bg-[#F5F7FA] border border-[#E7EBF2] flex items-center justify-between hover:bg-slate-100 transition-colors"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Phone className="w-5 h-5 text-[#1A4FBF]" />
-                  <div>
-                    <h4 className="text-xs font-bold text-[#0D1B3E]">Call +971 50 304 8978</h4>
-                    <p className="text-[10px] text-[#5F6B82]">Sunday – Friday 9am to 7pm</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-[#8D98AA]" />
-              </a>
-            </div>
+            <button className="p-3 border rounded-lg" onClick={()=>{setShowHelpModal(false);setActiveView('faq')}}>Read help & frequently asked questions</button>
 
             <button
               onClick={() => setShowHelpModal(false)}

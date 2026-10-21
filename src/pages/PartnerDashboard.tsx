@@ -66,7 +66,7 @@ export const PartnerDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7FAFD] text-[#0D1B3E] font-sans pb-28">
+    <div className="paper-partner min-h-screen bg-[#F7FAFD] text-[#0D1B3E] font-sans pb-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-6 space-y-5 sm:space-y-6">
         {/* 1. TOP HEADER: Good morning, Venue name, Published pill, Notification bell */}
         <div className="flex items-center justify-between pt-1">

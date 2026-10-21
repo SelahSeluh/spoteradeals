@@ -1,53 +1,5 @@
 import React from 'react';
-import { useApp } from '../context/AppContext';
-import { Deal } from '../types';
-import { SpoteraPlayfulHero } from '../components/SpoteraPlayfulHero';
-import { WhySpoteraSection } from '../components/WhySpoteraSection';
-import { TopCategoriesSection } from '../components/TopCategoriesSection';
-import { FeaturedDealsSection } from '../components/FeaturedDealsSection';
-import { FlashDealsSection } from '../components/FlashDealsSection';
-import { DailySpotlightSection } from '../components/DailySpotlightSection';
-import { PromoCouponBanner } from '../components/PromoCouponBanner';
-
-interface HomePageProps {
-  onClaimCoupon: (deal: Deal) => void;
-  onBookNow: (deal: Deal) => void;
-}
-
-export const HomePage: React.FC<HomePageProps> = ({ onClaimCoupon, onBookNow }) => {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20 sm:pb-24 space-y-8 sm:space-y-12">
-      {/* 1. Main Spotera Playful Hero Banner with Search & Emirate Filter */}
-      <SpoteraPlayfulHero />
-
-      {/* 2. Value Proposition Strip: Best Prices, Trusted Partners, Easy Booking, Family Friendly, Rewards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <WhySpoteraSection />
-      </div>
-
-      {/* 3. Top Categories Section */}
-
-
-      {/* 4. Real-time Flash Deals with Live Countdown */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FlashDealsSection />
-      </div>
-
-      {/* 5. Hot Deals for Families Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FeaturedDealsSection />
-      </div>
-
-      {/* 5. Daily AI Family Spotlight Section */}
-      <DailySpotlightSection
-        onClaimCoupon={onClaimCoupon}
-        onBookNow={onBookNow}
-      />
-
-      {/* 6. Promotional Voucher / Coupon Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <PromoCouponBanner />
-      </div>
-    </div>
-  );
-};
+import {Deal} from '../types';
+import {SpoteraPlayfulHero} from '../components/SpoteraPlayfulHero';
+import {FeaturedDealsSection} from '../components/FeaturedDealsSection';
+export const HomePage:React.FC<{onClaimCoupon:(d:Deal)=>void;onBookNow:(d:Deal)=>void}>=()=> <div className="paper-home"><SpoteraPlayfulHero/><div className="paper-home-deals"><FeaturedDealsSection/></div><aside className="paper-end-note">Little adventures. Bigger together. <span>♡</span></aside></div>;

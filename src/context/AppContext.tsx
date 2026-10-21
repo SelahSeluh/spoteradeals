@@ -43,18 +43,14 @@ import {
 } from '../lib/loyaltyAndHolidayDefaults';
 import { safeTranslate } from '../utils/i18nHelper';
 import {
-  initialUser,
   defaultGuestUser,
   initialBusinesses,
   initialDeals,
-  initialReviews,
   initialHeroSlides,
   initialCategoriesList,
   initialLocationsList,
   initialMediaLibrary,
   initialBrandingConfig,
-  initialUserRequests,
-  initialRequestQuotes,
   initialFindMeProducts,
   initialFindMeServices,
 } from '../lib/mockData';
@@ -142,9 +138,9 @@ export const defaultFooterConfig: FooterConfig = {
   companyName: 'SpoteraDeals',
   description:
     'SpoteraDeals connects families and adults with verified deals, dining offers, attractions, kids play areas, and instant passes in AED.',
-  businessAddress: 'Dubai Marina & Downtown Dubai, UAE',
-  contactEmail: 'support@spoteradeals.ae',
-  contactPhone: '+971503048978',
+  businessAddress: '',
+  contactEmail: '',
+  contactPhone: '',
   copyrightText: '© 2026 SpoteraDeals. All rights reserved.',
   socialLinks: {
     instagram: 'https://www.instagram.com',
@@ -185,6 +181,7 @@ export type ViewMode =
   | 'contact'
   | 'faq'
   | 'privacy'
+  | 'settings'
   | 'terms'
   | 'profile'
   | 'admin'
@@ -414,10 +411,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         parsed &&
         parsed.email &&
         !parsed.email.includes('guest') &&
-        parsed.email !== 'customer@spoteradeals.com' &&
-        parsed.email !== 'rashid.family@spoteradeals.com' &&
-        !parsed.name?.toLowerCase().includes('rashid') &&
-        !parsed.name?.toLowerCase().includes('sara al mansoori')
+        Boolean(safeStorage.getItem('spotera_session_token'))
       ) {
         // Sanitize any legacy Google User label
         const rawName = (parsed.name || '').trim();
@@ -478,11 +472,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        return parsed.filter(
-          (c: Coupon) =>
-            !c.userName?.toLowerCase().includes('rashid') &&
-            !c.userName?.toLowerCase().includes('sara al mansoori')
-        );
+        return Array.isArray(parsed) ? parsed.filter((b: Booking) => b.userId === initialAuthUser?.id) : [];
       } catch (e) {
         // ignore
       }
@@ -495,12 +485,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        return parsed.filter(
-          (b: Booking) =>
-            !b.userName?.toLowerCase().includes('rashid') &&
-            !b.userName?.toLowerCase().includes('sara al mansoori') &&
-            b.userEmail !== 'customer@spoteradeals.com'
-        );
+        return Array.isArray(parsed) ? parsed.filter((b: Booking) => b.userId === initialAuthUser?.id) : [];
       } catch (e) {
         // ignore
       }
@@ -510,7 +495,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [reviews, setReviews] = useState<Review[]>(() => {
     const saved = safeStorage.getItem('spotera_reviews');
-    return safeJsonParse(saved, initialReviews);
+    return safeJsonParse(saved, []);
   });
 
   const [language, setLanguageState] = useState<Language>(() => {
@@ -530,16 +515,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Ensure businessAddress is sanitized if it matches the old hardcoded address
-        if (parsed.businessAddress?.includes('Boulevard Plaza Tower 1')) {
-          parsed.businessAddress = '';
-        }
-        if (parsed.contactPhone === '+971 4 800 SPOTERA (776-8372)') {
-          parsed.contactPhone = '+971503048978';
-        }
-        if (parsed.contactEmail === 'support@spoteradeals.com') {
-          parsed.contactEmail = '';
-        }
+        parsed.businessAddress = '';
+        parsed.contactPhone = '';
+        parsed.contactEmail = '';
         if (!parsed.socialLinks?.instagram || parsed.socialLinks.instagram.includes('instagram.com/spoteradeals')) {
           parsed.socialLinks = {
             ...parsed.socialLinks,
@@ -677,6 +655,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'contact',
         'faq',
         'privacy',
+        'settings',
         'terms',
         'profile',
         'admin',
@@ -700,10 +679,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (initialAuthUser) {
       return initialAuthUser.role === 'ADMIN' || initialAuthUser.role === 'admin' ? 'admin' : (locationView || 'home');
     }
-    if (locationView) {
-      return locationView;
-    }
-    return 'home';
+    if (safeSessionStorage.getItem('paper_guest_entered') === 'true') return locationView;
+    return 'auth';
   });
 
   const [sessionToken, setSessionToken] = useState<string | null>(() => {
@@ -716,15 +693,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const isGuest = !isLoggedIn || !user.email || user.email.includes('guest');
 
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
-    return safeStorage.getItem('spotera_admin_auth') === 'true';
+    return false;
   });
 
   const [isPartnerAuthenticated, setIsPartnerAuthenticated] = useState<boolean>(() => {
-    return safeStorage.getItem('spotera_partner_auth') === 'true';
+    return false;
   });
 
   const [adminEmail, setAdminEmail] = useState<string>(() => {
-    return safeStorage.getItem('spotera_admin_email') || 'admin@spoteradeals.com';
+    return safeStorage.getItem('spotera_admin_email') || '';
   });
 
   const [hasAdminPasswordSet, setHasAdminPasswordSet] = useState<boolean>(() => {
@@ -866,6 +843,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     safeStorage.removeItem('spotera_has_entered');
     safeSessionStorage.removeItem('spotera_welcome_modal_seen');
     safeSessionStorage.removeItem('spotera_auth_chosen');
+    safeSessionStorage.removeItem('paper_guest_entered');
     setActiveViewState('auth');
   };
 
@@ -922,7 +900,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [partnerEmail, setPartnerEmail] = useState<string>(() => {
-    return safeStorage.getItem('spotera_partner_email') || 'partner@spoteradeals.com';
+    return safeStorage.getItem('spotera_partner_email') || '';
   });
 
   const [hasPartnerPasswordSet, setHasPartnerPasswordSet] = useState<boolean>(() => {
@@ -930,7 +908,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const setupPartnerAccount = async (email: string, pass: string) => {
-    const cleanEmail = email.trim().toLowerCase() || 'partner@spoteradeals.com';
+    const cleanEmail = email.trim().toLowerCase() || '';
     const cleanPass = pass.trim();
 
     try {
@@ -960,7 +938,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
     const storedPass = safeStorage.getItem('spotera_partner_pass');
-    const storedEmail = safeStorage.getItem('spotera_partner_email') || 'partner@spoteradeals.com';
+    const storedEmail = safeStorage.getItem('spotera_partner_email') || '';
 
     fetch('/api/auth/login', {
       method: 'POST',
@@ -981,7 +959,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     if (
-      (cleanEmail === storedEmail.toLowerCase() || cleanEmail === 'partner@spoteradeals.com') &&
+      (Boolean(storedEmail) && cleanEmail === storedEmail.toLowerCase()) &&
       cleanPass === storedPass
     ) {
       setIsPartnerAuthenticated(true);
@@ -1064,7 +1042,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLocationChange = () => {
       const matched = parseViewFromLocation();
-      if (initialAuthUser || hasEnteredApp || isLoggedIn) {
+      if (initialAuthUser || safeSessionStorage.getItem('paper_guest_entered') === 'true') {
         setActiveViewState(matched);
       }
 
@@ -1129,10 +1107,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const dismissOpeningAnimation = useCallback(() => {
     setShowOpeningAnimation(false);
     setStartupPhase('app');
-    setHasEnteredApp(true);
     safeSessionStorage.setItem('spotera_animated', 'true');
-    safeStorage.setItem('spotera_has_entered', 'true');
-    setActiveViewState((curr) => (curr === 'auth' ? 'home' : curr));
+    setActiveViewState('auth');
+    window.history.replaceState(null, '', '#auth');
   }, []);
 
   const replaySplashAnimation = () => {
@@ -1969,12 +1946,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // FindMe Sourcing & Requests State
   const [userRequests, setUserRequests] = useState<UserRequest[]>(() => {
     const saved = safeStorage.getItem('findme_requests');
-    return saved ? JSON.parse(saved) : initialUserRequests;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [requestQuotes, setRequestQuotes] = useState<RequestQuote[]>(() => {
     const saved = safeStorage.getItem('findme_quotes');
-    return saved ? JSON.parse(saved) : initialRequestQuotes;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [products] = useState<FindMeProduct[]>(initialFindMeProducts);
@@ -2002,7 +1979,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         businessId: 'biz_auto_matched',
         businessName: 'Verified UAE Sourcing Partner',
         businessRating: 4.9,
-        businessPhone: '+971 4 555 1212',
+        businessPhone: '',
         priceAED: reqData.budgetAED ? Math.round(reqData.budgetAED * 0.9) : 450,
         availability: 'Available for immediate dispatch',
         minOrder: 'Flexible',
@@ -2198,20 +2175,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try { return JSON.parse(saved); } catch (e) { /* ignore */ }
     }
-    return [
-      {
-        id: 'msg_sup_1',
-        userId: 'usr_sample',
-        userName: 'Selahadin',
-        userEmail: 'selahadin@example.com',
-        userRole: 'customer',
-        subject: 'Family Birthday Package Inquiry',
-        message: 'Hello Spotera Support! Can I customize the birthday party package at OliOli for 12 children?',
-        adminReply: 'Hello Selahadin! Yes, OliOli offers custom group extensions. Please present your Spotera booking code upon arrival.',
-        status: 'replied',
-        createdAt: new Date().toISOString().split('T')[0],
-      },
-    ];
+    return [];
   });
 
   const addSupportMessage = (messageText: string, subject = 'General Inquiry', role: 'customer' | 'partner' = 'customer') => {
@@ -2219,7 +2183,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `sup_${Date.now()}`,
       userId: user.id || 'guest',
       userName: user.name || 'Valued User',
-      userEmail: user.email || 'user@spoteradeals.com',
+      userEmail: user.email || '',
       userRole: role,
       subject,
       message: messageText,
@@ -2243,7 +2207,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `sup_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       userId: userId || user.id || 'guest',
       userName: userName || user.name || 'Valued User',
-      userEmail: userEmail || user.email || 'user@spoteradeals.com',
+      userEmail: userEmail || user.email || '',
       userRole: role,
       subject: subject || 'General Inquiry',
       message: messageText,

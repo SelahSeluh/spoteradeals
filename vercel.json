@@ -5,6 +5,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/api/chat",
+      "destination": "/api/chat"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/status?route=:path*"
     },

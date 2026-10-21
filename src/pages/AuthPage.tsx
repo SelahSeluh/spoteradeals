@@ -19,6 +19,7 @@ import { useToast } from '../context/ToastContext';
 import { SpoteraLogo } from '../components/SpoteraLogo';
 import { GoogleSignInButton } from '../components/GoogleSignInButton';
 import { authService } from '../services/authService';
+import { safeSessionStorage } from '../utils/storage';
 import { Language } from '../types';
 
 export const AuthPage: React.FC = () => {
@@ -149,6 +150,7 @@ export const AuthPage: React.FC = () => {
   };
 
   const handleGuest = () => {
+    safeSessionStorage.setItem("paper_guest_entered", "true");
     continueAsGuest();
     navigateToDestination();
     showToast.info('Welcome! Browsing UAE family deals as a Guest.');
@@ -163,7 +165,7 @@ export const AuthPage: React.FC = () => {
   ];
 
   return (
-    <div className="sunshine-auth min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 font-sans select-none relative spotera-mesh-canvas py-6">
+    <div className="paper-auth min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-6 font-sans select-none relative spotera-mesh-canvas py-6">
       {/* Top Bar with Back Link & Language Selector */}
       <div className="w-full max-w-[400px] flex items-center justify-between mb-3 z-20 px-1">
         <button
@@ -195,8 +197,8 @@ export const AuthPage: React.FC = () => {
         <div className="absolute bottom-10 left-1/3 w-[450px] h-[250px] bg-[#FD9302]/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full max-w-[400px] bg-white rounded-2xl sm:rounded-3xl border border-[#D9E3F0] shadow-[0_8px_30px_rgba(13,79,165,0.08)] p-4 sm:p-6 space-y-4 relative z-10">
-        <div className="sunshine-auth-photo"><img src="/sunshine-family.jpg" alt="Child enjoying the outdoors"/><span>Good things<br/>bring families<br/>together.</span></div>
+      <div className="paper-auth-card w-full max-w-[400px] bg-white rounded-2xl sm:rounded-3xl border border-[#D9E3F0] shadow-[0_8px_30px_rgba(13,79,165,0.08)] p-4 sm:p-6 space-y-4 relative z-10">
+        <div className="paper-auth-collage"><span>Good to<br/>see you<br/>again!</span><span className="paper-photo paper-photo-family" role="img" aria-label="Family making happy memories"/></div>
         {/* Top Branding */}
         <div className="text-center flex flex-col items-center">
           <SpoteraLogo
@@ -281,6 +283,8 @@ export const AuthPage: React.FC = () => {
           </button>
         </div>
 
+        <button type="button" aria-expanded={showOtherMethods} onClick={()=>setShowOtherMethods(!showOtherMethods)} className="paper-email-toggle"><Mail size={16}/> Continue with email <ChevronDown size={14}/></button>
+        {showOtherMethods && <>
         {/* Divider */}
         <div className="relative flex items-center justify-center pt-1">
           <div className="border-t border-slate-200 w-full" />
@@ -416,6 +420,7 @@ export const AuthPage: React.FC = () => {
           </form>
         </div>
 
+        </>}
         {/* Value Highlights for Family Trust */}
         <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-[#F0F4F8] text-center">
           <div className="p-1.5 rounded-xl bg-[#F8FAFC] flex flex-col items-center">

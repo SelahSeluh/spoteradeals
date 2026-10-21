@@ -120,7 +120,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
   }, [deals, selectedCategory, selectedCity, filter, onlyFavorites, availabilityFilter, dateFilter, sortHigh, savedDealIds]);
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] pb-28">
+    <div className="paper-explore min-h-screen bg-[#F5F7FA] pb-28">
       {/* Header */}
       <PageHeader
         title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : t('dealsCount'))}

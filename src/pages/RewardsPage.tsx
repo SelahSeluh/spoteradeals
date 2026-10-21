@@ -129,7 +129,7 @@ export const RewardsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="paper-rewards min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="max-w-2xl mx-auto flex flex-col gap-5">
         {/* Navigation Top Bar */}
         <div className="flex items-center justify-between min-h-[46px]">

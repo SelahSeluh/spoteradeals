@@ -1,0 +1,5 @@
+import React from 'react';
+import {ChevronRight,Globe,Info,Shield,RotateCcw} from 'lucide-react';
+import {useApp} from '../context/AppContext';
+import {Language} from '../types';
+export const SettingsPage:React.FC=()=>{const {language,setLanguage,setActiveView,replaySplashAnimation}=useApp();return <section className="paper-settings"><h1>Settings</h1><p>A little more you.</p><div><label><Globe size={19}/><span>Language</span><select aria-label="App language" value={language} onChange={e=>setLanguage(e.target.value as Language)}><option value="en">English</option><option value="ar">العربية</option><option value="fr">Français</option><option value="ru">Русский</option><option value="zh">中文</option></select></label><button onClick={()=>setActiveView('privacy')}><Shield size={19}/>Privacy policy<ChevronRight size={17}/></button><button onClick={()=>setActiveView('terms')}><Info size={19}/>Terms & conditions<ChevronRight size={17}/></button><button onClick={replaySplashAnimation}><RotateCcw size={19}/>Replay introduction<ChevronRight size={17}/></button></div><small>SpoteraDeals · More play, brighter tomorrows ♡</small></section>};

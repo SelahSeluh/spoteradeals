@@ -228,7 +228,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
 
   if (!deal) {
     return (
-      <div className="min-h-screen bg-[#F7FAFD] flex flex-col items-center justify-center p-6 text-center font-sans">
+      <div className="paper-experience min-h-screen bg-[#F7FAFD] flex flex-col items-center justify-center p-6 text-center font-sans">
         <h2 className="text-base font-bold text-[#0D1B3E]">{t('emptyNoDealsFound')}</h2>
         <button
           onClick={() => setActiveView('home')}

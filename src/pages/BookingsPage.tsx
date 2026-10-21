@@ -8,13 +8,6 @@ export const BookingsPage: React.FC = () => {
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
 
-  React.useEffect(() => {
-    if (!isLoggedIn) {
-      requireUserAuth(t('signInOrRegister') || 'Sign in or register to view and manage your bookings.', () => {
-        setActiveView('bookings');
-      });
-    }
-  }, [isLoggedIn, requireUserAuth, setActiveView, t]);
 
   const tabs: { label: string; value: 'upcoming' | 'completed' | 'cancelled' }[] = [
     { label: t('upcomingTab'), value: 'upcoming' },
@@ -23,11 +16,12 @@ export const BookingsPage: React.FC = () => {
   ];
 
   const filteredBookings = useMemo(() => {
+    if (!isLoggedIn) return [];
     return bookings.filter((booking) => {
       if (activeTab === 'upcoming') return booking.status === 'confirmed';
       return booking.status === activeTab;
     });
-  }, [activeTab, bookings]);
+  }, [activeTab, bookings, isLoggedIn]);
 
   const getDeal = useCallback(
     (dealId: string) => {
@@ -49,7 +43,7 @@ export const BookingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6">
+    <div className="paper-passes min-h-screen bg-[#F0F5FB] pb-28 pt-4 px-4 sm:px-6">
       <div className="max-w-xl mx-auto flex flex-col gap-4">
         {/* Page Header */}
         <div className="flex items-center justify-between min-h-[46px]">
@@ -64,6 +58,7 @@ export const BookingsPage: React.FC = () => {
           <div className="w-10" />
         </div>
 
+        {!isLoggedIn && <div className="rounded-lg border border-[#d5c8b2] bg-[#fffdf7] p-5 text-center"><h2 className="text-2xl">Your next adventure starts here</h2><p className="text-sm my-3">Sign in to view your passes. You can keep exploring as a guest.</p><button className="px-5 py-2 rounded-lg bg-[#ff7315] text-white" onClick={()=>requireUserAuth('Sign in to view your passes.',()=>setActiveView('bookings'))}>Sign in</button></div>}
         {/* Tab Pills */}
         <div className="flex p-1 rounded-[14px] bg-white border border-[#E7EBF2] shadow-xs">
           {tabs.map((tab) => {

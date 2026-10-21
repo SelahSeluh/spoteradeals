@@ -97,8 +97,12 @@ export const DealCard: React.FC<DealCardProps> = ({
 
   return (
     <div
+      role="link"
+      tabIndex={0}
+      aria-label={`View ${displayTitle}`}
+      onKeyDown={(e) => { if(e.target===e.currentTarget && e.key==='Enter') handleCardClick(); }}
       onClick={handleCardClick}
-      className={`group bg-white rounded-2xl border border-[#E7EBF2] hover:border-[#0D9CFD]/40 shadow-[0_2px_10px_rgba(13,27,62,0.05)] hover:shadow-[0_6px_20px_rgba(13,27,62,0.09)] transition-all duration-200 flex flex-col font-sans select-none cursor-pointer overflow-hidden relative ${
+      className={`paper-deal-card group bg-white rounded-2xl border border-[#E7EBF2] hover:border-[#0D9CFD]/40 shadow-[0_2px_10px_rgba(13,27,62,0.05)] hover:shadow-[0_6px_20px_rgba(13,27,62,0.09)] transition-all duration-200 flex flex-col font-sans select-none cursor-pointer overflow-hidden relative ${
         compact ? 'w-[230px] sm:w-[245px] shrink-0' : 'w-full'
       } ${className}`}
     >

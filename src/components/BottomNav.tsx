@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Compass, Ticket, Heart, User, Users } from 'lucide-react';
+import { Home, Compass, Ticket, Heart, User, Users, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
@@ -40,30 +40,30 @@ export const BottomNav: React.FC = () => {
       },
     },
     {
-      id: 'family',
-      label: t('navCoupons') || 'Passes',
+      id: 'bookings',
+      label: 'My passes',
       icon: Ticket,
       badge: bookingsCount > 0 ? bookingsCount : undefined,
       isActive: activeView === 'family' || activeView === 'bookings',
       onClick: () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        setActiveView('family');
+        setActiveView('bookings');
       },
     },
     {
-      id: 'wishlist',
-      label: t('saved') || 'Saved',
-      icon: Heart,
+      id: 'rewards',
+      label: 'Rewards',
+      icon: Gift,
       badge: savedCount > 0 ? savedCount : undefined,
-      isActive: activeView === 'wishlist',
+      isActive: activeView === 'rewards',
       onClick: () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        setActiveView('wishlist');
+        setActiveView('rewards');
       },
     },
     {
       id: 'profile',
-      label: isGuest ? (t('guestBadge') || 'Guest') : (t('navProfile') || 'Profile'),
+      label: 'Profile',
       icon: User,
       isActive: activeView === 'profile' || activeView === 'auth' || activeView === 'rewards' || activeView === 'membership',
       onClick: () => {
