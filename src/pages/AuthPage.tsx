@@ -196,7 +196,7 @@ export const AuthPage: React.FC = () => {
       </div>
 
       <div className="w-full max-w-[400px] bg-white rounded-2xl sm:rounded-3xl border border-[#D9E3F0] shadow-[0_8px_30px_rgba(13,79,165,0.08)] p-4 sm:p-6 space-y-4 relative z-10">
-        <div className="sunshine-auth-photo"><img src="/sunshine-family.jpg" alt="Happy family outdoors"/><span>Good things<br/>bring families<br/>together.</span></div>
+        <div className="sunshine-auth-photo"><img src="/sunshine-family.jpg" alt="Child enjoying the outdoors"/><span>Good things<br/>bring families<br/>together.</span></div>
         {/* Top Branding */}
         <div className="text-center flex flex-col items-center">
           <SpoteraLogo
