@@ -28,7 +28,7 @@ export function PostcardPromotions() {
   },[mode,slides.length,paused,hover,reduced,hidden,config.heroAutoPlaySpeedSeconds]);
   const video=safeMediaUrl(mode==='video'?config.heroVideoUrl:active?.mediaType==='video'?active.videoUrl:undefined);
   useEffect(()=>{const element=videoRef.current;if(!element)return;if(paused||hidden||reduced)element.pause();else void element.play().catch(()=>{});},[paused,hidden,reduced,video]);
-  const image = safeMediaUrl(mode==='image'?config.heroImageUrl:active?.imageUrl) || '/places/skyline.jpg';
+  const image = safeMediaUrl(mode!=='slideshow'?config.heroImageUrl:active?.imageUrl) || '/places/skyline.jpg';
   return <div className="picnic-postcard" role="region" aria-roledescription="carousel" aria-label="Promoted places and top offers" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} onFocusCapture={()=>setHover(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setHover(false)}} onKeyDown={e=>{if(e.key==='ArrowRight'){e.preventDefault();next(1)}if(e.key==='ArrowLeft'){e.preventDefault();next(-1)}}}>
     <div className="postcard-media" onTouchStart={e=>touch.current=e.touches[0].clientX} onTouchEnd={e=>{if(touch.current!==null){const delta=touch.current-e.changedTouches[0].clientX;if(Math.abs(delta)>45)next(delta>0?1:-1)}touch.current=null}}>
       {video ? <video ref={videoRef} key={video} src={video} poster={image} controls playsInline muted autoPlay={!reduced&&!paused&&!hidden} loop={mode==='video'} preload="metadata" /> : <img key={image} src={image} alt={active?.title || 'Dubai skyline'} onError={e=>{if(!e.currentTarget.src.endsWith('/places/skyline.jpg'))e.currentTarget.src='/places/skyline.jpg'}}/>}

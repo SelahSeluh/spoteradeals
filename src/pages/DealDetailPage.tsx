@@ -51,7 +51,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
 
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const [bookingDate, setBookingDate] = useState('2026-09-12');
+  const [bookingDate, setBookingDate] = useState(() => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()));
   const [bookingTime, setBookingTime] = useState('11:00');
   const [guestsCount, setGuestsCount] = useState(2);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -382,51 +382,8 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 {t('whatsIncluded')}
               </h3>
 
-              <div className="space-y-2.5">
-                {/* Item 1 */}
-                <div className="flex items-center justify-between text-xs sm:text-sm font-medium text-[#0D1B3E]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
-                      <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </div>
-                    <span>{t('fullDayAccess')}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
-                </div>
-
-                {/* Item 2 */}
-                <div className="flex items-center justify-between text-xs sm:text-sm font-medium text-[#0D1B3E]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
-                      <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </div>
-                    <span>{t('towelsLockers')}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
-                </div>
-
-                {/* Item 3 */}
-                <div className="flex items-center justify-between text-xs sm:text-sm font-medium text-[#0D1B3E]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
-                      <Waves className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </div>
-                    <span>{t('splashZone')}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
-                </div>
-
-                {/* Item 4 */}
-                <div className="flex items-center justify-between text-xs sm:text-sm font-medium text-[#0D1B3E]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
-                      <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </div>
-                    <span>{t('freeAdultEntry')}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
-                </div>
-              </div>
+              <p className="text-sm leading-relaxed whitespace-pre-line">{getLocalizedDescription(deal,language)}</p>
+              {deal.terms?.length ? <ul className="space-y-2 text-xs">{deal.terms.map((term,index)=><li key={index} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 shrink-0"/>{term}</li>)}</ul> : null}
             </div>
 
             {/* 5. KEY INFO ROWS */}
@@ -437,7 +394,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
                     <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <span>{t('openDaily')}</span>
+                  <span>{deal.openingHours || 'Contact the venue for opening hours'}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
               </div>
@@ -448,7 +405,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
                     <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <span>{t('ageGroup')}</span>
+                  <span>{deal.targetAgeGroup || deal.ageRange || 'See the venue’s age policy'}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
               </div>
@@ -459,7 +416,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
                     <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <span>{t('locationNear')}</span>
+                  <span>{deal.location || [deal.district,deal.city].filter(Boolean).join(', ')}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
               </div>
@@ -482,7 +439,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                     <MapPin className="w-5 h-5" />
                   </div>
                   <span className="mt-1 px-2.5 py-0.5 rounded-md bg-white/95 text-[11px] font-bold text-[#0D1B3E] shadow-2xs border border-slate-200">
-                    Dubai Marina Walk
+                    {deal.location || [deal.district,deal.city].filter(Boolean).join(', ')}
                   </span>
                 </div>
               </div>
@@ -510,6 +467,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <label className="font-bold text-slate-700 block mb-1.5">{t('selectDate')}</label>
                   <input
                     type="date"
+                    min={new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
                     value={bookingDate}
                     onChange={(e) => setBookingDate(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-semibold focus:outline-none focus:border-[#1060E2]"
@@ -664,6 +622,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <label className="font-bold text-slate-600 block mb-1">{t('selectDate')}</label>
                 <input
                   type="date"
+                    min={new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 text-slate-800 font-semibold"
