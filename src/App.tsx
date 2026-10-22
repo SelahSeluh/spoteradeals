@@ -163,7 +163,7 @@ const MainAppContent: React.FC = () => {
             </React.Suspense>
           )}
         </main>
-        <div className="expedition-page-footer" aria-hidden="true"><ExpeditionSkyline/></div>
+
       </ErrorBoundary>
 
       {/* Claimed Coupon Modal */}
@@ -203,10 +203,8 @@ const MainAppContent: React.FC = () => {
       {/* Global Toast Notifications Container */}
       <ToastContainer />
 
-      {/* Footer (Desktop only) */}
-      <div className="hidden md:block">
-        <Footer />
-      </div>
+      {/* Shared footer remains accessible on every screen. */}
+      <Footer />
 
       {/* Mobile Floating Bottom Navigation Bar */}
       <BottomNav />

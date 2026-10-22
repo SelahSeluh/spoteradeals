@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /layout-check.html
+Sitemap: https://spoteradeals.com/sitemap.xml
