@@ -3,10 +3,12 @@ import {createHmac, timingSafeEqual} from 'node:crypto';
 
 export const CMS_SCOPES = ['homepage','branding','footer','intro','deals','categories','locations','media','businesses','holidays','loyaltyRules','loyaltyTiers'] as const;
 export type CmsScope = typeof CMS_SCOPES[number];
+// CDN compression can prefix a storage ETag with W/. Conditional writes need the strong tag.
+export function strongEtag(etag:string){return etag.replace(/^W\//,'')}
 export async function readPublished() {
   const file=await get('cms/published.json',{access:'private',useCache:false});
   if(!file || file.statusCode!==200)return {data:{},etag:undefined};
-  return {data:JSON.parse(await new Response(file.stream).text()),etag:file.blob.etag};
+  return {data:JSON.parse(await new Response(file.stream).text()),etag:strongEtag(file.blob.etag)};
 }
 export async function readContent(scope:string) { return (await readPublished()).data[scope] ?? null; }
 export async function writeContents(patch:Record<string,unknown>) {

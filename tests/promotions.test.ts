@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {postcardSlides,safeMediaUrl} from '../src/utils/postcardSlides';
-import {issueAdminSession,verifyAdminSession,safeContent} from '../src/server/cms';
+import {issueAdminSession,verifyAdminSession,safeContent,strongEtag} from '../src/server/cms';
 import handler from '../api/status';
 import type {Deal,HomepageConfig} from '../src/types';
 const deal=(i:number,patch:Partial<Deal>={}):Deal=>({id:String(i),title:`Offer ${i}`,imageUrl:`https://example.com/${i}.jpg`,isPublished:true,isFeatured:false,expiryDate:'2030-12-31',rating:i,discountPrice:29,...patch} as Deal);
@@ -42,4 +42,8 @@ test('public cannot write content, upload files, reset passwords, or choose arbi
  assert.equal((await request('/api/admin/content','POST',{}, {'content-type':'application/json',origin:'https://attacker.example'})).statusCode,403);
  assert.equal((await request('/api/admin/content','DELETE')).statusCode,405);
  assert.equal((await request('/api/admin/content','POST',{}, {'content-type':'text/plain'})).statusCode,415);
+});
+
+test('conditional writes normalize compressed CDN ETags',()=>{
+ assert.equal(strongEtag('W/"abc123"'),'"abc123"');assert.equal(strongEtag('"abc123"'),'"abc123"');
 });
