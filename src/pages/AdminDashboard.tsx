@@ -79,6 +79,8 @@ export const AdminDashboard: React.FC = () => {
     setupAdminAccount,
     changeAdminPassword,
     adminLogout,
+    cmsSaveStatus,
+    retryCmsSave,
     homepageConfig,
     updateHomepageConfig,
     footerConfig,
@@ -103,7 +105,7 @@ export const AdminDashboard: React.FC = () => {
   const [adminEmail, setAdminEmail] = useState(storedAdminEmail || '');
   const [adminPasscode, setAdminPasscode] = useState('');
   const [confirmPasscode, setConfirmPasscode] = useState('');
-  const [isSetupMode, setIsSetupMode] = useState(!hasAdminPasswordSet);
+  const [isSetupMode, setIsSetupMode] = useState(false);
   const [passError, setPassError] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [newPasswordInput, setNewPasswordInput] = useState('');
@@ -195,7 +197,7 @@ export const AdminDashboard: React.FC = () => {
 
     if (isSetupMode) {
       if (!adminPasscode.trim() || adminPasscode.length < 6) {
-        setPassError('Password must be at least 6 characters long.');
+        setPassError('Password must be at least 12 characters long.');
         return;
       }
       if (adminPasscode !== confirmPasscode) {
@@ -328,7 +330,7 @@ export const AdminDashboard: React.FC = () => {
               <input
                 type="password"
                 required
-                placeholder={isSetupMode ? 'Create a secure password (min 6 chars)' : 'Enter your password'}
+                placeholder={isSetupMode ? 'Create a secure password (min 12 chars)' : 'Enter your password'}
                 value={adminPasscode}
                 onChange={(e) => setAdminPasscode(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -363,18 +365,7 @@ export const AdminDashboard: React.FC = () => {
               <span>{isSetupMode ? 'Save Password & Authenticate Admin' : 'Authenticate Admin Session'}</span>
             </button>
 
-            <div className="text-center pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSetupMode(!isSetupMode);
-                  setPassError(null);
-                }}
-                className="text-xs text-blue-600 font-bold hover:underline"
-              >
-                {isSetupMode ? 'Already set a password? Switch to Log In' : 'First time setup / Reset password? Click here'}
-              </button>
-            </div>
+            <p className="text-xs text-slate-500">Your administrator account is configured securely by the site owner. Public account setup is disabled.</p>
           </form>
 
           <div className="pt-4 border-t border-slate-100 text-center text-[11px] text-slate-400">
@@ -391,6 +382,7 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div role="status" className="rounded-lg border bg-white p-3 text-sm">{cmsSaveStatus} <button type="button" className="underline ml-2" onClick={retryCmsSave}>Retry publishing</button></div>
       {/* Top Banner */}
       <div className="bg-slate-900 text-white rounded-3xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2">
@@ -405,7 +397,7 @@ export const AdminDashboard: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-400/30">
-            2FA Active • Secure Node
+            Owner session verified
           </span>
           <button
             onClick={() => {
@@ -2232,7 +2224,7 @@ export const AdminDashboard: React.FC = () => {
                 <label className="font-bold text-slate-700 block mb-1">Set New Master Password</label>
                 <input
                   type="password"
-                  placeholder="Enter new master password (min 6 chars)"
+                  placeholder="Enter new master password (min 12 chars)"
                   value={newPasswordInput}
                   onChange={(e) => setNewPasswordInput(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -2253,13 +2245,13 @@ export const AdminDashboard: React.FC = () => {
                   Close
                 </button>
                 <button
-                  onClick={() => {
-                    if (!newPasswordInput.trim() || newPasswordInput.length < 6) {
-                      setSettingsNotice('Password must be at least 6 characters long.');
-                      showToast.warning('Password must be at least 6 characters long.');
+                  onClick={async () => {
+                    if (!newPasswordInput.trim() || newPasswordInput.length < 12) {
+                      setSettingsNotice('Password must be at least 12 characters long.');
+                      showToast.warning('Password must be at least 12 characters long.');
                       return;
                     }
-                    changeAdminPassword(newPasswordInput);
+                    if(!await changeAdminPassword(newPasswordInput)){setSettingsNotice('Password change failed. Please try again.');return;}
                     setSettingsNotice('Master Admin password updated successfully!');
                     showToast.success('Master Admin password updated successfully!');
                     setNewPasswordInput('');

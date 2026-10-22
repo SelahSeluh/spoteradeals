@@ -66,3 +66,15 @@
 @media(max-width:767px) {
   .paper-home-deals h2 { font-size:23px!important; }
 }
+/* Keep the original postcard frame; only its media now rotates. */
+.postcard-media{position:relative;aspect-ratio:16/10;overflow:hidden;background:#123d78;isolation:isolate}
+.picnic-postcard .postcard-media>img,.picnic-postcard .postcard-media>video{width:100%;height:100%;object-fit:cover;display:block}
+.postcard-offer{position:absolute;inset:auto 0 0;padding:36px 14px 12px;background:linear-gradient(transparent,#071d40ed);color:white;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
+.postcard-offer small{background:#ff7315;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:800}
+.postcard-offer strong{font:700 clamp(15px,1.6vw,21px)/1.25 'Nunito Sans',sans-serif;max-width:100%;overflow-wrap:anywhere}
+.postcard-offer button{pointer-events:auto;background:white;color:#07358c;padding:5px 10px;min-height:36px;border-radius:5px;font-size:12px;font-weight:800}
+.postcard-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding-top:6px;color:#07358c;background:white}
+.postcard-controls button{display:grid;place-items:center;min-width:36px;min-height:36px;border-radius:50%;background:#edf5ff}
+.postcard-controls span{font-size:12px;font-weight:800;min-width:42px;text-align:center}
+.picnic-postcard>span{padding-top:5px!important}.picnic-tape,.picnic-sun,.picnic-doodle{pointer-events:none}
+@media(max-width:767px){.postcard-controls{gap:8px}.postcard-controls button{min-width:44px;min-height:44px}.postcard-offer{padding:25px 10px 8px}.postcard-offer button{min-height:40px}.postcard-media{aspect-ratio:4/3}}

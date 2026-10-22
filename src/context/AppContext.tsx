@@ -35,6 +35,7 @@ import {
   LoyaltyHistoryItem,
   LoyaltyActionType,
 } from '../types';
+import {useCmsSync} from '../hooks/useCmsSync';
 import { expeditionCatalog } from '../utils/expeditionImages';
 import { defaultIntroConfig } from '../lib/defaultConfigs';
 import {
@@ -78,7 +79,10 @@ export const defaultHomepageConfig: HomepageConfig = {
   heroSubtitle: "Discover Dubai, Abu Dhabi & UAE's best kids play areas, theme parks, dining passes, and family entertainment.",
   heroBadgeText: "SpoteraDeals • UAE Family Passes & Deals",
   heroBgStyle: "blue-gradient",
-  heroSlides: initialHeroSlides,
+  heroSlides: [],
+  heroPostcardMode: 'slideshow',
+  heroIncludeTopOffers: true,
+  heroPostcardCaption: 'Explore. Play. Discover. Together.',
   heroAutoPlaySpeedSeconds: 5,
   sections: [
     { id: 'hero', title: 'Hero Family Deals', enabled: true, order: 1 },
@@ -264,7 +268,7 @@ interface AppContextType {
   sessionToken: string | null;
   adminLoginWithCreds: (email: string, pass: string) => Promise<{ success: boolean; message: string }>;
   setupAdminAccount: (email: string, pass: string) => void;
-  changeAdminPassword: (newPass: string) => void;
+  changeAdminPassword: (newPass: string) => Promise<boolean>;
   adminLogout: () => void;
 
   isPartnerAuthenticated: boolean;
@@ -318,6 +322,8 @@ interface AppContextType {
   requestUserLocation: () => Promise<boolean>;
   calculateDistanceKm: (lat: number, lng: number) => number | null;
   // Dynamic Homepage & Branding Configuration
+  cmsSaveStatus: string;
+  retryCmsSave: () => void;
   homepageConfig: HomepageConfig;
   updateHomepageConfig: (config: Partial<HomepageConfig>) => void;
   // Hero Slides CMS
@@ -444,14 +450,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return safeStorage.getItem('spotera_has_entered') === 'true';
   });
 
+  const directAdminRoute = typeof window !== 'undefined' && (window.location.hash.replace(/^#\/?/,'') === 'admin' || window.location.pathname === '/admin');
   const [startupPhase, setStartupPhase] = useState<StartupPhase>(() => {
     const alreadySeen = safeSessionStorage.getItem('spotera_animated');
-    return alreadySeen ? 'app' : 'intro';
+    return alreadySeen || directAdminRoute ? 'app' : 'intro';
   });
 
   const [showOpeningAnimation, setShowOpeningAnimation] = useState<boolean>(() => {
     const alreadySeen = safeSessionStorage.getItem('spotera_animated');
-    return !alreadySeen;
+    return !alreadySeen && !directAdminRoute;
   });
 
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(false);
@@ -677,9 +684,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [activeView, setActiveViewState] = useState<ViewMode>(() => {
     const locationView = parseViewFromLocation();
-    if (initialAuthUser) {
-      return locationView === 'admin' ? 'home' : (locationView || 'home');
-    }
+    if (locationView === 'admin') return 'admin';
+    if (initialAuthUser) return locationView || 'home';
     if (safeSessionStorage.getItem('paper_guest_entered') === 'true') return locationView;
     return 'auth';
   });
@@ -859,7 +865,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const adminLoginWithCreds = async (email: string, pass: string): Promise<{ success: boolean; message: string }> => {
     const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = pass.trim();
+    const cleanPass = pass;
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -878,6 +884,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setHasAdminPasswordSet(true);
         return { success: true, message: 'Admin authentication verified.' };
       }
+      if (data.message && !res.ok) return {success:false,message:data.message};
       if (data.error === 'SETUP_REQUIRED' || data.message === 'SETUP_REQUIRED') {
         return { success: false, message: 'SETUP_REQUIRED' };
       }
@@ -888,8 +895,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return { success: false, message: 'Admin sign-in is unavailable until the server is configured.' };
   };
 
-  const changeAdminPassword = (_newPass: string) => {
-    throw new Error('Password changes require a verified server session.');
+  const changeAdminPassword = async (newPassword: string) => {
+    try{const response=await fetch('/api/auth/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({newPassword})});return response.ok && (await response.json()).success===true;}catch{return false;}
   };
 
   const adminLogout = () => {
@@ -915,7 +922,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setupPartnerAccount = async (email: string, pass: string) => {
     const cleanEmail = email.trim().toLowerCase() || '';
-    const cleanPass = pass.trim();
+    const cleanPass = pass;
 
     try {
       const res = await fetch('/api/auth/register', {
@@ -942,7 +949,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const partnerLoginWithCreds = (email: string, pass: string) => {
     const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = pass.trim();
+    const cleanPass = pass;
     const storedPass = safeStorage.getItem('spotera_partner_pass');
     const storedEmail = safeStorage.getItem('spotera_partner_email') || '';
 
@@ -1048,7 +1055,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLocationChange = () => {
       const matched = parseViewFromLocation();
-      if (initialAuthUser || safeSessionStorage.getItem('paper_guest_entered') === 'true') {
+      if (matched === 'admin' || initialAuthUser || safeSessionStorage.getItem('paper_guest_entered') === 'true') {
         setActiveViewState(matched);
       }
 
@@ -1815,19 +1822,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updated = { ...prev, ...newBranding };
       safeStorage.setItem('spotera_branding_config', JSON.stringify(updated));
 
-      const token = sessionToken || safeStorage.getItem('spotera_session_token');
-      fetch('/api/admin/content/branding', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          data: updated,
-          summary: `Updated site branding (${updated.siteName})`,
-        }),
-      }).catch(() => {});
-
       return updated;
     });
   };
@@ -1886,37 +1880,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Sync published app config from server
-  useEffect(() => {
-    fetch('/api/app-config?t=' + Date.now())
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success) {
-          if (data.intro) {
-            setIntroConfig((prev) => {
-              const merged = { ...prev, ...data.intro };
-              safeStorage.setItem('spotera_intro_config', JSON.stringify(merged));
-              return merged;
-            });
-          }
-          if (data.branding) {
-            setBrandingConfig((prev) => {
-              const merged = { ...prev, ...data.branding };
-              safeStorage.setItem('spotera_branding_config', JSON.stringify(merged));
-              return merged;
-            });
-          }
-          if (data.footer) {
-            setFooterConfig((prev) => {
-              const merged = { ...prev, ...data.footer };
-              safeStorage.setItem('spotera_footer_config', JSON.stringify(merged));
-              return merged;
-            });
-          }
-        }
-      })
-      .catch(() => {});
-  }, []);
+  // A single server-backed content source is shared by every page and visitor.
+  const {cmsSaveStatus,retryCmsSave}=useCmsSync(
+    {homepage:homepageConfig,branding:brandingConfig,footer:footerConfig,intro:introConfig,deals,categories:categoriesList,locations:locationsList,media:mediaLibrary,businesses,holidays,loyaltyRules,loyaltyTiers},
+    {homepage:setHomepageConfig,branding:setBrandingConfig,footer:setFooterConfig,intro:setIntroConfig,deals:setDeals,categories:setCategoriesList,locations:setLocationsList,media:setMediaLibrary,businesses:setBusinesses,holidays:setHolidays,loyaltyRules:setLoyaltyRules,loyaltyTiers:setLoyaltyTiers},
+    isAdminAuthenticated
+  );
 
   // Synchronize CSS Typography variables whenever brandingConfig changes
   useEffect(() => {
@@ -2391,6 +2360,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         userLocation,
         requestUserLocation,
         calculateDistanceKm,
+        cmsSaveStatus,
+        retryCmsSave,
         homepageConfig,
         updateHomepageConfig,
         addHeroSlide,
