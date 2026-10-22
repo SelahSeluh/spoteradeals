@@ -1,8 +1,8 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {get,put} from '@vercel/blob';
 import {randomUUID} from 'node:crypto';
-import {hashPassword,verifyPassword} from '../src/server/security';
-import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms';
+import {hashPassword,verifyPassword} from '../src/server/security.js';
+import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms.js';
 
 type Request=IncomingMessage & {body?:any};
 const user=()=>({id:'spotera-owner',name:'SpoteraDeals Owner',email:process.env.ADMIN_EMAIL,role:'ADMIN',adminSubRole:'SUPER_ADMIN',membership:'Free'});
