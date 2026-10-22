@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import path from "path";
-import crypto from "crypto";
+import { hashPassword, verifyPassword } from "./src/server/security";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
@@ -12,9 +12,32 @@ const app = express();
 const PORT = 3000;
 
 // Enable proxy trusting for Google Cloud Run SSL & custom domain headers
-app.set("trust proxy", true);
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 
-app.use(express.json());
+app.use(express.json({limit:"32kb"}));
+// Reject cross-origin mutations and bound authentication attempts before parsing credentials.
+const authAttempts = new Map<string,{count:number;until:number}>();
+app.use('/api', (req,res,next) => {
+  res.setHeader('Cache-Control','no-store');
+  res.setHeader('X-Content-Type-Options','nosniff');
+  if (!['GET','HEAD','OPTIONS'].includes(req.method)) {
+    try {
+      if (req.headers.origin && new URL(req.headers.origin).host !== req.get('host')) {
+        res.status(403).json({error:'Cross-origin request rejected.'}); return;
+      }
+    } catch { res.status(403).json({error:'Invalid origin.'}); return; }
+  }
+  if (req.path.startsWith('/auth/') && req.method === 'POST') {
+    const now=Date.now(), key=req.ip || 'unknown';
+    for (const [ip,entry] of authAttempts) if(entry.until < now) authAttempts.delete(ip);
+    if(authAttempts.size >= 5000 && !authAttempts.has(key)) {res.status(429).json({error:'Please try later.'});return;}
+    const entry=authAttempts.get(key) || {count:0,until:now+60000};
+    authAttempts.set(key,entry);
+    if (++entry.count>10) {res.setHeader('Retry-After','60');res.status(429).json({error:'Please try later.'});return;}
+  }
+  next();
+});
 
 // Helper to extract session token
 function extractToken(req: Request): string | null {
@@ -128,38 +151,15 @@ app.get("/api/auth/status", (_req, res) => {
   });
 });
 
-app.post("/api/auth/setup-admin", (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!password || password.length < 6) {
-      res.status(400).json({ error: "Password must be at least 6 characters long." });
-      return;
-    }
-    const adminEmail = email ? email.trim().toLowerCase() : "admin@spoteradeals.com";
-    const adminAcc = ServerDB.upsertAdminAccount(adminEmail, password);
-    const session = ServerDB.createSession(adminAcc.id);
-    ServerDB.logAudit(adminAcc.email, "ADMIN", "Master Admin Account initialized/updated via Server API");
-
-    res.json({
-      success: true,
-      message: "Admin account setup completed successfully on server.",
-      token: session.token,
-      user: {
-        id: adminAcc.id,
-        email: adminAcc.email,
-        name: adminAcc.name,
-        role: adminAcc.role,
-      },
-    });
-  } catch (e: any) {
-    res.status(500).json({ error: e.message || "Failed to setup admin account" });
-  }
+// Admin creation is an offline deployment operation; never a public HTTP endpoint.
+app.post("/api/auth/setup-admin", (_req,res) => {
+  res.status(403).json({error:"Administrator setup is unavailable over HTTP."});
 });
 
 app.post("/api/auth/login", (req, res) => {
   try {
     const { email, password, requestedRole } = req.body;
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string" || email.length>254 || password.length>1024) {
       res.status(400).json({ error: "Email and password are required." });
       return;
     }
@@ -176,7 +176,7 @@ app.post("/api/auth/login", (req, res) => {
       return;
     }
 
-    if (user.password !== password) {
+    if (!verifyPassword(password, user.password)) {
       res.status(401).json({ error: "Invalid email or password." });
       return;
     }
@@ -214,13 +214,13 @@ app.post("/api/auth/login", (req, res) => {
 app.post("/api/auth/register", (req, res) => {
   try {
     const { email, password, name, phone, role = "CUSTOMER", businessId } = req.body;
-    if (!email || !password || !name) {
+    if (typeof email !== "string" || typeof password !== "string" || typeof name !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length>254 || password.length>1024 || name.length>100) {
       res.status(400).json({ error: "Email, password, and name are required." });
       return;
     }
 
-    if (password.length < 6) {
-      res.status(400).json({ error: "Password must be at least 6 characters long." });
+    if (password.length < 12) {
+      res.status(400).json({ error: "Password must be at least 12 characters long." });
       return;
     }
 
@@ -232,12 +232,12 @@ app.post("/api/auth/register", (req, res) => {
 
     const newUser = ServerDB.createUser({
       email: email.trim().toLowerCase(),
-      password,
+      password: hashPassword(password),
       name: name.trim(),
       phone: phone ? phone.trim() : "",
-      role: role === "PARTNER" ? "PARTNER" : "CUSTOMER",
+      role: "CUSTOMER",
       membership: "Free",
-      businessId: businessId || undefined,
+      businessId: undefined,
       authProvider: "email",
     });
 
@@ -264,73 +264,9 @@ app.post("/api/auth/register", (req, res) => {
   }
 });
 
-app.post("/api/auth/google", (req, res) => {
-  try {
-    const { credential, email, name, picture, googleId } = req.body;
-    let userEmail = email;
-    let userName = name;
-    let userPicture = picture;
-    let userGoogleId = googleId;
-
-    // Decode Google JWT credential from Google Identity Services
-    if (credential && typeof credential === "string") {
-      try {
-        const parts = credential.split(".");
-        if (parts.length === 3) {
-          const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-          const decodedJson = Buffer.from(payloadBase64, "base64").toString("utf-8");
-          const payload = JSON.parse(decodedJson);
-          if (payload.email) {
-            userEmail = payload.email;
-            userName = payload.name || payload.given_name || userName;
-            userPicture = payload.picture || userPicture;
-            userGoogleId = payload.sub || userGoogleId;
-          }
-        }
-      } catch (jwtErr) {
-        console.warn("Could not decode Google JWT credential:", jwtErr);
-      }
-    }
-
-    if (!userEmail || !userEmail.includes("@")) {
-      res.status(400).json({ error: "A valid email address is required for Google Sign-In." });
-      return;
-    }
-
-    const cleanEmail = userEmail.trim().toLowerCase();
-    const rawName = (userName || "").trim();
-    const isGoogleName = !rawName || ["google user", "google", "g", "guest user"].includes(rawName.toLowerCase());
-    const emailHandle = cleanEmail.split("@")[0].replace(/[._-]/g, " ");
-    const cleanName = isGoogleName ? (emailHandle ? emailHandle.charAt(0).toUpperCase() + emailHandle.slice(1) : "Spotera Member") : rawName;
-
-    const googleUser = ServerDB.upsertGoogleUser({
-      email: cleanEmail,
-      name: cleanName,
-      avatar: userPicture,
-      googleId: userGoogleId,
-    });
-
-    const session = ServerDB.createSession(googleUser.id);
-    ServerDB.logAudit(googleUser.email, googleUser.role, "Signed in via Google Authentication");
-
-    res.json({
-      success: true,
-      token: session.token,
-      user: {
-        id: googleUser.id,
-        email: googleUser.email,
-        name: googleUser.name,
-        phone: googleUser.phone,
-        avatar: googleUser.avatar || "",
-        role: googleUser.role,
-        membership: googleUser.membership,
-        businessId: googleUser.businessId,
-        authProvider: "google",
-      },
-    });
-  } catch (e: any) {
-    res.status(500).json({ error: e.message || "Google authentication failed" });
-  }
+// Fail closed until a provider verifies signatures, issuer, audience and expiration.
+app.post("/api/auth/google", (_req,res) => {
+  res.status(503).json({error:"Google sign-in is not configured. Continue as a guest."});
 });
 
 app.get("/api/auth/me", (req, res) => {
@@ -377,8 +313,8 @@ app.post("/api/auth/change-password", requireAuth(["CUSTOMER", "PARTNER", "ADMIN
   try {
     const session = (req as any).userSession;
     const { currentPassword, newPassword } = req.body;
-    if (!newPassword || newPassword.length < 6) {
-      res.status(400).json({ error: "New password must be at least 6 characters." });
+    if (typeof newPassword !== "string" || newPassword.length < 12 || newPassword.length > 1024) {
+      res.status(400).json({ error: "New password must be between 12 and 1024 characters." });
       return;
     }
 
@@ -388,17 +324,11 @@ app.post("/api/auth/change-password", requireAuth(["CUSTOMER", "PARTNER", "ADMIN
       return;
     }
 
-    // Verify current password if provided
-    if (user.password && currentPassword) {
-      const hashedCurrent = crypto.createHash("sha256").update(currentPassword).digest("hex");
-      if (user.password !== hashedCurrent && user.password !== currentPassword) {
-        res.status(401).json({ error: "Current password does not match." });
-        return;
-      }
+    if (!verifyPassword(currentPassword, user.password)) {
+      res.status(401).json({error:"Current password does not match."}); return;
     }
-
-    const hashedNew = crypto.createHash("sha256").update(newPassword).digest("hex");
-    ServerDB.updateUserPassword(user.id, hashedNew);
+    ServerDB.updateUserPassword(user.id, hashPassword(newPassword));
+    ServerDB.revokeUserSessions(user.id);
     ServerDB.logAudit(session.email, session.role, "Updated account password");
 
     res.json({ success: true, message: "Password updated successfully." });
@@ -597,7 +527,7 @@ app.get("/api/content/:scope", (req, res) => {
 });
 
 // Admin Content Management with Automatic Version History
-app.get("/api/admin/content/:scope", (req, res) => {
+app.get("/api/admin/content/:scope", requireAdminSubRole(["SUPER_ADMIN", "CONTENT_ADMIN", "MARKETING_ADMIN"]), (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.set("Pragma", "no-cache");
   res.set("Expires", "0");
@@ -986,7 +916,7 @@ app.post("/api/push/unsubscribe", (req, res) => {
   }
 });
 
-app.post("/api/push/broadcast", (req, res) => {
+app.post("/api/push/broadcast", requireAdminSubRole(["SUPER_ADMIN", "MARKETING_ADMIN"]), (req, res) => {
   try {
     const { title, body, url, emirate, dealId } = req.body;
     const subs = ServerDB.getPushSubscriptions(emirate);

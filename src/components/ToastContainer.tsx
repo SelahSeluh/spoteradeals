@@ -12,7 +12,7 @@ export const ToastContainer: React.FC = () => {
 
   return (
     <div
-      className={`fixed z-50 pointer-events-none flex flex-col gap-2.5 items-center w-full max-w-full px-4
+      className={`spotera-notifications fixed z-50 pointer-events-none flex flex-col gap-2.5 items-center w-full max-w-full px-4
         bottom-20 left-0 right-0 sm:bottom-6 sm:px-0 sm:w-auto sm:max-w-md
         ${isRtl ? 'sm:left-6 sm:right-auto sm:items-start' : 'sm:right-6 sm:left-auto sm:items-end'}
       `}

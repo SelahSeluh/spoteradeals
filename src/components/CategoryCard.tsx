@@ -1,6 +1,6 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
-import { expeditionImage } from '../utils/expeditionImages';
+import { expeditionImage, safeImageUrl } from '../utils/expeditionImages';
 import { useApp } from '../context/AppContext';
 
 export interface CategoryInfo {
@@ -27,7 +27,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 }) => {
   const { t } = useApp();
   const defaultBg = category.color || '#1A4FBF';
-  const defaultImg = expeditionImage(category.name);
+  const defaultImg = safeImageUrl(category.imageUrl) || expeditionImage(category.name);
 
   return (
     <div

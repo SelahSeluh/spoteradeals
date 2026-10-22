@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { hashPassword, sessionIsValid } from './security';
 
 export type ServerAdminSubRole =
   | 'SUPER_ADMIN'
@@ -259,15 +260,23 @@ export class ServerDB {
         }
         if (!Array.isArray(loaded.auditLogs)) loaded.auditLogs = [];
 
+        // Upgrade legacy plaintext passwords; disable the former published default.
+        for (const user of loaded.users) {
+          if (user.password === 'SpoteraMaster2026!') user.password = undefined;
+          else if (user.password && !user.password.startsWith('scrypt$')) {
+            // Legacy SHA-256 hashes cannot be safely upgraded without password reset.
+            user.password = /^[a-f0-9]{64}$/.test(user.password) ? undefined : hashPassword(user.password);
+          }
+        }
         ServerDB.data = loaded;
 
         // Auto-initialize master administrator account if no admin exists
         const hasAdmin = ServerDB.data.users.some((u) => u.role === 'ADMIN');
         if (!hasAdmin) {
           const adminEmail = (process.env.ADMIN_EMAIL || 'admin@spoteradeals.com').trim().toLowerCase();
-          const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'SpoteraMaster2026!';
-          ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
-          console.log(`[Spotera ServerDB] Initialized Master Administrator account (${adminEmail})`);
+          const adminPass = process.env.ADMIN_INITIAL_PASSWORD;
+          if (adminPass && adminPass.length >= 12) ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
+
         } else {
           ServerDB.data.adminConfigured = true;
         }
@@ -276,9 +285,9 @@ export class ServerDB {
       } else {
         // Fresh database initialization
         const adminEmail = (process.env.ADMIN_EMAIL || 'admin@spoteradeals.com').trim().toLowerCase();
-        const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'SpoteraMaster2026!';
-        ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
-        console.log(`[Spotera ServerDB] Initialized Master Administrator account (${adminEmail}) in fresh DB`);
+        const adminPass = process.env.ADMIN_INITIAL_PASSWORD;
+        if (adminPass && adminPass.length >= 12) ServerDB.upsertAdminAccount(adminEmail, adminPass, 'SUPER_ADMIN');
+
         ServerDB.save();
       }
     } catch (e) {
@@ -291,7 +300,7 @@ export class ServerDB {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
-      fs.writeFileSync(DB_PATH, JSON.stringify(ServerDB.data, null, 2), 'utf-8');
+      fs.writeFileSync(DB_PATH, JSON.stringify(ServerDB.data, null, 2), {encoding:'utf-8',mode:0o600});
     } catch (e) {
       console.error('Failed to save server DB file:', e);
     }
@@ -343,7 +352,7 @@ export class ServerDB {
     const cleanEmail = profile.email.trim().toLowerCase();
     const rawName = (profile.name || '').trim();
     const isGoogleName = !rawName || ['google user', 'google', 'g', 'guest user'].includes(rawName.toLowerCase());
-    
+
     const derivedName = (() => {
       if (!isGoogleName) return rawName;
       const handle = cleanEmail.split('@')[0].replace(/[._-]/g, ' ');
@@ -390,14 +399,14 @@ export class ServerDB {
     let admin = ServerDB.data.users.find((u) => u.role === 'ADMIN' || u.email.toLowerCase() === cleanEmail);
     if (admin) {
       admin.email = cleanEmail;
-      admin.password = pass;
+      admin.password = hashPassword(pass);
       admin.role = 'ADMIN';
       admin.adminSubRole = subRole || admin.adminSubRole || 'SUPER_ADMIN';
     } else {
       admin = {
         id: 'usr_admin_master',
         email: cleanEmail,
-        password: pass,
+        password: hashPassword(pass),
         name: 'Spotera Master Administrator',
         phone: '+971 4 000 9999',
         role: 'ADMIN',
@@ -416,13 +425,13 @@ export class ServerDB {
     const cleanEmail = email.trim().toLowerCase() || 'partner@spoteradeals.com';
     let partner = ServerDB.data.users.find((u) => u.role === 'PARTNER' && u.email.toLowerCase() === cleanEmail);
     if (partner) {
-      partner.password = pass;
+      partner.password = hashPassword(pass);
       if (businessId) partner.businessId = businessId;
     } else {
       partner = {
         id: 'usr_partner_' + Date.now(),
         email: cleanEmail,
-        password: pass,
+        password: hashPassword(pass),
         name: name || 'OliOli Play Museum Front Desk',
         phone: '+971 4 701 4000',
         role: 'PARTNER',
@@ -441,7 +450,7 @@ export class ServerDB {
     const usr = ServerDB.findUserById(userId);
     if (!usr) throw new Error('User not found');
 
-    const token = 'spt_sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const token = 'spt_sess_' + crypto.randomBytes(32).toString('hex');
     const session: SessionRecord = {
       token,
       userId: usr.id,
@@ -458,7 +467,16 @@ export class ServerDB {
   }
 
   public static getSession(token: string): SessionRecord | undefined {
-    return ServerDB.data.sessions[token];
+    const session=ServerDB.data.sessions[token];
+    if (!sessionIsValid(session, token)) { delete ServerDB.data.sessions[token]; return; }
+    const user=ServerDB.findUserById(session.userId);
+    if (!user || user.role !== session.role || user.adminSubRole !== session.adminSubRole) return;
+    return session;
+  }
+
+  public static revokeUserSessions(userId:string) {
+    for (const [token,session] of Object.entries(ServerDB.data.sessions)) if(session.userId === userId) delete ServerDB.data.sessions[token];
+    ServerDB.save();
   }
 
   public static deleteSession(token: string) {

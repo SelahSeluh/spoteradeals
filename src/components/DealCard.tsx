@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Heart, MapPin, Users, Link2 } from 'lucide-react';
-import { expeditionImage } from '../utils/expeditionImages';
+import { expeditionImage, safeImageUrl } from '../utils/expeditionImages';
 import { Deal } from '../types';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
@@ -31,6 +31,7 @@ export const DealCard: React.FC<DealCardProps> = ({
   const { user, toggleFavoriteDeal, setSelectedDealId, setActiveView, requireUserAuth, language, isRtl } = useApp();
   const { showToast } = useToast();
   const [isPopping, setIsPopping] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const isFavorite =
     saved !== undefined ? saved : user.savedDealIds ? user.savedDealIds.includes(deal.id) : false;
@@ -85,7 +86,8 @@ export const DealCard: React.FC<DealCardProps> = ({
 
   const displayTitle = getLocalizedTitle(deal, language);
 
-  const dealImage = expeditionImage(`${deal.title} ${deal.category}`);
+  const dealImage = imageFailed ? expeditionImage(`${deal.title} ${deal.category}`) : safeImageUrl(deal.imageUrl) || safeImageUrl(deal.images?.[0]) || expeditionImage(`${deal.title} ${deal.category}`);
+  const isCategoryPhoto = dealImage.startsWith('/places/') || dealImage.includes('images.unsplash.com/');
 
   const locationText = deal.district
     ? `${deal.district}, ${deal.city}`
@@ -112,21 +114,17 @@ export const DealCard: React.FC<DealCardProps> = ({
       >
         <img
           src={dealImage}
-          alt={`Illustration for ${deal.title}`}
+          alt={isCategoryPhoto ? `Category inspiration for ${deal.category}` : displayTitle}
           referrerPolicy="no-referrer"
           onError={(e) => {
-            const target = e.currentTarget;
-            if (!target.src.endsWith('/places/skyline.jpg')) {
-              target.src =
-                '/places/skyline.jpg';
-            }
+            if (!imageFailed) setImageFailed(true);
           }}
           className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-300 ease-out"
           loading="lazy"
         />
 
         {/* Top-Left: Discount Badge in Brand Orange + Availability */}
-        <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 flex-wrap">
+        <div className="deal-badges absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 flex-wrap">
           <span className="bg-[#F5820A] text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-xs tracking-tight">
             {deal.discountPercent}% OFF
           </span>
@@ -167,7 +165,7 @@ export const DealCard: React.FC<DealCardProps> = ({
         </div>
 
         {/* Top-Right: Quick Actions (Copy Link & Wishlist Heart) */}
-        <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
+        <div className="deal-actions absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
           <button
             type="button"
             onClick={handleCopyLink}
@@ -198,7 +196,7 @@ export const DealCard: React.FC<DealCardProps> = ({
         </div>
 
         {/* Bottom tags on image (Category & Age Pill) */}
-        <div className="absolute bottom-2 left-2.5 right-2.5 z-10 flex items-center justify-between text-[10px] font-semibold text-white pointer-events-none">
+        <div className="deal-tags absolute bottom-2 left-2.5 right-2.5 z-10 flex items-center justify-between text-[10px] font-semibold text-white pointer-events-none">
           <span className="bg-black/55 backdrop-blur-xs px-2 py-0.5 rounded-md truncate max-w-[130px]">
             {deal.category}
           </span>
@@ -210,7 +208,8 @@ export const DealCard: React.FC<DealCardProps> = ({
       </div>
 
       {/* 2. BODY CONTENT */}
-      <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2">
+      <div className="deal-body p-3.5 flex-1 flex flex-col justify-between space-y-2">
+        {isCategoryPhoto && <small className="deal-photo-note">Category photo · venue may differ</small>}
         <div>
           {/* Title (max 2 lines, bold, readable) */}
           <h3 className="text-[14px] font-bold text-[#0D1B3E] leading-snug line-clamp-2 group-hover:text-[#0C5CAB] transition-colors">
@@ -225,11 +224,11 @@ export const DealCard: React.FC<DealCardProps> = ({
         </div>
 
         {/* 3. PRICE & RATING ROW */}
-        <div className="flex items-center justify-between pt-2 border-t border-[#F0F4F8]">
+        <div className="deal-price-rating flex items-center justify-between pt-2 border-t border-[#F0F4F8]">
           {/* Price with clear 'From' label and struck-through original */}
           <div className="flex flex-col">
             <span className="text-[10px] font-semibold text-[#8D98AA] leading-none">From</span>
-            <div className="flex items-baseline gap-1.5 mt-0.5">
+            <div className="deal-prices flex items-baseline gap-1.5 mt-0.5">
               <span className="text-[15px] font-black text-[#0C5CAB] leading-none">
                 AED {deal.discountPrice}
               </span>
@@ -242,7 +241,7 @@ export const DealCard: React.FC<DealCardProps> = ({
           </div>
 
           {/* Star Rating with Review Count */}
-          <div className="flex items-center gap-1 bg-[#FFF9F0] border border-[#FFE7C2] px-2 py-1 rounded-lg">
+          <div className="deal-rating flex items-center gap-1 bg-[#FFF9F0] border border-[#FFE7C2] px-2 py-1 rounded-lg">
             <Star className="w-3 h-3 fill-[#F5820A] text-[#F5820A]" />
             <span className="text-[11.5px] font-bold text-[#0D1B3E] leading-none">
               {deal.rating || 4.8}

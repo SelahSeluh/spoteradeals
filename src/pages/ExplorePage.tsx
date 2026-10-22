@@ -24,6 +24,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     setActiveView,
     setSelectedDealId,
     holidays,
+    isRtl,
     t,
   } = useApp();
 
@@ -123,7 +124,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     <div className="paper-explore min-h-screen bg-[#F5F7FA] pb-28">
       {/* Header */}
       <PageHeader
-        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : t('dealsCount'))}
+        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : (isRtl ? 'استكشف التجارب' : 'Explore experiences'))}
         rightAction={
           <div className="flex items-center gap-2">
             {/* View Mode Segmented Switcher */}

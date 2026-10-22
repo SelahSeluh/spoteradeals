@@ -1,0 +1,62 @@
+/* Final shared layout rules. Keep breakpoints together to prevent theme regressions. */
+:root { --content-width:1280px; --page-gutter:24px; }
+.paper-nav-inner, main[data-paper-page], .paper-footer { max-width:var(--content-width)!important; width:100%; margin-inline:auto; }
+.paper-nav-inner { padding-inline:var(--page-gutter); }
+.paper-home { max-width:none; padding-inline:var(--page-gutter); }
+.paper-nav-actions { flex-shrink:0; }
+.paper-nav-inner>button { flex-shrink:0; }
+.paper-menu { top:100%; }
+.paper-footer { display:flex; padding-inline:var(--page-gutter); }
+.paper-footer>.expedition-skyline { object-fit:contain; }
+.picnic-postcard>span { padding-top:18px; }
+.picnic-sticker { bottom:100px; left:2px; }
+.deal-price-rating { flex-wrap:wrap; gap:8px; }
+.deal-prices { flex-wrap:wrap; }
+.deal-prices>span, .deal-rating { white-space:nowrap; flex-shrink:0; }
+.deal-badges { right:88px; }
+.deal-photo-note { display:block; font-size:10px; line-height:1.4; color:#526482; }
+.spotera-notifications { bottom:100px!important; }
+.picnic-categories button { font-size:12px; }
+.picnic-search input { font-size:16px; }
+@media (min-width:768px) and (max-width:1023px) {
+  .paper-home-deals .grid, .places-photo-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+}
+@media (max-width:1023px) {
+  .paper-nav nav { display:none; }
+  .paper-nav-actions { margin-left:auto; }
+  .paper-nav-actions label { display:flex; }
+  .paper-menu { top:100%; }
+}
+@media (max-width:767px) {
+  :root { --page-gutter:12px; }
+  .paper-nav-inner { gap:5px; padding-inline:10px; }
+  .paper-nav-actions label { display:none; }
+  .paper-footer { display:flex; flex-direction:column; align-items:flex-start; padding:105px 16px calc(100px + env(safe-area-inset-bottom,0px)); gap:12px; margin-top:12px; }
+  .paper-footer>.expedition-skyline { height:75px; }
+  .paper-footer>div { gap:4px 16px; }
+  .paper-footer button { font-size:13px; min-height:44px; }
+  .paper-footer p { font-size:18px; }
+  .paper-footer small { font-size:11px; }
+  .picnic-categories button { font-size:11px; line-height:1.3; }
+  .picnic-sticker { bottom:95px; left:0; font-size:12px; padding:10px; }
+  .picnic-postcard>span { font-size:15px; padding-inline:4px; }
+  .paper-home-deals .grid { grid-template-columns:1fr!important; }
+  .paper-home-deals .paper-deal-card { display:flex; }
+  .paper-home-deals .paper-deal-card>div:first-child { height:190px!important; }
+  .paper-deal-card h3 { font-size:16px!important; }
+  .paper-deal-card [class*='absolute'][class*='top'], .paper-home-deals .paper-deal-card>div:first-child>div.absolute { transform:none; }
+  .deal-price-rating { align-items:flex-start; }
+  [data-paper-page=explore] .paper-deal-card { display:flex!important; }
+  [data-paper-page=explore] .paper-deal-card>div:first-child { min-height:190px; height:190px!important; }
+  .deal-tags { gap:8px; }
+  .deal-tags>span:first-child { min-width:0; }
+  .spotera-notifications { bottom:calc(145px + env(safe-area-inset-bottom,0px))!important; }
+  .picnic-search input { font-size:16px; }
+}
+@media(min-width:1024px) {
+  .paper-home-deals .grid { grid-template-columns:repeat(4,minmax(0,1fr))!important; }
+}
+@media(max-width:350px) {
+  .places-photo-grid { grid-template-columns:1fr; }
+  .picnic-categories { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}

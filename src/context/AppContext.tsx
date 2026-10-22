@@ -430,14 +430,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [user, setUser] = useState<User>(() => {
     if (initialAuthUser) {
-      return initialAuthUser;
+      return {...initialAuthUser, role:'customer'};
     }
     safeStorage.removeItem('spotera_user');
     return defaultGuestUser;
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    return Boolean(initialAuthUser);
+    return false;
   });
 
   const [hasEnteredApp, setHasEnteredApp] = useState<boolean>(() => {
@@ -678,7 +678,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeView, setActiveViewState] = useState<ViewMode>(() => {
     const locationView = parseViewFromLocation();
     if (initialAuthUser) {
-      return initialAuthUser.role === 'ADMIN' || initialAuthUser.role === 'admin' ? 'admin' : (locationView || 'home');
+      return locationView === 'admin' ? 'home' : (locationView || 'home');
     }
     if (safeSessionStorage.getItem('paper_guest_entered') === 'true') return locationView;
     return 'auth';
@@ -733,6 +733,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (res.ok) {
             const data = await res.json();
             if (data.authenticated && data.user) {
+              setUser(prev=>({...prev,...data.user}));
+              setIsLoggedIn(true);
               if (data.user.role === 'ADMIN') {
                 setIsAdminAuthenticated(true);
                 setAdminEmail(data.user.email);
@@ -761,10 +763,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 });
                 setIsLoggedIn(true);
               }
+            } else {
+              setIsLoggedIn(false); setUser(defaultGuestUser); setIsAdminAuthenticated(false); setIsPartnerAuthenticated(false);
+              safeStorage.removeItem('spotera_user'); safeStorage.removeItem('spotera_session_token');
             }
           }
         } catch (e) {
-          // ignore network error
+          // Network failures cannot authenticate a cached profile.
         }
       }
     };

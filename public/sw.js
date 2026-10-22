@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotera-official-logo-v11';
+const CACHE_NAME = 'spotera-security-responsive-v12';
 const STATIC_ASSETS = [
   '/spoteradeals-logo.png',
   '/icon-192.png',
@@ -42,7 +42,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // Exclude API requests
-  if (url.pathname.startsWith('/api/')) {
+  if (url.origin !== self.location.origin || event.request.method !== 'GET' || url.pathname.startsWith('/api/')) {
     return;
   }
 
@@ -132,7 +132,11 @@ self.addEventListener('notificationclick', (event) => {
     return;
   }
 
-  const targetUrl = event.notification.data?.url || '/';
+  let targetUrl = '/';
+  try {
+    const candidate = new URL(event.notification.data?.url || '/', self.location.origin);
+    if (candidate.origin === self.location.origin) targetUrl = candidate.href;
+  } catch { /* Invalid notification links open the homepage. */ }
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
