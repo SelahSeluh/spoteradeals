@@ -60,3 +60,9 @@
   .places-photo-grid { grid-template-columns:1fr; }
   .picnic-categories { grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
+.places-photo-grid button { display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; }
+.paper-home-deals>section>div:first-child { flex-wrap:wrap; gap:10px; }
+.paper-home-deals>section>div:first-child>button { flex-shrink:0; white-space:nowrap; }
+@media(max-width:767px) {
+  .paper-home-deals h2 { font-size:23px!important; }
+}
