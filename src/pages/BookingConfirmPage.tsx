@@ -177,7 +177,7 @@ export const BookingConfirmPage: React.FC = () => {
                 <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
               <div className="flex items-center gap-1.5">
-                <span>Paid:</span>
+                <span>Pay at venue:</span>
                 <span className="font-black text-[#F5820A]">AED {paidPrice}</span>
               </div>
             </div>

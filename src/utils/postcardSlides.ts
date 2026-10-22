@@ -14,6 +14,6 @@ export function postcardSlides(config: HomepageConfig, deals: Deal[], now = Date
   if (config.heroIncludeTopOffers === false) return custom.slice(0,10);
   const featured = [...available].sort((a,b) => Number(b.isFeatured)-Number(a.isFeatured) || (a.displayOrder ?? 999)-(b.displayOrder ?? 999) || b.rating-a.rating);
   return [...custom, ...featured.filter(d => !custom.some(s => s.dealId === d.id)).map((d,i) => ({
-    id:`offer-${d.id}`, dealId:d.id, title:d.title, subtitle:`${d.businessName} · ${d.city} · AED ${d.discountPrice}`, imageUrl:safeMediaUrl(d.imageUrl || d.images?.[0]) || '/places/skyline.jpg', buttonText:'View offer', enabled:true, order:i,
+    id:`offer-${d.id}`, mediaType:d.videoUrl?'video' as const:'image' as const,videoUrl:d.videoUrl,dealId:d.id, title:d.title, subtitle:`${d.businessName} · ${d.city} · AED ${d.discountPrice}`, imageUrl:safeMediaUrl(d.imageUrl || d.images?.[0]) || '/places/skyline.jpg', buttonText:'View offer', enabled:true, order:i,
   }))].slice(0,10);
 }

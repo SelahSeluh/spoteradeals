@@ -4,6 +4,8 @@ import {randomUUID} from 'node:crypto';
 import {hashPassword,verifyPassword} from '../src/server/security.js';
 import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms.js';
 
+import {readCommerce,transact,publicAccount,accountCookie,verifyAccountCookie,reserve,redeem,cancel,visibleBookings,CommerceError} from '../src/server/commerce.js';
+
 type Request=IncomingMessage & {body?:any};
 const user=()=>({id:'spotera-owner',name:'SpoteraDeals Owner',email:process.env.ADMIN_EMAIL,role:'ADMIN',adminSubRole:'SUPER_ADMIN',membership:'Free'});
 async function session(req:Request){const cookie=req.headers.cookie?.split(';').map(c=>c.trim()).find(c=>c.startsWith('spotera_admin='));return cookie?verifyAdminSession(cookie.slice('spotera_admin='.length),Date.now(),await adminPasswordHash()):false}
@@ -23,17 +25,48 @@ export default async function handler(req:Request,res:ServerResponse){
     if(origin && origin!==`https://${host}` && !(host?.startsWith('localhost:')&&origin===`http://${host}`))return send(403,{error:'CROSS_ORIGIN_REQUEST'});
     if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'JSON_REQUIRED'});
   }
-  if(path==='/api/health')return send(200,{status:'ok',release:'postcard-promotions',adminConfigured:configured,accountsConfigured:false});
-  if(path==='/api/auth/status')return send(200,{adminConfigured:configured,accountsConfigured:false});
-  if(path==='/api/auth/logout' && req.method==='POST'){res.setHeader('Set-Cookie','spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0');return send(200,{success:true})}
+  if(path==='/api/health')return send(200,{status:'ok',release:'postcard-promotions',adminConfigured:configured,accountsConfigured:configured});
+  if(path==='/api/auth/status')return send(200,{adminConfigured:configured,accountsConfigured:configured});
+  if(path==='/api/auth/logout' && req.method==='POST'){res.setHeader('Set-Cookie',['spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0','spotera_account=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0']);return send(200,{success:true})}
   try{
-    if(path==='/api/auth/me')return send(200,(await session(req))?{authenticated:true,user:user()}:{authenticated:false});
+    const owner=await session(req);
+    const accountToken=req.headers.cookie?.split(';').map(c=>c.trim()).find(c=>c.startsWith('spotera_account='))?.slice(16);
+    const account=accountToken?verifyAccountCookie(accountToken,(await readCommerce()).data.users):null;
+    const actor=owner?user():account;
+    if(path==='/api/auth/me')return send(200,actor?{authenticated:true,user:owner?actor:publicAccount(account!)}:{authenticated:false});
+    if(path==='/api/auth/register'&&req.method==='POST'){
+      const input=await body(req);const email=String(input.email||'').trim().toLowerCase();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof input.password!=='string'||input.password.length<12||input.password.length>128||typeof input.name!=='string'||!input.name.trim()||input.name.length>120)return send(400,{message:'Use a valid email, name, and a password of 12–128 characters.'});
+      const ip=String(req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown');if(!await consumeLoginAttempt(ip))return send(429,{message:'Please wait 15 minutes before trying again.'});
+      const created=await transact(state=>{if(state.users.some(u=>u.email===email)||email===process.env.ADMIN_EMAIL)throw new CommerceError(409,'This email is already registered.');const a={id:randomUUID(),email,name:input.name.trim(),phone:String(input.phone||'').slice(0,40),hash:hashPassword(input.password),role:'CUSTOMER' as const};state.users.push(a);return a});
+      res.setHeader('Set-Cookie',`spotera_account=${accountCookie(created)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`);return send(200,{success:true,token:'cookie-session',user:publicAccount(created)});
+    }
+    if(path==='/api/bookings'&&req.method==='GET'){
+      if(!actor)return send(401,{message:'Sign in first.'});return send(200,{success:true,bookings:visibleBookings((await readCommerce()).data,actor)});
+    }
+    if(path==='/api/bookings'&&req.method==='POST'){
+      if(!account)return send(401,{message:'Sign in as a customer to book.'});const input=await body(req);const {data}=await readPublished();const deal=data.deals?.find((d:any)=>d.id===input.dealId);const booking=await transact(state=>reserve(state,account,deal,input));return send(200,{success:true,booking});
+    }
+    if(path==='/api/bookings/cancel'&&req.method==='POST'){
+      if(!actor)return send(401,{message:'Sign in first.'});const input=await body(req);const booking=await transact(state=>cancel(state,actor,input.id));return send(200,{success:true,booking});
+    }
+    if(path==='/api/vouchers/redeem'&&req.method==='POST'){
+      if(!actor)return send(401,{message:'Sign in first.'});const input=await body(req);const booking=await transact(state=>redeem(state,actor,input.code));return send(200,{success:true,type:'booking',title:booking.dealTitle,customerName:booking.userName,code:booking.bookingCode,message:'Voucher redeemed successfully.',booking});
+    }
+    if(path==='/api/partner/overview'){
+      if(!account||account.role!=='PARTNER')return send(403,{message:'Business sign-in required.'});const state=(await readCommerce()).data;const {data}=await readPublished();return send(200,{success:true,business:data.businesses?.find((b:any)=>b.id===account.businessId),bookings:visibleBookings(state,account),deals:data.deals?.filter((d:any)=>d.businessId===account.businessId)||[]});
+    }
     if(path==='/api/auth/login'&&req.method==='POST'){
       if(!configured)return send(503,{error:'ADMIN_NOT_CONFIGURED'});
       const input=await body(req);
       if(typeof input.email!=='string'||typeof input.password!=='string'||input.password.length>1024)return send(400,{error:'INVALID_INPUT'});
       const ip=String(req.headers['x-vercel-forwarded-for']||req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown').split(',')[0].trim();
       if(!await consumeLoginAttempt(ip)){res.setHeader('Retry-After','900');return send(429,{error:'TOO_MANY_ATTEMPTS',message:'Please wait 15 minutes before trying again.'})}
+      if(input.email.trim().toLowerCase()!==process.env.ADMIN_EMAIL){
+        const a=(await readCommerce()).data.users.find(u=>u.email===input.email.trim().toLowerCase()&&!u.disabled);
+        if(!a||!verifyPassword(input.password,a.hash))return send(401,{message:'Incorrect email or password.'});
+        res.setHeader('Set-Cookie',[`spotera_account=${accountCookie(a)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`,'spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0']);return send(200,{success:true,token:'cookie-session',user:publicAccount(a)});
+      }
       const hash=await adminPasswordHash();
       const valid=verifyPassword(input.password,hash);
       if(!valid||input.email.trim().toLowerCase()!==process.env.ADMIN_EMAIL)return send(401,{error:'INVALID_CREDENTIALS',message:'Incorrect email or password.'});
@@ -79,9 +112,14 @@ export default async function handler(req:Request,res:ServerResponse){
         const input=await body(req);if(input.data===undefined||!safeContent(input.data))return send(400,{error:'INVALID_CONTENT'});
         await writeContent(scope,input.data);return send(200,{success:true,scope});
       }
-      if(path==='/api/admin/overview')return send(200,{success:true,adminSubRole:'SUPER_ADMIN',stats:{totalUsers:1,activeVouchers:0,redeemedVouchers:0,totalBookings:0,totalBackups:0},users:[user()],vouchers:[],bookings:[],auditLogs:[],backups:[]});
+      if(path==='/api/admin/business-account'&&req.method==='POST'){
+        const input=await body(req);const email=String(input.email||'').trim().toLowerCase();const {data}=await readPublished();
+        if(!data.businesses?.some((b:any)=>b.id===input.businessId)||!/^\S+@\S+\.\S+$/.test(email)||email===process.env.ADMIN_EMAIL||typeof input.password!=='string'||input.password.length<12||input.password.length>128)return send(400,{message:'Select a business, valid email, and a password of 12–128 characters.'});
+        const a=await transact(state=>{const existing=state.users.find(u=>u.email===email);if(existing&&existing.role!=='PARTNER')throw new CommerceError(409,'That email belongs to a customer.');if(existing){existing.hash=hashPassword(input.password);existing.businessId=input.businessId;existing.disabled=false;return existing}const created={id:randomUUID(),email,name:data.businesses.find((b:any)=>b.id===input.businessId).name,hash:hashPassword(input.password),role:'PARTNER' as const,businessId:input.businessId};state.users.push(created);return created});return send(200,{success:true,user:publicAccount(a)});
+      }
+      if(path==='/api/admin/overview'){const state=(await readCommerce()).data;return send(200,{success:true,adminSubRole:'SUPER_ADMIN',stats:{totalUsers:state.users.length+1,activeVouchers:state.bookings.filter(b=>b.status==='confirmed').length,redeemedVouchers:state.bookings.filter(b=>b.status==='redeemed').length,totalBookings:state.bookings.length,totalBackups:0},users:[user(),...state.users.map(publicAccount)],vouchers:[],bookings:state.bookings,auditLogs:state.auditLogs,backups:[]})}
       return send(501,{error:'SERVICE_NOT_CONFIGURED',message:'This account feature is not configured.'});
     }
     return send(503,{success:false,error:'Account services are not configured yet. Please continue as a guest.'});
-  }catch(error){console.error('CMS request failed',error instanceof Error?error.name:'unknown');return send(error instanceof Error&&error.message==='TOO_LARGE'?413:503,{success:false,error:'SERVICE_UNAVAILABLE',message:'Could not complete the request. Please try again.'})}
+  }catch(error){if(error instanceof CommerceError)return send(error.status,{success:false,message:error.message});console.error('CMS request failed',error instanceof Error?error.name:'unknown');return send(error instanceof Error&&error.message==='TOO_LARGE'?413:503,{success:false,error:'SERVICE_UNAVAILABLE',message:'Could not complete the request. Please try again.'})}
 }

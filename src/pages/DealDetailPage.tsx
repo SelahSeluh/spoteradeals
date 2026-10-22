@@ -1,3 +1,4 @@
+import {PublicBusinessProfile} from '../components/BusinessOperations';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   ChevronLeft,
@@ -125,7 +126,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
     }
   }, [deal?.id, selectedDealId, setSelectedDealId]);
 
-  const images = deal?.images && deal.images.length > 0 ? deal.images : [
+  const images = deal?.images && deal.images.length > 0 ? deal.images : deal?.imageUrl?[deal.imageUrl]:[
     'https://images.unsplash.com/photo-1566454544259-f4b94c96a464?auto=format&fit=crop&q=80&w=800',
     'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80&w=800',
   ];
@@ -193,8 +194,9 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
   const isDealExpired = hasExpiredLive || (dealTiming ? dealTiming.isExpired : false);
   const isDealUpcoming = dealTiming ? dealTiming.isUpcoming : false;
 
-  const handleConfirmBooking = () => {
-    if (!deal) return;
+  const [showBusiness,setShowBusiness]=useState(false);
+  const handleConfirmBooking = async () => {
+    if (!deal||isProcessing) return;
 
     // Strict validation: Reject expired or not-started deals
     const validation = validateDealBooking(deal);
@@ -208,22 +210,11 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
 
     setIsProcessing(true);
 
-    setTimeout(() => {
-      const newBooking = createBooking(
-        deal,
-        bookingDate,
-        bookingTime,
-        guestsCount,
-        '2 Kids Entry',
-        deal.discountPrice || 99
-      );
+    try {
+      const newBooking=await createBooking(deal,bookingDate,bookingTime,guestsCount,deal.title,deal.discountPrice*guestsCount);
+      setSelectedBookingId(newBooking.id);setShowBookingModal(false);window.scrollTo({top:0});setActiveView('booking-confirm');
+    } catch(error){showToast.error(error instanceof Error?error.message:'Booking failed.');} finally{setIsProcessing(false);}
 
-      setSelectedBookingId(newBooking.id);
-      setIsProcessing(false);
-      setShowBookingModal(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setActiveView('booking-confirm');
-    }, 600);
   };
 
   if (!deal) {
@@ -297,14 +288,16 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
         <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
           {/* LEFT COLUMN: Media & Information */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+            <button className="text-blue-700 underline font-bold" onClick={()=>setShowBusiness(true)}>View {deal.businessName} profile & all offers</button>
+            {showBusiness&&<PublicBusinessProfile businessId={deal.businessId} onClose={()=>setShowBusiness(false)}/>}
             {/* 2. IMAGE CAROUSEL: Kids on yellow inflatable water raft */}
             <div className="space-y-2">
               <div className="relative aspect-[16/10] rounded-3xl overflow-hidden bg-slate-100 shadow-xs">
-                <img
+                {deal.videoUrl ? <video src={deal.videoUrl} poster={images[0]} className="w-full h-full object-cover" controls playsInline preload="metadata" /> : <img
                   src={images[activeImgIndex]}
                   alt={getLocalizedTitle(deal, language)}
                   className="w-full h-full object-cover"
-                />
+                />}
                 {deal.availability && (
                   <span className={`absolute top-4 ${isRtl ? 'right-4' : 'left-4'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-xs ${
                     deal.availability === 'available'
@@ -368,7 +361,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   AED {deal.originalPrice || 160}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-[#F5820A]">
-                  AED {deal.discountPrice || 99}
+                  AED {deal.discountPrice * guestsCount}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#FFF3E8] text-[#F5820A] border border-[#F5820A]/30 text-xs font-bold">
                   {t('save')} {deal.discountPercent || 38}%
@@ -453,7 +446,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{t('specialPassRate')}</span>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-3xl font-black text-[#0D1B3E]">AED {deal.discountPrice || 99}</span>
+                    <span className="text-3xl font-black text-[#0D1B3E]">AED {deal.discountPrice * guestsCount}</span>
                     <span className="text-sm text-slate-400 line-through">AED {deal.originalPrice || 160}</span>
                   </div>
                 </div>
@@ -517,7 +510,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div className="pt-3 border-t border-slate-100 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">{t('subtotal')}</span>
-                    <span className="font-bold text-slate-700">AED {deal.discountPrice || 99}</span>
+                    <span className="font-bold text-slate-700">AED {deal.discountPrice * guestsCount}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">{t('vatIncluded')}</span>
@@ -525,7 +518,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-sm">
                     <span className="font-bold text-[#0D1B3E]">{t('totalDue')}</span>
-                    <span className="font-black text-xl text-[#F5820A]">AED {deal.discountPrice || 99}</span>
+                    <span className="font-black text-xl text-[#F5820A]">AED {deal.discountPrice * guestsCount}</span>
                   </div>
                 </div>
               </div>
@@ -551,7 +544,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   ? t('dealExpired')
                   : isDealUpcoming
                   ? t('offerStartsSoon')
-                  : `${t('bookNow')} — AED ${deal.discountPrice || 99}`}
+                  : `${t('bookNow')} — AED ${deal.discountPrice * guestsCount}`}
               </button>
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-slate-500 font-medium pt-1">
@@ -574,7 +567,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
         <div className="max-w-md mx-auto flex items-center justify-between gap-4">
           <div>
             <div className="text-xl font-black text-[#0D1B3E] tracking-tight">
-              AED {deal.discountPrice || 99}
+              AED {deal.discountPrice * guestsCount}
             </div>
             <div className="text-[10px] font-semibold text-[#8D98AA]">{t('totalPrice')}</div>
           </div>
@@ -672,7 +665,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                 <span className="font-bold text-slate-600">{t('totalDue')}</span>
                 <span className="text-base font-black text-[#F5820A]">
-                  AED {deal.discountPrice || 99}
+                  AED {deal.discountPrice * guestsCount}
                 </span>
               </div>
             </div>

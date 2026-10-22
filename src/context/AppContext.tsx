@@ -279,16 +279,16 @@ interface AppContextType {
   changePartnerPassword: (newPass: string) => void;
   partnerLogout: () => void;
   // Core domain actions
-  claimCoupon: (deal: Deal) => Coupon;
+  claimCoupon: (deal: Deal) => Promise<Coupon>;
   redeemCoupon: (couponCode: string) => boolean;
-  redeemCode: (code: string, businessName?: string) => {
+  redeemCode: (code: string, businessName?: string) => Promise<{
     success: boolean;
     type?: 'booking' | 'coupon';
     title?: string;
     customerName?: string;
     code?: string;
     message: string;
-  };
+  }>;
   createBooking: (
     deal: Deal,
     date: string,
@@ -296,7 +296,7 @@ interface AppContextType {
     childrenCount: number,
     packageName: string,
     totalPrice: number
-  ) => Booking;
+  ) => Promise<Booking>;
   cancelBooking: (bookingId: string) => void;
   updateBookingStatus: (bookingId: string, status: Booking['status']) => void;
   toggleFavoriteDeal: (dealId: string) => void;
@@ -475,31 +475,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return expeditionCatalog(safeJsonParse(saved, initialDeals));
   });
 
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = safeStorage.getItem('spotera_coupons');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed.filter((b: Booking) => b.userId === initialAuthUser?.id) : [];
-      } catch (e) {
-        // ignore
-      }
-    }
-    return [];
-  });
-
-  const [bookings, setBookings] = useState<Booking[]>(() => {
-    const saved = safeStorage.getItem('spotera_bookings');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed.filter((b: Booking) => b.userId === initialAuthUser?.id) : [];
-      } catch (e) {
-        // ignore
-      }
-    }
-    return [];
-  });
+  const [coupons,setCoupons]=useState<Coupon[]>([]);
+  const [bookings,setBookings]=useState<Booking[]>([]);
 
   const [reviews, setReviews] = useState<Review[]>(() => {
     const saved = safeStorage.getItem('spotera_reviews');
@@ -734,7 +711,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (sessionToken) {
         try {
           const res = await fetch('/api/auth/me', {
-            headers: { Authorization: `Bearer ${sessionToken}` },
+            headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type':'application/json' },
           });
           if (res.ok) {
             const data = await res.json();
@@ -799,6 +776,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const handleAuthSuccess = (authUser: User, token?: string) => {
     setUser(authUser);
+    setIsAdminAuthenticated(authUser.role==='ADMIN');
+    setIsPartnerAuthenticated(authUser.role==='PARTNER');
     safeStorage.setItem('spotera_user', JSON.stringify(authUser));
     if (token) {
       setSessionToken(token);
@@ -813,7 +792,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     safeSessionStorage.setItem('spotera_auth_chosen', 'true');
     if (authUser.role === 'ADMIN' || (authUser.role as string) === 'admin') {
       setActiveViewState('admin');
-    } else {
+    } else if(authUser.role==='PARTNER'){setActiveViewState('partners');} else {
       setActiveViewState('home');
     }
 
@@ -847,6 +826,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     setUser(defaultGuestUser);
     setIsLoggedIn(false);
+    setIsAdminAuthenticated(false);setIsPartnerAuthenticated(false);
     setHasEnteredApp(false);
     setStartupPhase('auth');
     setSessionToken(null);
@@ -903,7 +883,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (sessionToken) {
       fetch('/api/auth/logout', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type':'application/json' },
       }).catch(() => {});
     }
     setIsAdminAuthenticated(false);
@@ -920,83 +900,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return !!safeStorage.getItem('spotera_partner_pass');
   });
 
-  const setupPartnerAccount = async (email: string, pass: string) => {
-    const cleanEmail = email.trim().toLowerCase() || '';
-    const cleanPass = pass;
-
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail, password: cleanPass, name: 'Partner Desk', role: 'PARTNER' }),
-      });
-      const data = await res.json();
-      if (res.ok && data.token) {
-        setSessionToken(data.token);
-        safeStorage.setItem('spotera_session_token', data.token);
-      }
-    } catch (e) {
-      // fallback
-    }
-
-    safeStorage.setItem('spotera_partner_email', cleanEmail);
-    safeStorage.setItem('spotera_partner_pass', cleanPass);
-    safeStorage.setItem('spotera_partner_auth', 'true');
-    setPartnerEmail(cleanEmail);
-    setHasPartnerPasswordSet(true);
-    setIsPartnerAuthenticated(true);
-  };
-
-  const partnerLoginWithCreds = (email: string, pass: string) => {
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = pass;
-    const storedPass = safeStorage.getItem('spotera_partner_pass');
-    const storedEmail = safeStorage.getItem('spotera_partner_email') || '';
-
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: cleanEmail, password: cleanPass, requestedRole: 'PARTNER' }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.token) {
-          setSessionToken(data.token);
-          safeStorage.setItem('spotera_session_token', data.token);
-        }
-      })
-      .catch(() => {});
-
-    if (!storedPass) {
-      return { success: false, message: 'SETUP_REQUIRED' };
-    }
-
-    if (
-      (Boolean(storedEmail) && cleanEmail === storedEmail.toLowerCase()) &&
-      cleanPass === storedPass
-    ) {
-      setIsPartnerAuthenticated(true);
-      safeStorage.setItem('spotera_partner_auth', 'true');
-      return { success: true, message: 'Authenticated successfully.' };
-    }
-
-    return { success: false, message: 'Invalid Partner Email or Password. Please try again.' };
-  };
-
-  const changePartnerPassword = (newPass: string) => {
-    const cleanPass = newPass.trim();
-    safeStorage.setItem('spotera_partner_pass', cleanPass);
-    setHasPartnerPasswordSet(true);
-  };
-
+  const setupPartnerAccount = () => {window.alert('Business accounts are created by the administrator in Business accounts & live bookings.');};
+  const partnerLoginWithCreds = () => ({success:false,message:'Use the regular email sign-in screen with your administrator-provided business account.'});
+  const changePartnerPassword = () => {window.alert('Ask the administrator to reset your business password.');};
   const partnerLogout = () => {
     if (sessionToken) {
       fetch('/api/auth/logout', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type':'application/json' },
       }).catch(() => {});
     }
-    setIsPartnerAuthenticated(false);
+    setIsPartnerAuthenticated(false);setIsLoggedIn(false);setUser(defaultGuestUser);
     safeStorage.removeItem('spotera_partner_auth');
     safeStorage.removeItem('spotera_session_token');
     setSessionToken(null);
@@ -1213,285 +1127,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Actions
-  const claimCoupon = (deal: Deal): Coupon => {
-    const randomCode = `SPOTERA-${deal.city.substring(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newCoupon: Coupon = {
-      id: `coup_${Date.now()}`,
-      code: randomCode,
-      dealId: deal.id,
-      dealTitle: deal.title,
-      businessName: deal.businessName,
-      userId: user.id,
-      userName: user.name,
-      claimedAt: new Date().toISOString().split('T')[0],
-      expiryDate: deal.expiryDate,
-      status: 'active',
-      qrCodeData: `${randomCode}-${user.id}`,
-      redemptionInstructions: `Present this QR code or coupon code "${randomCode}" at ${deal.businessName} reception to claim your ${deal.discountPercent}% discount.`,
-    };
-
-    setCoupons((prev) => [newCoupon, ...prev]);
-
-    // Send in-app notification
-    const notif = {
-      id: `notif_${Date.now()}`,
-      title: 'Coupon Claimed Successfully',
-      message: `You claimed a coupon for "${deal.title}". Code: ${randomCode}`,
-      date: new Date().toISOString().split('T')[0],
-      read: false,
-    };
-    setUser((prev) => ({
-      ...prev,
-      notifications: [notif, ...prev.notifications],
-    }));
-
-    return newCoupon;
+  const apiAction = async (path:string, input?:unknown) => {
+    const response=await fetch(path,input===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)});
+    const data=await response.json();if(!response.ok||data.success===false)throw new Error(data.message||'Could not complete this request.');return data;
   };
-
-  const redeemCoupon = (couponCode: string): boolean => {
-    const targetIndex = coupons.findIndex(
-      (c) => c.code.toLowerCase().trim() === couponCode.toLowerCase().trim()
-    );
-    if (targetIndex !== -1 && coupons[targetIndex].status === 'active') {
-      const updated = [...coupons];
-      const targetC = updated[targetIndex];
-      updated[targetIndex] = {
-        ...targetC,
-        status: 'redeemed',
-        redeemedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      };
-      setCoupons(updated);
-
-      // Award Loyalty Points for verified redemption with duplicate protection
-      awardLoyaltyPoints(
-        'DEAL_REDEMPTION',
-        targetC.id,
-        loyaltyRules.redemptionPoints,
-        `Redeemed Voucher: ${targetC.dealTitle}`
-      );
-
-      return true;
-    }
-    return false;
+  const refreshBookings = async () => { try{const data=await apiAction('/api/bookings');setBookings(data.bookings||[]);}catch{setBookings([])} };
+  useEffect(()=>{if(!isLoggedIn&&!isAdminAuthenticated&&!isPartnerAuthenticated){setBookings([]);setCoupons([]);return}void refreshBookings();const timer=setInterval(()=>{if(!document.hidden)void refreshBookings()},30000);window.addEventListener('focus',refreshBookings);return()=>{clearInterval(timer);window.removeEventListener('focus',refreshBookings)}},[isLoggedIn,isAdminAuthenticated,isPartnerAuthenticated,user.id]);
+  const createBooking = async (deal:Deal,date:string,timeSlot:string,childrenCount:number,packageName:string,totalPrice:number):Promise<Booking> => {
+    const data=await apiAction('/api/bookings',{dealId:deal.id,date,timeSlot,childrenCount});setBookings(prev=>[data.booking,...prev.filter(b=>b.id!==data.booking.id)]);return data.booking;
   };
-
-  const redeemCode = (cleanCodeInput: string, businessNameParam?: string) => {
-    const raw = cleanCodeInput.trim().toUpperCase();
-    if (!raw) {
-      return { success: false, message: 'Please enter or scan a valid code.' };
-    }
-
-    const nowFormatted = new Date().toISOString().replace('T', ' ').substring(0, 16);
-
-    // 1. Search in Bookings (by bookingCode, id, or substring)
-    const bookingIndex = bookings.findIndex(
-      (b) =>
-        b.bookingCode.toUpperCase() === raw ||
-        b.id.toUpperCase() === raw ||
-        raw.includes(b.bookingCode.toUpperCase())
-    );
-
-    if (bookingIndex !== -1) {
-      const targetBk = bookings[bookingIndex];
-      if (targetBk.status === 'completed') {
-        return {
-          success: false,
-          type: 'booking' as const,
-          title: targetBk.dealTitle,
-          customerName: targetBk.userName,
-          code: targetBk.bookingCode,
-          message: `Invalid or already redeemed QR code: Booking ${targetBk.bookingCode} for "${targetBk.userName}" was ALREADY redeemed on ${targetBk.redeemedAt || 'a previous date'}.`,
-        };
-      }
-      if (targetBk.status === 'cancelled') {
-        return {
-          success: false,
-          type: 'booking' as const,
-          title: targetBk.dealTitle,
-          customerName: targetBk.userName,
-          code: targetBk.bookingCode,
-          message: `Invalid or already redeemed QR code: Booking ${targetBk.bookingCode} has been CANCELLED.`,
-        };
-      }
-
-      // Mark as completed/redeemed
-      const updatedBk = [...bookings];
-      updatedBk[bookingIndex] = {
-        ...targetBk,
-        status: 'completed',
-        redeemedAt: nowFormatted,
-        redeemedByBusiness: businessNameParam || targetBk.businessName,
-      };
-      setBookings(updatedBk);
-
-      // Award Loyalty Points
-      awardLoyaltyPoints(
-        'DEAL_REDEMPTION',
-        targetBk.id,
-        loyaltyRules.redemptionPoints,
-        `Pass Redeemed at Venue: ${targetBk.dealTitle}`
-      );
-
-      return {
-        success: true,
-        type: 'booking' as const,
-        title: targetBk.dealTitle,
-        customerName: targetBk.userName,
-        code: targetBk.bookingCode,
-        message: `Booking verified successfully! Pass ${targetBk.bookingCode} for ${targetBk.userName} confirmed & redeemed.`,
-      };
-    }
-
-    // 2. Search in Coupons (by code, qrCodeData, id)
-    const couponIndex = coupons.findIndex(
-      (c) =>
-        c.code.toUpperCase() === raw ||
-        c.id.toUpperCase() === raw ||
-        c.qrCodeData.toUpperCase() === raw ||
-        raw.includes(c.code.toUpperCase())
-    );
-
-    if (couponIndex !== -1) {
-      const targetCoup = coupons[couponIndex];
-      if (targetCoup.status === 'redeemed') {
-        return {
-          success: false,
-          type: 'coupon' as const,
-          title: targetCoup.dealTitle,
-          customerName: targetCoup.userName,
-          code: targetCoup.code,
-          message: `Invalid or already redeemed QR code: Coupon ${targetCoup.code} was ALREADY redeemed on ${targetCoup.redeemedAt || 'a previous date'}.`,
-        };
-      }
-
-      const updatedC = [...coupons];
-      updatedC[couponIndex] = {
-        ...targetCoup,
-        status: 'redeemed',
-        redeemedAt: nowFormatted,
-        redeemedByBusiness: businessNameParam || targetCoup.businessName,
-      };
-      setCoupons(updatedC);
-
-      // Award Loyalty Points
-      awardLoyaltyPoints(
-        'DEAL_REDEMPTION',
-        targetCoup.id,
-        loyaltyRules.redemptionPoints,
-        `Voucher Redeemed: ${targetCoup.dealTitle}`
-      );
-
-      return {
-        success: true,
-        type: 'coupon' as const,
-        title: targetCoup.dealTitle,
-        customerName: targetCoup.userName,
-        code: targetCoup.code,
-        message: `Booking verified successfully! Voucher ${targetCoup.code} for ${targetCoup.userName} confirmed & redeemed.`,
-      };
-    }
-
-    // 3. Fallback check for Spotera Deal QR / Promo codes
-    const matchedDeal = deals.find(
-      (d) =>
-        d.id.toUpperCase() === raw ||
-        raw.includes(d.id.toUpperCase()) ||
-        (raw.includes('KIDZANIA') && d.businessName.includes('KidZania')) ||
-        (raw.includes('WILD-WADI') && d.businessName.includes('Wild Wadi')) ||
-        (raw.includes('OLIOLI') && d.businessName.includes('OliOli')) ||
-        (raw.includes('SUMMER') && d.isFeatured)
-    );
-
-    if (matchedDeal) {
-      return {
-        success: true,
-        type: 'coupon' as const,
-        title: matchedDeal.title,
-        customerName: user.name || 'Spotera Member',
-        code: `SPOTERA-${matchedDeal.id.substring(5, 12).toUpperCase()}`,
-        message: `Booking verified successfully! Spotera Offer: "${matchedDeal.title}" at ${matchedDeal.businessName} (${matchedDeal.discountPercent}% OFF) validated.`,
-      };
-    }
-
-    return {
-      success: false,
-      message: `Invalid or already redeemed QR code: No active booking or voucher matching "${raw}".`,
-    };
+  const claimCoupon = async (deal:Deal):Promise<Coupon> => {
+    const date=new Date(Date.now()+4*3600000).toISOString().slice(0,10);
+    const b=await createBooking(deal,date,'During opening hours',1,deal.title,deal.discountPrice);
+    const coupon:Coupon={id:b.id,code:b.bookingCode,dealId:deal.id,dealTitle:deal.title,businessName:deal.businessName,userId:user.id,userName:user.name,claimedAt:b.createdAt,expiryDate:date,status:'active',qrCodeData:b.bookingCode,redemptionInstructions:'Show this code at the venue. Pay at the venue; this reservation is not proof of payment.'};setCoupons(prev=>[coupon,...prev]);return coupon;
   };
-
-  const createBooking = (
-    deal: Deal,
-    date: string,
-    timeSlot: string,
-    childrenCount: number,
-    packageName: string,
-    totalPrice: number
-  ): Booking => {
-    const bookingCode = `SP-BK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newBooking: Booking = {
-      id: `bk_${Date.now()}`,
-      dealId: deal.id,
-      dealTitle: deal.title,
-      businessName: deal.businessName,
-      userId: user.id,
-      userName: user.name,
-      userEmail: user.email,
-      userPhone: user.phone,
-      date,
-      timeSlot,
-      childrenCount,
-      packageSelected: packageName,
-      totalPrice,
-      status: 'confirmed',
-      bookingCode,
-      createdAt: new Date().toISOString().split('T')[0],
-    };
-
-    setBookings((prev) => [newBooking, ...prev]);
-
-    // Send in-app notification
-    const notif = {
-      id: `notif_${Date.now()}`,
-      title: 'Booking Confirmation',
-      message: `Your booking for "${deal.businessName}" on ${date} (${timeSlot}) is confirmed! Ref: ${bookingCode}`,
-      date: new Date().toISOString().split('T')[0],
-      read: false,
-    };
-    setUser((prev) => ({
-      ...prev,
-      notifications: [notif, ...prev.notifications],
-    }));
-
-    // Award Loyalty Points for completed booking with duplicate protection
-    awardLoyaltyPoints(
-      'BOOKING_COMPLETED',
-      newBooking.id,
-      loyaltyRules.bookingPoints,
-      `Pass Booking: ${deal.title} (${deal.businessName})`
-    );
-
-    return newBooking;
+  const redeemCode = async (code:string,businessName?:string) => {
+    try{const data=await apiAction('/api/vouchers/redeem',{code:code.trim()});await refreshBookings();return data}catch(error){return {success:false,message:error instanceof Error?error.message:'Redemption failed.'}}
   };
-
-  const cancelBooking = (bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === bookingId ? { ...b, status: 'cancelled' as const } : b))
-    );
-  };
-
-  const updateBookingStatus = (bookingId: string, status: Booking['status']) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId
-          ? {
-              ...b,
-              status,
-              redeemedAt: status === 'redeemed' || status === 'completed' ? new Date().toISOString() : b.redeemedAt,
-            }
-          : b
-      )
-    );
-  };
+  const redeemCoupon = (code:string):boolean => {void redeemCode(code);return false};
+  const cancelBooking = (id:string) => {void apiAction('/api/bookings/cancel',{id}).then(()=>refreshBookings()).catch(error=>window.alert(error.message));};
+  const updateBookingStatus = (id:string,status:Booking['status']) => {if(status==='cancelled')cancelBooking(id);else if(status==='redeemed'||status==='completed'){const booking=bookings.find(b=>b.id===id);if(booking)void redeemCode(booking.bookingCode).then(result=>{if(!result.success)window.alert(result.message)})}};
 
   const toggleFavoriteDeal = (dealId: string) => {
     setUser((prev) => {
@@ -1891,6 +1546,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
+      root.dataset.customTypography=brandingConfig.typographyEnabled?'true':'false';
       if (brandingConfig.headingFont) {
         root.style.setProperty('--font-heading', `'${brandingConfig.headingFont}', system-ui, sans-serif`);
       }

@@ -51,8 +51,8 @@ export const authService = {
             authProvider: 'google',
             savedDealIds: [],
             notifications: [],
-            walletBalanceAED: 50,
-            walletEarnedTotalAED: 50,
+            walletBalanceAED: 0,
+            walletEarnedTotalAED: 0,
             walletUsedTotalAED: 0,
             walletTransactions: [],
           },
@@ -94,13 +94,13 @@ export const authService = {
             phone: data.user.phone || '',
             username: data.user.email.split('@')[0],
             avatar: data.user.avatar || '',
-            role: (data.user.role?.toLowerCase() as any) || 'customer',
+            role: data.user.role==='PARTNER'?'PARTNER':data.user.role==='ADMIN'?'ADMIN':'customer',
             membership: data.user.membership || 'Free',
             authProvider: 'email',
             savedDealIds: [],
             notifications: [],
-            walletBalanceAED: 50,
-            walletEarnedTotalAED: 50,
+            walletBalanceAED: 0,
+            walletEarnedTotalAED: 0,
             walletUsedTotalAED: 0,
             walletTransactions: [],
           },
@@ -153,8 +153,8 @@ export const authService = {
             authProvider: 'email',
             savedDealIds: [],
             notifications: [],
-            walletBalanceAED: 50,
-            walletEarnedTotalAED: 50,
+            walletBalanceAED: 0,
+            walletEarnedTotalAED: 0,
             walletUsedTotalAED: 0,
             walletTransactions: [],
           },
@@ -179,7 +179,7 @@ export const authService = {
   async verifySession(token: string): Promise<AuthResponse> {
     try {
       const res = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type':'application/json' },
       });
       if (!res.ok) return { success: false };
       const data = await res.json();
@@ -194,13 +194,13 @@ export const authService = {
             phone: data.user.phone || '',
             username: data.user.email.split('@')[0],
             avatar: data.user.avatar || '',
-            role: (data.user.role?.toLowerCase() as any) || 'customer',
+            role: data.user.role==='PARTNER'?'PARTNER':data.user.role==='ADMIN'?'ADMIN':'customer',
             membership: data.user.membership || 'Free',
             authProvider: data.user.authProvider || 'email',
             savedDealIds: [],
             notifications: [],
-            walletBalanceAED: 50,
-            walletEarnedTotalAED: 50,
+            walletBalanceAED: 0,
+            walletEarnedTotalAED: 0,
             walletUsedTotalAED: 0,
             walletTransactions: [],
           },
@@ -220,7 +220,7 @@ export const authService = {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type':'application/json' },
       });
     } catch (e) {
       // ignore

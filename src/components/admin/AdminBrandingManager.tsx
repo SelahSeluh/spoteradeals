@@ -1,3 +1,4 @@
+import {MediaUploadField} from './MediaUploadField';
 import React, { useState } from 'react';
 import {
   Sparkles,
@@ -24,9 +25,9 @@ export const AdminBrandingManager: React.FC = () => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateBrandingConfig(formData);
+    updateBrandingConfig({...formData,typographyEnabled:true});
     updateFooterConfig(footerData);
-    showToast('Branding & global site settings updated successfully!', 'success');
+    showToast('Branding updated. Check Saved everywhere above for publishing status.', 'info');
   };
 
   return (
@@ -41,6 +42,7 @@ export const AdminBrandingManager: React.FC = () => {
         </p>
       </div>
 
+      <MediaUploadField accept="image/jpeg,image/png,image/webp" onUploaded={url=>setFormData(prev=>({...prev,customLogoUrl:url}))}/>
       <form onSubmit={handleSave} className="space-y-6">
         {/* Brand Name & Logo */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-xs">

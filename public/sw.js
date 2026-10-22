@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotera-security-responsive-v12';
+const CACHE_NAME = 'spotera-business-media-v13';
 const STATIC_ASSETS = [
   '/spoteradeals-logo.png',
   '/icon-192.png',

@@ -1,3 +1,4 @@
+import {BusinessOperations} from '../components/BusinessOperations';
 import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
@@ -383,6 +384,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <div role="status" className="rounded-lg border bg-white p-3 text-sm">{cmsSaveStatus} <button type="button" className="underline ml-2" onClick={retryCmsSave}>Retry publishing</button></div>
+      <BusinessOperations admin />
       {/* Top Banner */}
       <div className="bg-slate-900 text-white rounded-3xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2">

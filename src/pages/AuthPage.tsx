@@ -87,8 +87,8 @@ export const AuthPage: React.FC = () => {
       return;
     }
 
-    if (!password || password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters.');
+    if (!password || password.length < (activeTab==='register'?12:6)) {
+      setErrorMsg('Use at least 12 characters when creating an account.');
       return;
     }
 
@@ -137,6 +137,7 @@ export const AuthPage: React.FC = () => {
 
       if (res.success && res.user) {
         handleAuthSuccess(res.user, res.token);
+        if(res.user.role==='PARTNER'){setActiveView('partners');return;}
         if (res.user.role === 'ADMIN') {
           showToast.success('Admin authentication verified.');
           setActiveView('admin');
@@ -182,7 +183,7 @@ export const AuthPage: React.FC = () => {
         {showOtherMethods && <div className="expedition-email"><div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div><form onSubmit={handleSubmit}>
           {activeTab==='register' && <label>Full name<input required autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
           <label>Email<input type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/></label>
-          <label>Password<span className="expedition-password"><input type={showPassword?'text':'password'} required minLength={6} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
+          <label>Password<span className="expedition-password"><input type={showPassword?'text':'password'} required minLength={activeTab==='register'?12:6} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
           <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':activeTab==='login'?'Sign in':'Create account'}</button>
         </form></div>}
         <p className="expedition-auth-legal">By continuing, you agree to our <button onClick={()=>setActiveView('terms')}>Terms</button> and <button onClick={()=>setActiveView('privacy')}>Privacy Policy</button>.</p>

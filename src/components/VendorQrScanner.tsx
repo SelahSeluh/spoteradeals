@@ -34,7 +34,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
   onRedeemedSuccess,
   onClose,
 }) => {
-  const { bookings, coupons, redeemCode } = useApp();
+  const { isAdminAuthenticated,isPartnerAuthenticated, redeemCode } = useApp();
 
   const [inputCode, setInputCode] = useState('');
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -54,9 +54,9 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const isProcessingRef = useRef(false);
 
-  const handleVerify = (codeToTest: string) => {
+  const handleVerify = async (codeToTest: string) => {
     if (!codeToTest.trim()) return;
-    const res = redeemCode(codeToTest, businessName);
+    const res = await redeemCode(codeToTest, businessName);
     setScanResult(res);
     setInputCode('');
     if (res.success && onRedeemedSuccess) {
@@ -134,12 +134,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
 
           if (code && code.data && !isProcessingRef.current) {
             isProcessingRef.current = true;
-            handleVerify(code.data);
-
-            // Cooldown 3s before next auto-scan
-            setTimeout(() => {
-              isProcessingRef.current = false;
-            }, 3000);
+            void handleVerify(code.data).finally(()=>{setTimeout(()=>{isProcessingRef.current=false},3000)});
           }
         }
       }
@@ -170,6 +165,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
     handleVerify(inputCode);
   };
 
+  if(!isAdminAuthenticated&&!isPartnerAuthenticated)return <p>Only signed-in administrators and businesses can scan vouchers.</p>;
   return (
     <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden space-y-0">
       {/* Top Header */}
@@ -239,7 +235,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
         )}
 
         {/* Live Camera Viewfinder Box */}
-        {isCameraActive && (
+        <div hidden={!isCameraActive}>
           <div className="relative bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden p-2 text-center text-white border-2 border-slate-800 shadow-2xl max-w-md mx-auto">
             <video
               ref={videoRef}
@@ -265,7 +261,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
               <span>Camera Active • Align Spotera QR Code inside target</span>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Manual Code Form */}
         <form onSubmit={handleFormSubmit} className="space-y-2.5">

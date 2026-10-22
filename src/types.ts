@@ -424,6 +424,7 @@ export interface FooterLink {
 }
 
 export interface HeroSlide {
+  hideButton?: boolean;
   sponsored?: boolean;
   mediaType?: 'image' | 'video';
   videoUrl?: string;
@@ -455,6 +456,7 @@ export interface HomepageSection {
 }
 
 export interface SiteBrandingConfig {
+  typographyEnabled?: boolean;
   siteName: string;
   tagline: string;
   logoUrl?: string;
@@ -596,6 +598,12 @@ export interface PromoMediaSlot {
 }
 
 export interface HomepageConfig {
+  postcardHeading?:string;
+  postcardSubheading?:string;
+  postcardNote?:string;
+  postcardButtonEnabled?: boolean;
+  searchButtonEnabled?: boolean;
+  categoryButtonsEnabled?: boolean;
   heroPostcardMode?: 'image' | 'slideshow' | 'video';
   heroIncludeTopOffers?: boolean;
   heroPostcardCaption?: string;

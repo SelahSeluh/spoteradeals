@@ -78,3 +78,9 @@
 .postcard-controls span{font-size:12px;font-weight:800;min-width:42px;text-align:center}
 .picnic-postcard>span{padding-top:5px!important}.picnic-tape,.picnic-sun,.picnic-doodle{pointer-events:none}
 @media(max-width:767px){.postcard-controls{gap:8px}.postcard-controls button{min-width:44px;min-height:44px}.postcard-offer{padding:25px 10px 8px}.postcard-offer button{min-height:40px}.postcard-media{aspect-ratio:4/3}}
+
+/* Explicit owner typography overrides preserve the original look until saved. */
+html[data-custom-typography="true"] body,html[data-custom-typography="true"] p,html[data-custom-typography="true"] input,html[data-custom-typography="true"] select,html[data-custom-typography="true"] textarea {font-family:var(--font-body, 'Nunito Sans',sans-serif)!important}
+html[data-custom-typography="true"] h1,html[data-custom-typography="true"] h2,html[data-custom-typography="true"] h3,html[data-custom-typography="true"] .paper-wordmark,html[data-custom-typography="true"] .paper-wordmark *,html[data-custom-typography="true"] .picnic-postcard>span,html[data-custom-typography="true"] .picnic-note {font-family:var(--font-heading,'Kalam',cursive)!important}
+html[data-custom-typography="true"] button,html[data-custom-typography="true"] button span {font-family:var(--font-button,'Nunito Sans',sans-serif)!important}
+.intro-custom-media,.intro-media-shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.intro-media-shade{background:#fff9}.expedition-intro>.paper-wordmark,.expedition-intro>h1,.expedition-intro>p{position:relative;z-index:1}.expedition-intro>.expedition-skip{z-index:2}

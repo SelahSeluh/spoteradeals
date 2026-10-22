@@ -1,3 +1,4 @@
+import {uploadAdminMedia} from './MediaUploadField';
 import React, { useState } from 'react';
 import {
   Play,
@@ -122,35 +123,14 @@ export const AdminIntroAnimationManager: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const maxMb = targetField === 'video' ? 15 : 5;
-    if (file.size > maxMb * 1024 * 1024) {
-      showToast(`File size is too large (max ${maxMb}MB)`, 'error');
-      return;
-    }
+    void uploadAdminMedia(file).then(url=>{
+      if(targetField==='logo')handleChange('logoUrl',url);
+      else if(targetField==='background'){handleChange('backgroundImageUrl',url);handleChange('backgroundType','image')}
+      else if(targetField==='video'){handleChange('videoUrl',url);handleChange('backgroundType','video')}
+      else setFormData(prev=>({...prev,slideshowImages:[...(prev.slideshowImages||[]),url]}));
+      showToast('Media uploaded. Save and publish to apply.','info');
+    }).catch(error=>showToast(error.message,'error'));
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      if (targetField === 'logo') {
-        handleChange('logoUrl', dataUrl);
-        showToast('Logo image uploaded successfully!', 'success');
-      } else if (targetField === 'background') {
-        handleChange('backgroundImageUrl', dataUrl);
-        handleChange('backgroundType', 'image');
-        showToast('Background image uploaded!', 'success');
-      } else if (targetField === 'slideshow') {
-        setFormData((prev) => ({
-          ...prev,
-          slideshowImages: [...(prev.slideshowImages || []), dataUrl],
-        }));
-        showToast('Image added to slideshow!', 'success');
-      } else if (targetField === 'video') {
-        handleChange('videoUrl', dataUrl);
-        handleChange('backgroundType', 'video');
-        showToast('Video clip uploaded successfully!', 'success');
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   return (

@@ -77,14 +77,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
   if (!deal) return null;
 
-  const currentPkg = deal.packages[selectedPkgIndex] || {
-    name: 'Standard Pass',
+  const currentPkg = {
+    name: deal.title,
     price: deal.discountPrice,
     description: 'Standard Entry Pass',
     duration: 'Full Day Access',
   };
 
-  const totalPrice = currentPkg.price * (childrenCount > 2 ? 1 + (childrenCount - 2) * 0.4 : 1);
+  const totalPrice = deal.discountPrice * childrenCount;
 
   const timeSlots = [
     '10:00 AM - 12:00 PM',
@@ -99,14 +99,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
     setStep('review');
   };
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (isSubmittingRef.current || isSubmitting) return;
 
     isSubmittingRef.current = true;
     setIsSubmitting(true);
 
     try {
-      const booking = createBooking(
+      const booking = await createBooking(
         deal,
         date,
         timeSlot,
@@ -117,10 +117,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
       setConfirmedBooking(booking);
       setStep('ticket');
-      showToast.success('Reservation confirmed! Digital Ticket Pass issued.');
+      showToast.success('Reservation confirmed. Pay at the venue.');
     } catch (err) {
       console.error(err);
-      showToast.error('Could not complete reservation. Please try again.');
+      showToast.error(err instanceof Error?err.message:'Could not complete reservation.');
     } finally {
       setIsSubmitting(false);
       isSubmittingRef.current = false;
@@ -210,14 +210,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
             </div>
 
             {/* Package Options */}
-            {deal.packages && deal.packages.length > 0 && (
+            {false && deal.packages && deal.packages.length > 0 && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <PackageCheck className="w-4 h-4 text-[#0C5CAB]" />
                   Select Experience Pass
                 </label>
                 <div className="space-y-2">
-                  {deal.packages.map((pkg, idx) => (
+                  {(deal.packages||[]).map((pkg, idx) => (
                     <div
                       key={pkg.id || idx}
                       onClick={() => setSelectedPkgIndex(idx)}

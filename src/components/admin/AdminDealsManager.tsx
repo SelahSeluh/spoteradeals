@@ -1,3 +1,4 @@
+import {MediaUploadField} from './MediaUploadField';
 import React, { useState } from 'react';
 import {
   Tag,
@@ -126,6 +127,8 @@ export const AdminDealsManager: React.FC = () => {
       discountPrice: deal.discountPrice,
       discountPercent: deal.discountPercent,
       imageUrl: deal.imageUrl,
+      videoUrl: deal.videoUrl,
+      images: deal.images,
       tags: deal.tags || [],
       expiryDate: deal.expiryDate,
       isFeatured: !!deal.isFeatured,
@@ -548,7 +551,7 @@ export const AdminDealsManager: React.FC = () => {
                   placeholder="https://images.unsplash.com/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 />
-              </div>
+              </div><label className="block text-xs font-bold py-3">Inside offer cover video (optional MP4/WebM)<input className="w-full border rounded-xl p-3 mt-2" placeholder="https://…/restaurant.mp4" value={formData.videoUrl||''} onChange={e=>setFormData({...formData,videoUrl:e.target.value})}/><MediaUploadField onUploaded={(url,type)=>setFormData(prev=>({...prev,...(type.startsWith('video/')?{videoUrl:url}:{imageUrl:url,images:[url]})}))}/><span className="text-slate-500 font-normal">Video replaces the inside cover photo. Category tiles stay unchanged.</span></label>
 
               {/* Description */}
               <div className="space-y-1">

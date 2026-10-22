@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { VendorQrScanner } from './VendorQrScanner';
 
 export const QrScannerModal: React.FC = () => {
-  const { isQrScannerOpen, setIsQrScannerOpen } = useApp();
+  const { isQrScannerOpen, setIsQrScannerOpen,isAdminAuthenticated,isPartnerAuthenticated } = useApp();
 
   // Handle escape key to close modal
   useEffect(() => {
@@ -16,7 +16,7 @@ export const QrScannerModal: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isQrScannerOpen, setIsQrScannerOpen]);
 
-  if (!isQrScannerOpen) return null;
+  if (!isQrScannerOpen||!isAdminAuthenticated&&!isPartnerAuthenticated) return null;
 
   return (
     <div

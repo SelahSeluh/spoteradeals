@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 
 interface SpoteraLogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -50,7 +50,8 @@ export const SpoteraLogo: React.FC<SpoteraLogoProps> = ({
   const primaryTextColor = isDark ? 'text-white' : 'text-slate-900';
   const tagColor = isDark ? 'text-slate-300' : 'text-slate-500';
 
-  const logoSrc = '/spoteradeals-logo.png';
+  const logoSrc = customLogoUrl || '/spoteradeals-logo.png';
+  useEffect(()=>setImgError(false),[logoSrc]);
   const shouldRenderImage = (preferImage || Boolean(customLogoUrl)) && !imgError;
 
   const logoContent = (
@@ -90,7 +91,7 @@ export const SpoteraLogo: React.FC<SpoteraLogoProps> = ({
               {customSiteName ? customSiteName : 'Spotera'}
             </span>
             <span className={`${sizeConfig.textSize} font-black text-[#FD9302] ml-0.5`}>
-              Deals
+              {customSiteName?'':'Deals'}
             </span>
             {showUaeBadge && (
               <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-blue-50 text-[#0D9CFD] font-extrabold text-[9px] uppercase border border-blue-200/60">

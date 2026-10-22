@@ -69,9 +69,8 @@ const MainAppContent: React.FC = () => {
   const [bookingModalDeal, setBookingModalDeal] = useState<Deal | null>(null);
 
   const handleClaimCoupon = (deal: Deal) => {
-    requireUserAuth('Sign in or register to claim this digital coupon voucher & QR pass.', () => {
-      const coupon = claimCoupon(deal);
-      setClaimedCouponModalData(coupon);
+    requireUserAuth('Sign in to reserve this offer.', () => {
+      void claimCoupon(deal).then(setClaimedCouponModalData).catch(error=>window.alert(error.message));
     });
   };
 
