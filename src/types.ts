@@ -315,6 +315,7 @@ export interface Deal {
   tags?: string[];
   originalPrice: number;
   discountPrice: number;
+  priceMode?: 'booking' | 'guest';
   discountPercent: number;
   images?: string[];
   videoUrl?: string;

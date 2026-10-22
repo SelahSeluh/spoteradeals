@@ -378,7 +378,7 @@ export const AdminDashboard: React.FC = () => {
   }
 
   // Analytics Metrics
-  const totalRevenue = bookings.reduce((sum, b) => sum + b.totalPrice, 0) + coupons.length * 25;
+  const totalRevenue = bookings.filter(b=>b.status!=='cancelled').reduce((sum,b)=>sum+b.totalPrice,0);
   const totalRedemptions = coupons.filter((c) => c.status === 'redeemed').length;
 
   return (

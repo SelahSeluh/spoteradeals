@@ -16,12 +16,12 @@ export function reserve(state:Commerce,actor:Account,deal:any,input:any,now=Date
  if(actor.role!=='CUSTOMER')throw new CommerceError(403,'Only customers can reserve an offer.');
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));
  if(!deal||deal.isPublished===false||deal.expiryDate?.slice(0,10)<today||deal.startDate?.slice(0,10)>today||['fully-booked','not-available'].includes(deal.availability))throw new CommerceError(409,'This offer is unavailable.');
- if(typeof input.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(input.date)||Number.isNaN(Date.parse(input.date))||input.date<today||input.date>deal.expiryDate?.slice(0,10))throw new CommerceError(400,'Choose an available booking date.');
+ if(typeof input.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(input.date)||Number.isNaN(Date.parse(input.date))||new Date(input.date).toISOString().slice(0,10)!==input.date||input.date<today||input.date>deal.expiryDate?.slice(0,10))throw new CommerceError(400,'Choose an available booking date.');
  const guests=Number(input.childrenCount);if(!Number.isInteger(guests)||guests<1||guests>50)throw new CommerceError(400,'Choose between 1 and 50 guests.');
  if(typeof input.timeSlot!=='string'||input.timeSlot.length>80)throw new CommerceError(400,'Choose a booking time.');
  if(!Number.isFinite(deal.discountPrice)||deal.discountPrice<0)throw new CommerceError(409,'Offer price unavailable.');
  const id=randomUUID(),code=`SP-${randomBytes(18).toString('base64url')}`;
- const booking={id,dealId:deal.id,businessId:deal.businessId,dealTitle:deal.title,businessName:deal.businessName,userId:actor.id,userName:actor.name,userEmail:actor.email,userPhone:actor.phone||'',date:input.date,timeSlot:input.timeSlot,childrenCount:guests,packageSelected:deal.title,totalPrice:Math.round(deal.discountPrice*guests*100)/100,status:'confirmed',bookingCode:code,qrCodeData:code,createdAt:new Date(now).toISOString(),paymentStatus:'pay_at_venue'};
+ const booking={id,dealId:deal.id,businessId:deal.businessId,dealTitle:deal.title,businessName:deal.businessName,userId:actor.id,userName:actor.name,userEmail:actor.email,userPhone:actor.phone||'',date:input.date,timeSlot:input.timeSlot,childrenCount:guests,packageSelected:deal.title,totalPrice:Math.round(deal.discountPrice*(deal.priceMode==='guest'?guests:1)*100)/100,status:'confirmed',bookingCode:code,qrCodeData:code,createdAt:new Date(now).toISOString(),paymentStatus:'pay_at_venue'};
  state.bookings.unshift(booking);state.auditLogs.unshift({id:randomUUID(),action:'BOOKING_CREATED',actorId:actor.id,bookingId:id,at:booking.createdAt});return booking;
 }
 export function redeem(state:Commerce,actor:{id:string;role:string;businessId?:string},code:unknown,now=Date.now()){

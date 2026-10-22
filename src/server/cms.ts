@@ -8,7 +8,8 @@ export function strongEtag(etag:string){return etag.replace(/^W\//,'')}
 export async function readPublished() {
   const file=await get('cms/published.json',{access:'private',useCache:false});
   if(!file || file.statusCode!==200)return {data:{},etag:undefined};
-  return {data:JSON.parse(await new Response(file.stream).text()),etag:strongEtag(file.blob.etag)};
+  const data=JSON.parse(await new Response(file.stream).text());data.businesses=completeBusinessProfiles(data.businesses,data.deals);
+  return {data,etag:strongEtag(file.blob.etag)};
 }
 export async function readContent(scope:string) { return (await readPublished()).data[scope] ?? null; }
 export async function writeContents(patch:Record<string,unknown>) {
@@ -54,4 +55,9 @@ export function safeContent(data:unknown,depth=0):boolean{
   if(depth>25)return false;
   if(!data||typeof data!=='object')return true;
   return Object.entries(data).every(([key,val])=>!['__proto__','constructor','prototype'].includes(key)&&safeContent(val,depth+1));
+}
+
+// Every administrator-managed venue needs a profile, including imported legacy offers.
+export function completeBusinessProfiles(businesses:any[]=[],deals:any[]=[]){
+ const profiles=Array.isArray(businesses)?[...businesses]:[];for(const deal of (Array.isArray(deals)?deals:[])){if(!deal.businessId||profiles.some(b=>b.id===deal.businessId))continue;profiles.push({id:deal.businessId,name:deal.businessName,category:deal.category,city:deal.city,district:deal.district,address:deal.location||deal.district||deal.city,coordinates:{lat:0,lng:0},description:`Explore the latest offers at ${deal.businessName}.`,images:deal.images?.length?deal.images:deal.imageUrl?[deal.imageUrl]:[],videoUrl:deal.videoUrl||'',openingHours:deal.openingHours||'Contact the venue for opening hours',phone:'',email:'',rating:0,reviewCount:0,status:'approved',verified:false,isFeatured:false})}return profiles;
 }

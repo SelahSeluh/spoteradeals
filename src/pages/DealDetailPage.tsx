@@ -211,7 +211,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
     setIsProcessing(true);
 
     try {
-      const newBooking=await createBooking(deal,bookingDate,bookingTime,guestsCount,deal.title,deal.discountPrice*guestsCount);
+      const newBooking=await createBooking(deal,bookingDate,bookingTime,guestsCount,deal.title,deal.discountPrice*(deal.priceMode==='guest'?guestsCount:1));
       setSelectedBookingId(newBooking.id);setShowBookingModal(false);window.scrollTo({top:0});setActiveView('booking-confirm');
     } catch(error){showToast.error(error instanceof Error?error.message:'Booking failed.');} finally{setIsProcessing(false);}
 
@@ -361,7 +361,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   AED {deal.originalPrice || 160}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-[#F5820A]">
-                  AED {deal.discountPrice * guestsCount}
+                  AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#FFF3E8] text-[#F5820A] border border-[#F5820A]/30 text-xs font-bold">
                   {t('save')} {deal.discountPercent || 38}%
@@ -446,7 +446,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{t('specialPassRate')}</span>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-3xl font-black text-[#0D1B3E]">AED {deal.discountPrice * guestsCount}</span>
+                    <span className="text-3xl font-black text-[#0D1B3E]">AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}</span>
                     <span className="text-sm text-slate-400 line-through">AED {deal.originalPrice || 160}</span>
                   </div>
                 </div>
@@ -510,7 +510,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div className="pt-3 border-t border-slate-100 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">{t('subtotal')}</span>
-                    <span className="font-bold text-slate-700">AED {deal.discountPrice * guestsCount}</span>
+                    <span className="font-bold text-slate-700">AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">{t('vatIncluded')}</span>
@@ -518,7 +518,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-sm">
                     <span className="font-bold text-[#0D1B3E]">{t('totalDue')}</span>
-                    <span className="font-black text-xl text-[#F5820A]">AED {deal.discountPrice * guestsCount}</span>
+                    <span className="font-black text-xl text-[#F5820A]">AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}</span>
                   </div>
                 </div>
               </div>
@@ -544,7 +544,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   ? t('dealExpired')
                   : isDealUpcoming
                   ? t('offerStartsSoon')
-                  : `${t('bookNow')} — AED ${deal.discountPrice * guestsCount}`}
+                  : `${t('bookNow')} — AED ${deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}`}
               </button>
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-slate-500 font-medium pt-1">
@@ -567,7 +567,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
         <div className="max-w-md mx-auto flex items-center justify-between gap-4">
           <div>
             <div className="text-xl font-black text-[#0D1B3E] tracking-tight">
-              AED {deal.discountPrice * guestsCount}
+              AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}
             </div>
             <div className="text-[10px] font-semibold text-[#8D98AA]">{t('totalPrice')}</div>
           </div>
@@ -665,7 +665,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                 <span className="font-bold text-slate-600">{t('totalDue')}</span>
                 <span className="text-base font-black text-[#F5820A]">
-                  AED {deal.discountPrice * guestsCount}
+                  AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}
                 </span>
               </div>
             </div>

@@ -84,7 +84,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
     duration: 'Full Day Access',
   };
 
-  const totalPrice = deal.discountPrice * childrenCount;
+  const totalPrice = deal.discountPrice * (deal.priceMode==='guest'?childrenCount:1);
 
   const timeSlots = [
     '10:00 AM - 12:00 PM',

@@ -128,6 +128,7 @@ export const AdminDealsManager: React.FC = () => {
       discountPercent: deal.discountPercent,
       imageUrl: deal.imageUrl,
       videoUrl: deal.videoUrl,
+      priceMode: deal.priceMode,
       images: deal.images,
       tags: deal.tags || [],
       expiryDate: deal.expiryDate,
@@ -551,7 +552,7 @@ export const AdminDealsManager: React.FC = () => {
                   placeholder="https://images.unsplash.com/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 />
-              </div><label className="block text-xs font-bold py-3">Inside offer cover video (optional MP4/WebM)<input className="w-full border rounded-xl p-3 mt-2" placeholder="https://…/restaurant.mp4" value={formData.videoUrl||''} onChange={e=>setFormData({...formData,videoUrl:e.target.value})}/><MediaUploadField onUploaded={(url,type)=>setFormData(prev=>({...prev,...(type.startsWith('video/')?{videoUrl:url}:{imageUrl:url,images:[url]})}))}/><span className="text-slate-500 font-normal">Video replaces the inside cover photo. Category tiles stay unchanged.</span></label>
+              </div><label className="block text-xs font-bold py-3">Price applies to<select className="w-full border rounded-xl p-3" value={formData.priceMode||'booking'} onChange={e=>setFormData({...formData,priceMode:e.target.value as 'booking'|'guest'})}><option value="booking">Whole booking / package</option><option value="guest">Each guest</option></select></label><div className="block text-xs font-bold py-3"><label>Inside offer cover video (optional MP4/WebM)<input className="w-full border rounded-xl p-3 mt-2" placeholder="https://…/restaurant.mp4" value={formData.videoUrl||''} onChange={e=>setFormData({...formData,videoUrl:e.target.value})}/></label><MediaUploadField onUploaded={(url,type)=>setFormData(prev=>({...prev,...(type.startsWith('video/')?{videoUrl:url}:{imageUrl:url,images:[url]})}))}/><span className="text-slate-500 font-normal">Video replaces the inside cover photo. Category tiles stay unchanged.</span></div>
 
               {/* Description */}
               <div className="space-y-1">

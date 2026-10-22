@@ -946,7 +946,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return view;
     });
-    window.location.hash = `#${view}`;
+    const linkedDeal=view==='deal-detail'?(parseDealIdFromLocation()||selectedDealId):null;
+    window.location.hash = linkedDeal?`#deal/${linkedDeal}`:`#${view}`;
   };
 
   const goBack = () => {

@@ -74,7 +74,7 @@ export default async function handler(req:Request,res:ServerResponse){
       return send(200,{success:true,token:'cookie-session',user:user()});
     }
     if(path==='/api/auth/change-password'&&req.method==='POST'){
-      if(!await session(req))return send(401,{error:'AUTHENTICATION_REQUIRED'});
+      if(!owner)return send(401,{error:'AUTHENTICATION_REQUIRED'});
       const input=await body(req);if(typeof input.newPassword!=='string'||input.newPassword.length<12||input.newPassword.length>128)return send(400,{message:'Use a password between 12 and 128 characters.'});
       const hash=hashPassword(input.newPassword);
       await put('auth/password.json',JSON.stringify({hash}),{access:'private',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',cacheControlMaxAge:0});
@@ -89,11 +89,11 @@ export default async function handler(req:Request,res:ServerResponse){
     if(path==='/api/app-config'&&req.method==='GET'){
       if(!process.env.BLOB_READ_WRITE_TOKEN)return send(503,{success:false,error:'CONTENT_STORE_UNAVAILABLE'});
       const {data}=await readPublished();
-      if(!await session(req)){delete data.media;if(Array.isArray(data.deals))data.deals=data.deals.filter((d:any)=>d.isPublished!==false)}
+      if(!owner){delete data.media;if(Array.isArray(data.deals))data.deals=data.deals.filter((d:any)=>d.isPublished!==false)}
       return send(200,{success:true,...data});
     }
     if(path.startsWith('/api/admin/')){
-      if(!await session(req))return send(401,{error:'AUTHENTICATION_REQUIRED'});
+      if(!owner)return send(401,{error:'AUTHENTICATION_REQUIRED'});
       if(path==='/api/admin/upload-media'&&req.method==='POST'){
         const input=await body(req);const ext:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','video/mp4':'mp4','video/webm':'webm'};
         if(!ext[input.contentType]||typeof input.base64!=='string'||!/^[A-Za-z0-9+/]*={0,2}$/.test(input.base64))return send(400,{error:'INVALID_MEDIA'});
@@ -111,6 +111,9 @@ export default async function handler(req:Request,res:ServerResponse){
         if(req.method==='GET')return send(200,{success:true,data:await readContent(scope)});
         const input=await body(req);if(input.data===undefined||!safeContent(input.data))return send(400,{error:'INVALID_CONTENT'});
         await writeContent(scope,input.data);return send(200,{success:true,scope});
+      }
+      if(path==='/api/admin/business-access'&&req.method==='POST'){
+        const input=await body(req);if(typeof input.disabled!=='boolean')return send(400,{message:'Choose an access state.'});await transact(state=>{const account=state.users.find(u=>u.id===input.id&&u.role==='PARTNER');if(!account)throw new CommerceError(404,'Business account not found.');account.disabled=input.disabled;return true});return send(200,{success:true});
       }
       if(path==='/api/admin/business-account'&&req.method==='POST'){
         const input=await body(req);const email=String(input.email||'').trim().toLowerCase();const {data}=await readPublished();
