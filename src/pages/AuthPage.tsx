@@ -52,6 +52,9 @@ export const AuthPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resetMode,setResetMode]=useState(false);
+  const [resetToken,setResetToken]=useState(()=>new URLSearchParams(window.location.search).get('reset_token')||'');
+  const [resetPassword,setResetPassword]=useState('');
 
   const navigateToDestination = () => {
     if (selectedDealId) {
@@ -152,6 +155,20 @@ export const AuthPage: React.FC = () => {
     }
   };
 
+  const handlePasswordRecovery = async (e:React.FormEvent) => {
+    e.preventDefault();setIsSubmitting(true);setErrorMsg(null);
+    try{
+      const endpoint=resetToken?'/api/auth/reset-password':'/api/auth/forgot-password';
+      const payload=resetToken?{token:resetToken,password:resetPassword}:{email:email.trim().toLowerCase()};
+      const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const result=await response.json();
+      if(!response.ok)throw new Error(result.message||'Password recovery is unavailable. Please try again.');
+      showToast.success(result.message||'Request received.');
+      if(resetToken){setResetToken('');setResetMode(false);setActiveTab('login');window.history.replaceState(null,'',window.location.pathname+'#auth')}
+      else setErrorMsg(result.message||'If your email is registered, check your inbox.');
+    }catch(error){setErrorMsg(error instanceof Error?error.message:'Please try again.')}
+    finally{setIsSubmitting(false)}
+  };
   const handleGuest = () => {
     safeSessionStorage.setItem("paper_guest_entered", "true");
     continueAsGuest();
@@ -180,12 +197,20 @@ export const AuthPage: React.FC = () => {
           <button type="button" aria-expanded={showOtherMethods} onClick={()=>setShowOtherMethods(!showOtherMethods)}><Mail size={18}/>Continue with email<ChevronDown size={14}/></button>
           <button type="button" className="expedition-guest-button" onClick={handleGuest}><Compass size={18}/>{t('continueAsGuest')}<ArrowRight size={16}/></button>
         </div>
-        {showOtherMethods && <div className="expedition-email"><div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div><form onSubmit={handleSubmit}>
+        {(showOtherMethods||resetToken) && <div className="expedition-email">{!resetMode&&!resetToken && <div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div>}
+        {(resetMode||resetToken)?<form onSubmit={handlePasswordRecovery}>
+          <h2>{resetToken?'Choose a new password':'Forgot password?'}</h2>
+          {!resetToken?<label>Email<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>:<label>New password<input type="password" minLength={12} maxLength={128} required autoComplete="new-password" value={resetPassword} onChange={e=>setResetPassword(e.target.value)}/></label>}
+          <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':resetToken?'Reset password':'Send reset link'}</button>
+          <button type="button" onClick={()=>{setResetMode(false);setResetToken('');setActiveTab('login')}}>Back to sign in</button>
+        </form>:<form onSubmit={handleSubmit}>
           {activeTab==='register' && <label>Full name<input required autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
           <label>Email<input type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/></label>
           <label>Password<span className="expedition-password"><input type={showPassword?'text':'password'} required minLength={activeTab==='register'?12:1} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
           <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':activeTab==='login'?'Sign in':'Create account'}</button>
-        </form></div>}
+        </form>}
+        {!resetMode&&!resetToken&&activeTab==='login'&&<button type="button" onClick={()=>setResetMode(true)}>Forgot password?</button>}
+        </div>}
         <p className="expedition-auth-legal">By continuing, you agree to our <button onClick={()=>setActiveView('terms')}>Terms</button> and <button onClick={()=>setActiveView('privacy')}>Privacy Policy</button>.</p>
       </section><ExpeditionSkyline/><small className="expedition-auth-caption">More discovery. More together.</small>
     </div>
