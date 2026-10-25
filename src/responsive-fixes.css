@@ -84,3 +84,45 @@ html[data-custom-typography="true"] body,html[data-custom-typography="true"] p,h
 html[data-custom-typography="true"] h1,html[data-custom-typography="true"] h2,html[data-custom-typography="true"] h3,html[data-custom-typography="true"] .paper-wordmark,html[data-custom-typography="true"] .paper-wordmark *,html[data-custom-typography="true"] .picnic-postcard>span,html[data-custom-typography="true"] .picnic-note {font-family:var(--font-heading,'Kalam',cursive)!important}
 html[data-custom-typography="true"] button,html[data-custom-typography="true"] button span {font-family:var(--font-button,'Nunito Sans',sans-serif)!important}
 .intro-custom-media,.intro-media-shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.intro-media-shade{background:#fff9}.expedition-intro>.paper-wordmark,.expedition-intro>h1,.expedition-intro>p{position:relative;z-index:1}.expedition-intro>.expedition-skip{z-index:2}
+
+
+/* Deep Blue Skyline: rich UAE city atmosphere, not a blank white canvas.
+   Scope to customer-facing surfaces; preserve editable postcard media and admin. */
+html:has(.paper-home),body:has(.paper-home),body:has(.paper-home) #root {
+  background-color:#eaf2ff!important;
+  background-image:linear-gradient(180deg,#d9eaff 0%,#f0f6ff 48%,#e7f1ff 100%)!important;
+}
+body:has(.paper-home) .spotera-mesh-canvas {background:transparent!important;}
+.paper-home .picnic-hero {
+  border-radius:24px;
+  margin-top:16px;
+  padding:clamp(22px,4vw,52px) clamp(16px,4vw,52px) 20px;
+  background-image:linear-gradient(105deg,rgba(9,32,86,.94) 0%,rgba(13,56,134,.90) 45%,rgba(15,77,167,.73) 100%),url('/places/skyline.jpg');
+  background-size:cover;
+  background-position:center 55%;
+  box-shadow:0 18px 48px rgba(13,49,116,.20);
+  overflow:hidden;
+}
+.paper-home .picnic-copy,.paper-home .picnic-copy p,.paper-home .picnic-note,
+.paper-home .picnic-hero h1,.paper-home .picnic-hero h1 em {
+  color:#fff!important;
+  text-shadow:0 2px 12px rgba(2,17,48,.22);
+}
+.paper-home .picnic-note{color:#bcdcff!important;}
+.paper-home .picnic-categories{border-top:1px solid rgba(255,255,255,.23);border-bottom:0;}
+.paper-home .picnic-categories button{color:#fff!important;}
+.paper-home .picnic-categories button>span{box-shadow:0 4px 12px rgba(3,22,62,.23);}
+.paper-home .picnic-doodle{color:#b7d7ff;}
+.paper-home .picnic-search{box-shadow:0 7px 22px rgba(3,24,65,.25);}
+.paper-home .paper-home-deals,.paper-home .places-photo-grid{position:relative;}
+.paper-home .paper-home-deals{padding-top:16px;}
+.paper-home .paper-deal-card{box-shadow:0 7px 20px rgba(15,62,137,.10)!important;}
+@media(max-width:767px){
+  .paper-home .picnic-hero{border-radius:18px;margin-top:10px;padding:24px 14px 14px;gap:14px;background-position:58% center;}
+  .paper-home .picnic-hero h1{font-size:clamp(30px,8vw,39px)!important;}
+  .paper-home .picnic-categories{gap:4px;}
+  .paper-home .picnic-categories button{font-size:10px!important;}
+  .paper-home .picnic-categories button>span{width:38px;height:38px;}
+  .paper-home .picnic-collage{min-width:0;}
+}
+@media(prefers-reduced-motion:reduce){.paper-home .picnic-hero *{scroll-behavior:auto;}}
