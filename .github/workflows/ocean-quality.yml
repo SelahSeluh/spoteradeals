@@ -1,0 +1,20 @@
+name: Ocean Blue quality checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript checks
+        run: npm run lint
+      - name: Web production build
+        run: npm run build:web
