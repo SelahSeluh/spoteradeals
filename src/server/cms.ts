@@ -22,9 +22,15 @@ export async function writeContents(patch:Record<string,unknown>) {
 }
 export async function writeContent(scope:string,data:unknown) { await writeContents({[scope]:data}); }
 export async function adminPasswordHash(){
+  // An explicit recovery override allows the owner to recover access using a
+  // freshly generated Vercel hash without deleting the persisted credentials.
+  // Remove ADMIN_PASSWORD_RECOVERY_HASH after changing the password in the CMS.
+  const recovery=process.env.ADMIN_PASSWORD_RECOVERY_HASH;
+  if(recovery && /^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(recovery))return recovery;
   const file=await get('auth/password.json',{access:'private',useCache:false});
   if(!file||file.statusCode!==200)return process.env.ADMIN_PASSWORD_HASH!;
-  return JSON.parse(await new Response(file.stream).text()).hash as string;
+  const stored=JSON.parse(await new Response(file.stream).text()).hash;
+  return typeof stored==='string' ? stored : process.env.ADMIN_PASSWORD_HASH!;
 }
 function signingKey(hash=process.env.ADMIN_PASSWORD_HASH){return `${process.env.ADMIN_SESSION_SECRET}:${hash}`}
 export function issueAdminSession(email:string,now=Date.now(),hash?:string){
