@@ -10,7 +10,7 @@ const uaeCity = (city?: string) => /dubai|sharjah|ajman|abu dhabi|al ain|ras al 
 
 export function postcardSlides(config: HomepageConfig, deals: Deal[], now = Date.now()): HeroSlide[] {
   const available = deals.filter(d => uaeCity(d.city) && d.isPublished !== false && (!d.expiryDate || new Date(d.expiryDate + 'T23:59:59+04:00').getTime() >= now));
-  const custom = (config.heroSlides || []).filter(s => s.enabled && safeMediaUrl(s.imageUrl) && (!s.dealId || available.some(d => d.id === s.dealId)))
+  const custom = (config.heroSlides || []).filter(s => s.enabled && safeMediaUrl(s.imageUrl) && (s.dealId ? available.some(d => d.id === s.dealId) : uaeCity(`${s.title} ${s.subtitle || ''}`)))
     .sort((a,b) => Number(!!b.sponsored) - Number(!!a.sponsored) || a.order-b.order)
     .map(s => { const deal = available.find(d => d.id === s.dealId); return deal ? {...s, title:deal.title, imageUrl:deal.imageUrl || deal.images?.[0] || s.imageUrl} : s; });
   if (config.heroIncludeTopOffers === false) return custom.slice(0,10);
