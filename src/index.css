@@ -10,16 +10,16 @@
     --font-size-button-scale: 0.875rem;
 
     /* SpoteraDeals Brand Tokens */
-    --color-spotera-blue: #0D9CFD;
-    --color-spotera-blue-dark: #0284C7;
-    --color-spotera-blue-light: #E0F2FE;
-    --color-spotera-orange: #FD9302;
-    --color-spotera-orange-soft: #FFF7ED;
-    --color-spotera-navy: #0F172A;
+    --color-spotera-blue: #1455D9;
+    --color-spotera-blue-dark: #103FA9;
+    --color-spotera-blue-light: #EAF2FF;
+    --color-spotera-orange: #FF7417;
+    --color-spotera-orange-soft: #FFF3E9;
+    --color-spotera-navy: #102448;
     --color-spotera-slate: #475569;
     --color-spotera-muted: #94A3B8;
-    --color-spotera-border: #E2E8F0;
-    --color-spotera-bg: #F8FAFC;
+    --color-spotera-border: #D8E5F5;
+    --color-spotera-bg: #F4F8FF;
 
     --sat: env(safe-area-inset-top, 0px);
     --sar: env(safe-area-inset-right, 0px);
@@ -49,7 +49,7 @@
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
     color: #0D1B3E;
-    background-color: #F7FAFD;
+    background-color: #FFFFFF;
     min-height: 100vh;
   }
 
@@ -87,20 +87,20 @@
 /* Ticket Stub Motif Styles */
 .ticket-stub {
   background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #D8E5F5;
   border-radius: 1rem;
   position: relative;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ticket-stub:hover {
-  border-color: #0D9CFD;
-  box-shadow: 0 8px 24px -6px rgba(13, 156, 253, 0.12);
+  border-color: #1455D9;
+  box-shadow: 0 8px 24px -6px rgba(20, 85, 217, 0.12);
 }
 
 .ticket-divider {
   position: relative;
-  border-top: 1.5px dashed #E2E8F0;
+  border-top: 1.5px dashed #D8E5F5;
   margin: 0.75rem 0;
 }
 
@@ -113,7 +113,7 @@
   height: 14px;
   background-color: #FFFFFF;
   border-radius: 50%;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #D8E5F5;
 }
 
 .ticket-divider::before {
@@ -135,13 +135,13 @@
 
 /* Subtle, family-friendly app-wide background treatment */
 .spotera-mesh-canvas {
-  background-color: #F8FAFC;
+  background-color: #F4F8FF;
   background-image: 
-    radial-gradient(at 15% 15%, rgba(13, 156, 253, 0.035) 0px, transparent 55%),
-    radial-gradient(at 85% 20%, rgba(253, 147, 2, 0.04) 0px, transparent 55%),
+    radial-gradient(at 15% 15%, rgba(20, 85, 217, 0.035) 0px, transparent 55%),
+    radial-gradient(at 85% 20%, rgba(255, 116, 23, 0.04) 0px, transparent 55%),
     radial-gradient(at 50% 60%, rgba(241, 245, 249, 0.6) 0px, transparent 100%),
-    radial-gradient(at 80% 85%, rgba(13, 156, 253, 0.03) 0px, transparent 50%),
-    radial-gradient(at 20% 90%, rgba(253, 147, 2, 0.03) 0px, transparent 50%);
+    radial-gradient(at 80% 85%, rgba(20, 85, 217, 0.03) 0px, transparent 50%),
+    radial-gradient(at 20% 90%, rgba(255, 116, 23, 0.03) 0px, transparent 50%);
   background-attachment: fixed;
 }
 
