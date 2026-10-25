@@ -161,8 +161,10 @@ export const AuthPage: React.FC = () => {
       const endpoint=resetToken?'/api/auth/reset-password':'/api/auth/forgot-password';
       const payload=resetToken?{token:resetToken,password:resetPassword}:{email:email.trim().toLowerCase()};
       const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      const result=await response.json();
-      if(!response.ok)throw new Error(result.message||'Password recovery is unavailable. Please try again.');
+      const contentType=response.headers.get('content-type')||'';
+      const result=contentType.includes('application/json')?await response.json().catch(()=>({})):{};
+      if(!response.ok)throw new Error(result.message|| (response.status===503?'Password recovery is not available yet. Email delivery must be configured by the site administrator.':'The password reset service could not respond. Please try again later.'));
+      if(!contentType.includes('application/json'))throw new Error('The password reset service returned an unexpected response. Please try again later.');
       showToast.success(result.message||'Request received.');
       if(resetToken){setResetToken('');setResetMode(false);setActiveTab('login');window.history.replaceState(null,'',window.location.pathname+'#auth')}
       else setErrorMsg(result.message||'If your email is registered, check your inbox.');
