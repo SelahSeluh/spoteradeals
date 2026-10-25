@@ -1,6 +1,7 @@
 import {get,put,BlobPreconditionFailedError} from '@vercel/blob';
 import {randomBytes,randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
 import {strongEtag} from './cms.js';
+import {isOfferAvailable} from '../utils/offerAvailability.js';
 export type Account={id:string;email:string;name:string;role:'CUSTOMER'|'PARTNER';businessId?:string;hash:string;phone?:string;disabled?:boolean};
 export type Commerce={users:Account[];bookings:any[];auditLogs:any[]};
 export const emptyCommerce=():Commerce=>({users:[],bookings:[],auditLogs:[]});
@@ -15,7 +16,7 @@ export function visibleBookings(state:Commerce,actor:{id:string;role:string;busi
 export function reserve(state:Commerce,actor:Account,deal:any,input:any,now=Date.now()){
  if(actor.role!=='CUSTOMER')throw new CommerceError(403,'Only customers can reserve an offer.');
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));
- if(!deal||deal.isPublished===false||deal.expiryDate?.slice(0,10)<today||deal.startDate?.slice(0,10)>today||['fully-booked','not-available'].includes(deal.availability))throw new CommerceError(409,'This offer is unavailable.');
+ if(!deal||!isOfferAvailable(deal,now))throw new CommerceError(409,'This offer is unavailable.');
  if(typeof input.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(input.date)||Number.isNaN(Date.parse(input.date))||new Date(input.date).toISOString().slice(0,10)!==input.date||input.date<today||input.date>deal.expiryDate?.slice(0,10))throw new CommerceError(400,'Choose an available booking date.');
  const guests=Number(input.childrenCount);if(!Number.isInteger(guests)||guests<1||guests>50)throw new CommerceError(400,'Choose between 1 and 50 guests.');
  if(typeof input.timeSlot!=='string'||input.timeSlot.length>80)throw new CommerceError(400,'Choose a booking time.');

@@ -15,3 +15,6 @@ test('session signatures cannot be forged and password reset revokes them',()=>{
 test('generated customer QR decodes to the exact server voucher code',async()=>{const QRCode=await import('qrcode');const {PNG}=await import('pngjs');const jsQR=(await import('jsqr')).default;const b=reserve(emptyCommerce(),customer,deal,input,now);const png=PNG.sync.read(await QRCode.toBuffer(b.bookingCode,{width:280,margin:4}));const decoded=jsQR(new Uint8ClampedArray(png.data),png.width,png.height);assert.equal(decoded?.data,b.bookingCode)});
 
 test('package offers retain the listed price regardless of guest count',()=>{const booking=reserve(emptyCommerce(),customer,{...deal,priceMode:'booking'},input,now);assert.equal(booking.totalPrice,50)});
+test('expired and future flash prices cannot be booked even when the general offer date is valid',()=>{
+ for(const patch of [{flashDealExpiresAt:'2026-10-22T07:59:59Z'},{flashDealStartsAt:'2026-10-22T08:00:01Z'}])assert.throws(()=>reserve(emptyCommerce(),customer,{...deal,...patch},input,now),/unavailable/);
+});

@@ -30,7 +30,7 @@ test('homepage promotions exclude future and unavailable offers using UAE calend
  const now=Date.parse('2026-10-25T20:00:00Z');
  assert.equal(isOfferAvailable(deal(1,{expiryDate:'2026-10-25'}),now),false);
  assert.equal(isOfferAvailable(deal(1,{expiryDate:'2026-10-26'}),now),true);
- for(const patch of [{startDate:'2026-10-27'},{availability:'fully-booked' as const},{availability:'not-available' as const},{isPublished:false}]){
+ for(const patch of [{startDate:'2026-10-27'},{flashDealExpiresAt:'2026-10-25T19:59:59Z'},{flashDealStartsAt:'2026-10-25T20:00:01Z'},{availability:'fully-booked' as const},{availability:'not-available' as const},{isPublished:false}]){
   assert.equal(isOfferAvailable(deal(1,patch),now),false);
   assert.equal(postcardSlides(config(),[deal(1,patch)],now).length,0);
  }
