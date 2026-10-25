@@ -44,8 +44,8 @@ export const AuthPage: React.FC = () => {
 
   const targetDeal = selectedDealId ? deals.find((d) => d.id === selectedDealId) : null;
 
-  const [activeTab, setActiveTab] = useState<'register' | 'login'>('register');
-  const [showOtherMethods, setShowOtherMethods] = useState(false);
+  const [activeTab, setActiveTab] = useState<'register' | 'login'>('login');
+  const [showOtherMethods, setShowOtherMethods] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -60,7 +60,7 @@ export const AuthPage: React.FC = () => {
     if (selectedDealId) {
       setActiveView('deal-detail');
     } else {
-      const target = (activeView && activeView !== 'auth') ? activeView : 'home';
+      const target = (activeView && !['auth','admin','partners'].includes(activeView)) ? activeView : 'home';
       setActiveView(target);
     }
   };
@@ -97,21 +97,6 @@ export const AuthPage: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // If logging in as admin
-    if (activeTab === 'login' && cleanEmail === 'admin@spoteradeals.com') {
-      const adminRes = await adminLoginWithCreds(cleanEmail, password);
-      setIsSubmitting(false);
-      if (adminRes.success) {
-        showToast.success('Admin authentication verified.');
-        setActiveView('admin');
-        return;
-      } else {
-        setErrorMsg(adminRes.message);
-        showToast.error(adminRes.message);
-        return;
-      }
-    }
-
     if (activeTab === 'register') {
       const res = await authService.signUpWithEmail({
         email: cleanEmail.includes('@') ? cleanEmail : `${cleanEmail}@spotera.ae`,
@@ -125,7 +110,7 @@ export const AuthPage: React.FC = () => {
       if (res.success && res.user) {
         handleAuthSuccess(res.user, res.token);
         showToast.success(`Welcome to SpoteraDeals, ${res.user.name}!`);
-        navigateToDestination();
+        setActiveView(selectedDealId ? 'deal-detail' : 'home');
       } else {
         setErrorMsg(res.message || 'Registration failed.');
         showToast.error(res.message || 'Registration failed.');
@@ -146,7 +131,7 @@ export const AuthPage: React.FC = () => {
           setActiveView('admin');
         } else {
           showToast.success(`Welcome back, ${res.user.name || 'Member'}!`);
-          navigateToDestination();
+          setActiveView(selectedDealId ? 'deal-detail' : 'home');
         }
       } else {
         setErrorMsg(res.message || 'Invalid email or password.');
@@ -194,11 +179,8 @@ export const AuthPage: React.FC = () => {
         {authModalReason && <p className="expedition-auth-notice">{authModalReason}</p>}
         {targetDeal && <p className="expedition-auth-notice">Continue to {targetDeal.title}</p>}
         {errorMsg && <p role="alert" className="expedition-form-error">{errorMsg}</p>}
-        <div className="expedition-auth-actions"><GoogleSignInButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} label={t('continueWithGoogle')} size="md"/>
-          <button type="button" onClick={handleAppleAuth}><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path fill="currentColor" d="M16.4 1c.1 1.3-.4 2.4-1.1 3.2-.8.9-1.9 1.4-3 1.3-.1-1.2.4-2.4 1.1-3.2.8-.8 2-1.3 3-1.3Zm3.8 16.3c-.5 1.2-.8 1.8-1.4 2.8-.9 1.3-2.2 2.9-3.8 2.9-1.4 0-1.8-.9-3.8-.9s-2.4.9-3.8.9c-1.6 0-2.8-1.5-3.7-2.8C1.2 16.6.8 12 2.3 9.5c1.1-1.8 2.8-2.8 4.4-2.8s2.6.9 3.9.9c1.3 0 2.1-.9 3.9-.9 1.4 0 2.9.8 3.9 2.1-3.5 1.9-2.9 6.8 1.8 8.5Z"/></svg>{t('continueWithApple')}</button>
-          <button type="button" aria-expanded={showOtherMethods} onClick={()=>setShowOtherMethods(!showOtherMethods)}><Mail size={18}/>Continue with email<ChevronDown size={14}/></button>
-          <button type="button" className="expedition-guest-button" onClick={handleGuest}><Compass size={18}/>{t('continueAsGuest')}<ArrowRight size={16}/></button>
-        </div>
+        <div className="expedition-auth-actions"><button type="button" className="expedition-guest-button" onClick={handleGuest}><Compass size={18}/>Browse as Guest<ArrowRight size={16}/></button></div>
+        <p className="text-xs text-slate-500">Sign in with email. Your account opens the customer, business or admin dashboard automatically.</p>
         {(showOtherMethods||resetToken) && <div className="expedition-email">{!resetMode&&!resetToken && <div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div>}
         {(resetMode||resetToken)?<form onSubmit={handlePasswordRecovery}>
           <h2>{resetToken?'Choose a new password':'Forgot password?'}</h2>

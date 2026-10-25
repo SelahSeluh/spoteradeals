@@ -23,3 +23,9 @@ test('homepage respects visibility and order without mutating saved section arra
  const sections:HomepageSection[]=[{id:'hero',title:'Hero',enabled:false,order:1},{id:'trending',title:'Deals',enabled:true,order:2},{id:'categories',title:'Places',enabled:true,order:3}];
  const before=JSON.stringify(sections);assert.deepEqual(homepageLayout(sections).map(s=>s.id),['trending','categories']);assert.equal(JSON.stringify(sections),before);
 });
+
+test('shared sign-in opens email login immediately with recovery and no unavailable providers',async()=>{
+ const {AuthPage}=await import('../src/pages/AuthPage');
+ const dom=new JSDOM('',{url:'https://spoteradeals.com/#auth'});Object.assign(globalThis,{window:dom.window,document:dom.window.document});
+ try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><AuthPage/></AppProvider></ToastProvider>);assert.match(html,/autocomplete="current-password"/i);assert.match(html,/Forgot password/);assert.doesNotMatch(html,/Continue with Google|Continue with Apple|autocomplete="name"/i);}finally{dom.window.close()}
+});

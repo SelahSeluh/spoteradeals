@@ -40,7 +40,7 @@ export default async function handler(req:Request,res:ServerResponse){
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof input.password!=='string'||input.password.length<12||input.password.length>128||typeof input.name!=='string'||!input.name.trim()||input.name.length>120)return send(400,{message:'Use a valid email, name, and a password of 12–128 characters.'});
       const ip=String(req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown');if(!await consumeLoginAttempt(ip))return send(429,{message:'Please wait 15 minutes before trying again.'});
       const created=await transact(state=>{if(state.users.some(u=>u.email===email)||email===process.env.ADMIN_EMAIL)throw new CommerceError(409,'This email is already registered.');const a={id:randomUUID(),email,name:input.name.trim(),phone:String(input.phone||'').slice(0,40),hash:hashPassword(input.password),role:'CUSTOMER' as const};state.users.push(a);return a});
-      res.setHeader('Set-Cookie',`spotera_account=${accountCookie(created)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`);return send(200,{success:true,token:'cookie-session',user:publicAccount(created)});
+      res.setHeader('Set-Cookie',[`spotera_account=${accountCookie(created)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`,'spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0']);return send(200,{success:true,token:'cookie-session',user:publicAccount(created)});
     }
     if(path==='/api/bookings'&&req.method==='GET'){
       if(!actor)return send(401,{message:'Sign in first.'});return send(200,{success:true,bookings:visibleBookings((await readCommerce()).data,actor)});

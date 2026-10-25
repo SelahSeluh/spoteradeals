@@ -1,3 +1,4 @@
+import {AuthPage} from './AuthPage';
 import {BusinessOperations} from '../components/BusinessOperations';
 import React, { useState, useEffect } from 'react';
 import {
@@ -287,95 +288,7 @@ export const AdminDashboard: React.FC = () => {
     showToast.success(`Deal "${newDealTitle}" published successfully!`);
   };
 
-  if (!isAdminAuthenticated) {
-    return (
-      <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 bg-slate-50">
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full space-y-6">
-          <div className="text-center space-y-2">
-            <div className="w-16 h-16 rounded-2xl bg-slate-900 text-amber-400 mx-auto flex items-center justify-center shadow-lg">
-              <Lock className="w-8 h-8" />
-            </div>
-            <div className="inline-block px-3 py-1 rounded-full bg-slate-100 text-[10px] font-extrabold text-slate-700 tracking-wider uppercase border border-slate-200">
-              Restricted Portal • spoteradeals.com
-            </div>
-            <h1 className="text-2xl font-black font-sans text-slate-900">
-              {isSetupMode ? 'Create Master Admin Account' : 'Admin Control System'}
-            </h1>
-            <p className="text-xs text-slate-500">
-              {isSetupMode
-                ? 'First time setup: Set your private administrator password below. You will use this password to log in.'
-                : 'Authorized SpoteraDeals administrators only. Log in with your email and password.'}
-            </p>
-          </div>
-
-          <form onSubmit={handleAdminAuthSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">Admin Email Address</label>
-              <input
-                type="email"
-                required
-                placeholder="admin@spoteradeals.com"
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="text-[10px] text-slate-400 mt-1 block">
-                Note: This email is managed internally in your app system.
-              </span>
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">
-                {isSetupMode ? 'Set New Master Password' : 'Password'}
-              </label>
-              <input
-                type="password"
-                required
-                placeholder={isSetupMode ? 'Create a secure password (min 12 chars)' : 'Enter your password'}
-                value={adminPasscode}
-                onChange={(e) => setAdminPasscode(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {isSetupMode && (
-              <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Confirm New Password</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Re-enter your password to confirm"
-                  value={confirmPasscode}
-                  onChange={(e) => setConfirmPasscode(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            )}
-
-            {passError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-bold text-center leading-relaxed">
-                {passError}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-slate-900 hover:bg-black text-amber-300 font-black rounded-2xl text-xs shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              <ShieldAlert className="w-4 h-4 text-amber-400" />
-              <span>{isSetupMode ? 'Save Password & Authenticate Admin' : 'Authenticate Admin Session'}</span>
-            </button>
-
-            <p className="text-xs text-slate-500">Your administrator account is configured securely by the site owner. Public account setup is disabled.</p>
-          </form>
-
-          <div className="pt-4 border-t border-slate-100 text-center text-[11px] text-slate-400">
-            Protected by SSL 256-bit encryption • SpoteraDeals Management Engine
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (!isAdminAuthenticated) return <AuthPage />;
 
   // Analytics Metrics
   const totalRevenue = bookings.filter(b=>b.status!=='cancelled').reduce((sum,b)=>sum+b.totalPrice,0);
