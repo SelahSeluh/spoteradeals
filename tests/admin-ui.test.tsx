@@ -29,3 +29,16 @@ test('shared sign-in opens email login immediately with recovery and no unavaila
  const dom=new JSDOM('',{url:'https://spoteradeals.com/#auth'});Object.assign(globalThis,{window:dom.window,document:dom.window.document});
  try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><AuthPage/></AppProvider></ToastProvider>);assert.match(html,/autocomplete="current-password"/i);assert.match(html,/Forgot password/);assert.doesNotMatch(html,/Continue with Google|Continue with Apple|autocomplete="name"/i);}finally{dom.window.close()}
 });
+
+test('used and cancelled passes do not present redeemable QR tickets',async()=>{
+ const {bookingPresentation}=await import('../src/utils/bookingStatus');
+ for(const status of ['cancelled','redeemed','completed','pending'])assert.equal(bookingPresentation(status).canRedeem,false);
+ assert.equal(bookingPresentation('confirmed').canRedeem,true);
+ assert.equal(bookingPresentation('cancelled').title,'Booking Cancelled');
+});
+
+test('intro preview renders configured media, logo and slogan',async()=>{
+ const {defaultIntroConfig}=await import('../src/lib/defaultConfigs');
+ const dom=new JSDOM('',{url:'https://spoteradeals.com'});Object.assign(globalThis,{window:dom.window,document:dom.window.document});
+ try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><OpeningAnimation previewConfig={{...defaultIntroConfig,backgroundType:'video',videoUrl:'https://example.com/intro.mp4',logoUrl:'/custom-logo.png',text:'Custom welcome'}} embedded/></AppProvider></ToastProvider>);assert.match(html,/https:\/\/example.com\/intro.mp4/);assert.match(html,/Custom welcome/);assert.match(html,/custom-logo.png/);}finally{dom.window.close()}
+});

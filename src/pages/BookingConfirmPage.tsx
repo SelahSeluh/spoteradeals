@@ -12,6 +12,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { SpoteraLogo } from '../components/SpoteraLogo';
+import {bookingPresentation} from '../utils/bookingStatus';
 import { BookingQr } from '../components/BookingQr';
 
 export const BookingConfirmPage: React.FC = () => {
@@ -23,14 +24,14 @@ export const BookingConfirmPage: React.FC = () => {
   const booking = useMemo(() => {
     if (selectedBookingId) {
       const found = bookings.find((b) => b.id === selectedBookingId);
-      if (found) return found;
+      return found || null;
     }
     return bookings[bookings.length - 1] || null;
   }, [bookings, selectedBookingId]);
 
   const deal = useMemo(() => {
     if (!booking) return null;
-    return deals.find((d) => d.id === booking.dealId) || deals[0];
+    return deals.find((d) => d.id === booking.dealId) || null;
   }, [booking, deals]);
 
   const handleShareTicket = async () => {
@@ -74,6 +75,7 @@ export const BookingConfirmPage: React.FC = () => {
     );
   }
 
+  const presentation=bookingPresentation(booking.status);
   const bookingRef = booking.bookingCode;
   const dealTitle = deal?.title || booking.dealTitle || 'Family Activity';
   const displayDate = booking.date ? `${booking.date} · ${booking.timeSlot || '11:00'}` : 'Scheduled Experience';
@@ -102,10 +104,10 @@ export const BookingConfirmPage: React.FC = () => {
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-[#0D1B3E] tracking-tight mt-1">
-            Booking Confirmed
+            {presentation.title}
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-[#8D98AA]">
-            Your digital pass is ready for redemption
+            {presentation.message}
           </p>
         </div>
 
@@ -128,9 +130,9 @@ export const BookingConfirmPage: React.FC = () => {
 
           {/* Centered QR Code */}
           <div className="py-2 flex flex-col items-center justify-center">
-            <BookingQr value={bookingRef} />
+            {presentation.canRedeem ? <BookingQr value={bookingRef} /> : <p role="status" className="text-red-700 text-center font-bold">{presentation.message}</p>}
             <p className="text-[10px] sm:text-xs text-[#8D98AA] font-semibold mt-2.5 text-center">
-              Scan at entry gate or front desk
+              {presentation.canRedeem ? 'Scan at entry gate or front desk' : 'Reference retained for your records'}
             </p>
           </div>
         </div>
@@ -232,7 +234,7 @@ export const BookingConfirmPage: React.FC = () => {
             <h3 className="text-lg font-black text-[#0D1B3E]">{dealTitle}</h3>
             <p className="text-xs text-[#5F6B82]">{displayDate} · {guestsLabel}</p>
             <div className="py-2">
-              <BookingQr value={bookingRef} />
+              {presentation.canRedeem ? <BookingQr value={bookingRef} /> : <p role="status" className="text-red-700 text-center font-bold">{presentation.message}</p>}
             </div>
             <p className="text-xs font-bold text-[#1060E2]">Ticket Reference: {bookingRef}</p>
             <button

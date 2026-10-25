@@ -718,6 +718,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             if (data.authenticated && data.user) {
               setUser(prev=>({...prev,...data.user}));
               setIsLoggedIn(true);
+              setIsAdminAuthenticated(data.user.role === 'ADMIN');
+              setIsPartnerAuthenticated(data.user.role === 'PARTNER');
               if (data.user.role === 'ADMIN') {
                 setIsAdminAuthenticated(true);
                 setAdminEmail(data.user.email);
@@ -757,7 +759,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
 
-    checkServerAuth();
+    void checkServerAuth();
+    const refreshSession=()=>{if(!document.hidden)void checkServerAuth()};
+    window.addEventListener('focus',refreshSession);
+    document.addEventListener('visibilitychange',refreshSession);
+    return()=>{window.removeEventListener('focus',refreshSession);document.removeEventListener('visibilitychange',refreshSession)};
   }, [sessionToken]);
 
   const requireUserAuth = (reason = 'Please sign in or create an account to proceed.', onAuthorized?: () => void): boolean => {
