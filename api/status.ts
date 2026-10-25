@@ -1,5 +1,6 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {get,put} from '@vercel/blob';
+import {createHash,randomBytes} from 'node:crypto';
 import {randomUUID} from 'node:crypto';
 import {hashPassword,verifyPassword} from '../src/server/security.js';
 import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms.js';
@@ -55,6 +56,44 @@ export default async function handler(req:Request,res:ServerResponse){
     }
     if(path==='/api/partner/overview'){
       if(!account||account.role!=='PARTNER')return send(403,{message:'Business sign-in required.'});const state=(await readCommerce()).data;const {data}=await readPublished();return send(200,{success:true,business:data.businesses?.find((b:any)=>b.id===account.businessId),bookings:visibleBookings(state,account),deals:data.deals?.filter((d:any)=>d.businessId===account.businessId)||[]});
+    }
+    if(path==='/api/auth/forgot-password'&&req.method==='POST'){
+      const input=await body(req);
+      if(typeof input.email!=='string'||input.email.length>254)return send(400,{message:'Enter a valid email address.'});
+      const email=input.email.trim().toLowerCase();
+      if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return send(400,{message:'Enter a valid email address.'});
+      const generic='If this address has an account, a reset link will be sent.';
+      const ip=String(req.headers['x-vercel-forwarded-for']||req.headers['x-forwarded-for']||'unknown').split(',')[0].trim();
+      if(!await consumeLoginAttempt(ip))return send(429,{message:'Too many attempts. Please try again later.'});
+      const eligible=email===process.env.ADMIN_EMAIL||(await readCommerce()).data.users.some(u=>u.email===email&&!u.disabled);
+      if(!eligible)return send(200,{success:true,message:generic});
+      if(!process.env.RESEND_API_KEY||!process.env.PASSWORD_RESET_FROM)return send(503,{message:'Password recovery email delivery is not configured yet.'});
+      const token=randomBytes(32).toString('hex'),id=createHash('sha256').update(token).digest('hex');
+      await put('auth/resets/'+id+'.json',JSON.stringify({email,expires:Date.now()+15*60*1000,used:false}),{access:'private',addRandomSuffix:false,allowOverwrite:false,contentType:'application/json',cacheControlMaxAge:0});
+      const link='https://www.spoteradeals.com/?reset_token='+encodeURIComponent(token)+'#auth';
+      const sent=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.PASSWORD_RESET_FROM,to:[email],subject:'Reset your SpoteraDeals password',text:'Use this link to reset your password. It expires in 15 minutes: '+link})});
+      if(!sent.ok){console.error('Password reset email delivery failed',sent.status);return send(503,{message:'Email delivery is temporarily unavailable. Please try again.'})}
+      return send(200,{success:true,message:generic});
+    }
+    if(path==='/api/auth/reset-password'&&req.method==='POST'){
+      const input=await body(req);
+      if(typeof input.token!=='string'||!/^[a-f0-9]{64}$/.test(input.token)||typeof input.password!=='string'||input.password.length<12||input.password.length>128)return send(400,{message:'Invalid reset link or password. Use 12–128 characters.'});
+      const id=createHash('sha256').update(input.token).digest('hex');
+      const record=await get('auth/resets/'+id+'.json',{access:'private',useCache:false});
+      if(!record||record.statusCode!==200)return send(400,{message:'This reset link is invalid or expired.'});
+      const data=JSON.parse(await new Response(record.stream).text());
+      if(data.used||data.expires<Date.now()||typeof data.email!=='string')return send(400,{message:'This reset link is invalid or expired.'});
+      // Conditional write ensures only one concurrent request can consume a token.
+      try{await put('auth/resets/'+id+'.json',JSON.stringify({...data,used:true}),{access:'private',addRandomSuffix:false,allowOverwrite:true,ifMatch:record.blob.etag.replace(/^W\\//,''),contentType:'application/json',cacheControlMaxAge:0})}
+      catch{return send(400,{message:'This reset link has already been used.'})}
+      const hash=hashPassword(input.password);
+      if(data.email===process.env.ADMIN_EMAIL){
+        await put('auth/password.json',JSON.stringify({hash}),{access:'private',addRandomSuffix:false,allowOverwrite:true,contentType:'application/json',cacheControlMaxAge:0});
+        // An explicit emergency override must be removed after recovery.
+      }else{
+        await transact(state=>{const account=state.users.find(u=>u.email===data.email&&!u.disabled);if(!account)throw new CommerceError(404,'Account unavailable.');account.hash=hash;return true});
+      }
+      return send(200,{success:true,message:'Password updated. You can now sign in.'});
     }
     if(path==='/api/auth/login'&&req.method==='POST'){
       if(!configured)return send(503,{error:'ADMIN_NOT_CONFIGURED'});
