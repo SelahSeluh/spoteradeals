@@ -1,0 +1,39 @@
+/* Ocean Blue design system — reference 02, final override loaded after legacy themes.
+   Use existing UAE venue photography and preserve CMS-controlled promotional media. */
+:root{--ocean:#087ad3;--ocean-dark:#064caa;--ocean-ink:#07438f;--ocean-orange:#ff791d;--ocean-light:#e6f8ff}
+html,body,#root{background:#e5f8ff!important;color:var(--ocean-ink)}
+body{background-image:linear-gradient(180deg,#067ac8 0,#37b5ed 240px,#d4f4ff 660px,#effaff 100%)!important;background-attachment:fixed!important}
+.spotera-mesh-canvas{background:transparent!important;background-image:none!important}
+.paper-nav{background:rgba(226,246,255,.93)!important;border-bottom:1px solid #8ed7f5!important;box-shadow:0 5px 24px #075ca323!important;backdrop-filter:blur(15px)}
+.paper-nav-inner{max-width:1320px!important}
+.paper-wordmark,.paper-wordmark *,h1,h2,h3,h4{color:#07438f!important}
+.paper-menu{background:#eefaff!important;border-color:#a3d8f4!important}
+.paper-home{max-width:1320px!important;padding-inline:clamp(12px,3vw,36px)!important}
+.paper-home .picnic-hero{background:linear-gradient(180deg,rgba(189,234,255,.24),rgba(77,200,239,.24) 70%,rgba(218,251,255,.65)),url('/places/skyline.jpg') center 35%/cover!important;box-shadow:0 12px 40px #086ca334!important;border:1px solid #a3e7ff!important;border-radius:22px!important;overflow:hidden;isolation:isolate;position:relative;margin-top:14px;padding:clamp(20px,3.8vw,48px)!important}
+.paper-home .picnic-hero:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(210,243,255,.93),rgba(196,236,255,.73) 47%,rgba(113,202,242,.17));pointer-events:none}
+.paper-home .picnic-copy,.paper-home .picnic-copy p,.paper-home .picnic-note,.paper-home .picnic-hero h1,.paper-home .picnic-hero h1 em{color:#06418e!important;text-shadow:none!important}
+.paper-home .picnic-note{color:#0a5ca9!important}
+.paper-home .picnic-search{background:#fff!important;border:1px solid #a6dafa!important;box-shadow:0 6px 15px #075ca324!important}
+.paper-home .picnic-search button{background:#ff791d!important}
+.paper-home .picnic-categories{border:0!important;border-top:1px solid #ffffff99!important}
+.paper-home .picnic-categories button{color:#06418e!important}
+.paper-home .picnic-categories button>span{box-shadow:0 6px 15px #0b6cac2b!important}
+.paper-home .picnic-collage{filter:drop-shadow(0 12px 18px #09599b33)}
+.paper-home .picnic-postcard{background:#fff!important;border:8px solid #fff!important;border-radius:7px!important;box-shadow:0 14px 25px #055b9940!important}
+.paper-home .picnic-postcard>span{color:#07509c!important}
+.paper-home .picnic-doodle{color:#1272d1!important}
+.paper-home .paper-home-deals,.paper-home .places-photo-grid{position:relative}
+.paper-home .paper-deal-card,.paper-home .places-photo-grid>*,.paper-deal-card{border-color:#a6daf1!important;box-shadow:0 7px 22px #0768a51c!important}
+.paper-home .paper-end-note{color:#08489c!important}
+.paper-footer{background:linear-gradient(180deg,#d7f6ff,#f3fbff)!important;border-top:1px solid #91d8f3!important;color:#07438f!important}
+.paper-footer .expedition-skyline{opacity:.9}
+main[data-paper-page]:not([data-paper-page="home"]):not([data-paper-page="deals"]){background:linear-gradient(180deg,#e2f7ff,#f7fcff)!important;border-radius:20px;min-height:60vh;padding-block:18px}
+main[data-paper-page] .bg-white,.paper-settings,.paper-auth-card{background-color:#fff!important;border-color:#b3def4!important}
+.expedition-auth,.expedition-auth-main{background:linear-gradient(135deg,#bfeeff,#effaff)!important}
+.expedition-auth-aside{background:linear-gradient(135deg,#76d3f5,#d5f5ff)!important}
+.expedition-intro{background:linear-gradient(150deg,#0063bd,#00a8e6 60%,#8ee8ff)!important}
+.expedition-intro h1,.expedition-intro .paper-wordmark{color:#fff!important}
+[data-testid=tab-bar]{background:#effbff!important;border-color:#a5dff5!important}
+@media(max-width:767px){body{background-attachment:scroll!important}.paper-home .picnic-hero{margin-top:8px;padding:20px 12px!important;border-radius:15px!important;background-position:58% center!important}.paper-home .picnic-hero:before{background:linear-gradient(180deg,rgba(219,246,255,.93),rgba(194,238,255,.73))}.paper-home .picnic-hero h1{font-size:clamp(30px,8vw,39px)!important}.paper-home .picnic-categories{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.paper-home .picnic-categories button{font-size:9px!important;min-width:0}.paper-home .picnic-categories button>span{width:36px;height:36px}.paper-home .picnic-collage{min-width:0}.paper-footer{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}}
+@media(max-width:380px){.paper-home .picnic-categories{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
