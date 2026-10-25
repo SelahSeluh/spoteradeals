@@ -4,6 +4,7 @@ import {postcardSlides,safeMediaUrl} from '../src/utils/postcardSlides';
 import {issueAdminSession,verifyAdminSession,safeContent,strongEtag} from '../src/server/cms';
 import handler from '../api/status';
 import type {Deal,HomepageConfig} from '../src/types';
+import {isOfferAvailable} from '../src/utils/offerAvailability';
 const deal=(i:number,patch:Partial<Deal>={}):Deal=>({id:String(i),title:`Offer ${i}`,imageUrl:`https://example.com/${i}.jpg`,isPublished:true,isFeatured:false,expiryDate:'2030-12-31',rating:i,discountPrice:29,...patch} as Deal);
 const config=(patch:Partial<HomepageConfig>={}):HomepageConfig=>({heroSlides:[],...patch} as HomepageConfig);
 test('top ten excludes expired and hidden offers, ranks featured first and deduplicates sponsored links',()=>{
@@ -20,6 +21,19 @@ test('manual only supports zero slides, hidden promotions and removal of linked 
 test('media URL guard rejects executable, relative-host and credentialed sources',()=>{
  for(const url of ['javascript:alert(1)','//other.example/x','http://example.com/x','https://user:pass@example.com/x','/\\evil.example/x'])assert.equal(safeMediaUrl(url),undefined);
  assert.equal(safeMediaUrl('/api/media?name=test'),'/api/media?name=test');
+});
+test('admin place promotions do not require a city name in their title',()=>{
+ const slide={id:'cafe',title:'Coffee together',subtitle:'Weekend special',imageUrl:'/places/skyline.jpg',enabled:true,order:0};
+ assert.equal(postcardSlides(config({heroSlides:[slide],heroIncludeTopOffers:false}),[])[0]?.id,'cafe');
+});
+test('homepage promotions exclude future and unavailable offers using UAE calendar boundaries',()=>{
+ const now=Date.parse('2026-10-25T20:00:00Z');
+ assert.equal(isOfferAvailable(deal(1,{expiryDate:'2026-10-25'}),now),false);
+ assert.equal(isOfferAvailable(deal(1,{expiryDate:'2026-10-26'}),now),true);
+ for(const patch of [{startDate:'2026-10-27'},{availability:'fully-booked' as const},{availability:'not-available' as const},{isPublished:false}]){
+  assert.equal(isOfferAvailable(deal(1,patch),now),false);
+  assert.equal(postcardSlides(config(),[deal(1,patch)],now).length,0);
+ }
 });
 test('signed admin sessions expire, reject tampering and revoke on password changes',()=>{
  process.env.ADMIN_EMAIL='owner@example.com';process.env.ADMIN_SESSION_SECRET='test-only-session-key';process.env.ADMIN_PASSWORD_HASH='test-only-hash';

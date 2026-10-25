@@ -297,7 +297,7 @@ interface AppContextType {
     packageName: string,
     totalPrice: number
   ) => Promise<Booking>;
-  cancelBooking: (bookingId: string) => void;
+  cancelBooking: (bookingId: string) => Promise<boolean>;
   updateBookingStatus: (bookingId: string, status: Booking['status']) => void;
   toggleFavoriteDeal: (dealId: string) => void;
   addReview: (dealId: string, rating: number, comment: string) => void;
@@ -1146,7 +1146,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try{const data=await apiAction('/api/vouchers/redeem',{code:code.trim()});await refreshBookings();return data}catch(error){return {success:false,message:error instanceof Error?error.message:'Redemption failed.'}}
   };
   const redeemCoupon = (code:string):boolean => {void redeemCode(code);return false};
-  const cancelBooking = (id:string) => {void apiAction('/api/bookings/cancel',{id}).then(()=>refreshBookings()).catch(error=>window.alert(error.message));};
+  const cancelBooking = async (id:string):Promise<boolean> => {try{await apiAction('/api/bookings/cancel',{id});await refreshBookings();return true}catch(error){window.alert(error instanceof Error?error.message:'Cancellation failed.');return false}};
   const updateBookingStatus = (id:string,status:Booking['status']) => {if(status==='cancelled')cancelBooking(id);else if(status==='redeemed'||status==='completed'){const booking=bookings.find(b=>b.id===id);if(booking)void redeemCode(booking.bookingCode).then(result=>{if(!result.success)window.alert(result.message)})}};
 
   const toggleFavoriteDeal = (dealId: string) => {

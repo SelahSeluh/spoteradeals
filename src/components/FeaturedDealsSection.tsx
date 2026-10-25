@@ -2,13 +2,14 @@ import React from 'react';
 import { ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { DealCard } from './DealCard';
+import {isOfferAvailable} from '../utils/offerAvailability';
 
 export const FeaturedDealsSection: React.FC = () => {
   const { deals, setActiveView, setSelectedCategory } = useApp();
 
   // Get top 4 featured deals matching the mockup layout
   const featuredDeals = React.useMemo(() => {
-    const published = deals.filter((d) => d.isPublished !== false);
+    const published = deals.filter((d) => isOfferAvailable(d));
     const groups = [
       (d: typeof published[number]) => /restaurant|cafe|café|dining|brunch|coffee/i.test(`${d.category} ${d.title}`),
       (d: typeof published[number]) => /attraction|entertainment|tour|desert/i.test(`${d.category} ${d.title}`),

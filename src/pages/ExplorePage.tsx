@@ -7,6 +7,7 @@ import { DealsMap } from '../components/DealsMap';
 import { EmptyState } from '../components/EmptyState';
 import { DateRangeFilter } from '../components/DateRangeFilter';
 import { Deal, DateFilterPreset } from '../types';
+import {isOfferAvailable} from '../utils/offerAvailability';
 
 interface ExplorePageProps {
   onClaimCoupon: (deal: Deal) => void;
@@ -57,7 +58,10 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
 
   const filteredDeals = useMemo(() => {
     // 1. Base published deals
-    let list = deals.filter((d) => d.isPublished !== false);
+    let list = deals.filter((d) => isOfferAvailable(d));
+    if (String(selectedCity).toLowerCase() !== 'all') {
+      list = list.filter(d => d.city.toLowerCase() === String(selectedCity).toLowerCase());
+    }
 
     // 2. Favorites only toggle
     if (onlyFavorites) {

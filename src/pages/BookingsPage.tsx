@@ -19,21 +19,23 @@ export const BookingsPage: React.FC = () => {
     if (!isLoggedIn) return [];
     return bookings.filter((booking) => {
       if (activeTab === 'upcoming') return booking.status === 'confirmed';
+      if (activeTab === 'completed') return booking.status === 'completed' || booking.status === 'redeemed';
       return booking.status === activeTab;
     });
   }, [activeTab, bookings, isLoggedIn]);
 
   const getDeal = useCallback(
     (dealId: string) => {
-      return deals.find((d) => d.id === dealId) || deals[0];
+      return deals.find((d) => d.id === dealId);
     },
     [deals]
   );
 
-  const handleCancel = (bookingId: string) => {
+  const handleCancel = async (bookingId: string) => {
     if (window.confirm(t('confirm') + '?')) {
-      cancelBooking(bookingId);
-      showToast(t('bookingCancelledToast') || 'Booking cancelled successfully', 'info');
+      if (await cancelBooking(bookingId)) {
+        showToast(t('bookingCancelledToast') || 'Booking cancelled successfully', 'info');
+      }
     }
   };
 
@@ -92,7 +94,7 @@ export const BookingsPage: React.FC = () => {
                   {/* Top: Image + Info */}
                   <div className="flex items-start gap-3.5">
                     <img
-                      src={deal?.imageUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'}
+                      src={deal?.imageUrl || '/places/skyline.jpg'}
                       alt={deal?.title || booking.dealTitle}
                       className="w-[72px] h-[72px] rounded-[14px] object-cover shrink-0 border border-slate-100"
                       loading="lazy"

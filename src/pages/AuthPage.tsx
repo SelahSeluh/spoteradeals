@@ -77,7 +77,7 @@ export const AuthPage: React.FC = () => {
   };
 
   const handleAppleAuth = () => {
-    setErrorMsg('Apple sign-in is not available yet. Please use email, Google, or continue as a guest.');
+    setErrorMsg('Apple sign-in is not available yet. Please use email or continue as a guest.');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

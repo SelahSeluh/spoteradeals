@@ -48,22 +48,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
   };
 
   const handleAppleAuth = () => {
-    const mockAppleUser = {
-      id: 'apple_' + Date.now(),
-      email: email && email.includes('@') ? email : 'apple.member@icloud.com',
-      name: 'Apple Member',
-      phone: '',
-      role: 'customer' as const,
-      membership: 'Free' as const,
-      savedDealIds: [],
-      notifications: [],
-      avatar: '',
-      authProvider: 'apple' as const,
-      username: 'apple_member',
-    };
-    handleAuthSuccess(mockAppleUser);
-    showToast.success('Signed in with Apple ID');
-    onClose();
+    setErrorMsg('Apple sign-in is not available yet. Please use email or continue as a guest.');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,8 +61,8 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
       return;
     }
 
-    if (!password || password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters.');
+    if (!password || (authView === 'email-register' && password.length < 12)) {
+      setErrorMsg(authView === 'email-register' ? 'Use at least 12 characters when creating an account.' : 'Please enter your password.');
       return;
     }
 
