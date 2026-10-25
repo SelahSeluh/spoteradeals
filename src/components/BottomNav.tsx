@@ -77,9 +77,9 @@ export const BottomNav: React.FC = () => {
     <nav
       aria-label="Spotera Tab Bar"
       data-testid="tab-bar"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom,12px))] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] select-none"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2 px-1 sm:px-3 pb-[max(0.6rem,env(safe-area-inset-bottom,12px))] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] select-none"
     >
-      <div className="max-w-md mx-auto flex items-center justify-around">
+      <div className="max-w-md mx-auto grid grid-cols-5 items-center">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = tab.isActive;
@@ -90,24 +90,24 @@ export const BottomNav: React.FC = () => {
               onClick={tab.onClick}
               aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
-              className="flex-1 flex flex-col items-center justify-center py-1 cursor-pointer transition-transform active:scale-95 group"
+              className="min-w-0 flex flex-col items-center justify-center py-1 px-0.5 cursor-pointer transition-transform active:scale-95 group"
             >
               <div className="relative">
                 <Icon
                   className={`w-[22px] h-[22px] transition-colors ${
-                    active ? 'text-[#0D9CFD] stroke-[2.4px]' : 'text-slate-400 stroke-[1.8px] group-hover:text-slate-600'
+                    active ? 'text-[#1455D9] stroke-[2.4px]' : 'text-slate-400 stroke-[1.8px] group-hover:text-slate-600'
                   }`}
                 />
 
                 {Boolean(tab.badge && tab.badge > 0) && (
-                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#FD9302] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#FF7417] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
                     {tab.badge}
                   </span>
                 )}
               </div>
 
               <span
-                className={`text-[10px] mt-1 font-bold tracking-tight transition-colors ${
+                className={`text-[9px] min-[375px]:text-[10px] mt-1 font-bold tracking-tight text-center leading-tight transition-colors ${
                   active ? 'text-[#0D9CFD]' : 'text-slate-500 group-hover:text-slate-700'
                 }`}
               >
