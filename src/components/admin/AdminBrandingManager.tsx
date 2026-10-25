@@ -77,7 +77,7 @@ export const AdminBrandingManager: React.FC = () => {
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700">Custom Logo Image URL (Optional)</label>
             <input
-              type="url"
+              type="text"
               value={formData.customLogoUrl || ''}
               onChange={(e) => setFormData({ ...formData, customLogoUrl: e.target.value })}
               placeholder="Leave empty to use official SpoteraDeals SVG mark"

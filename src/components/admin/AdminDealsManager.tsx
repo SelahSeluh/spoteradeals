@@ -1,4 +1,5 @@
 import {MediaUploadField} from './MediaUploadField';
+import {safeMediaUrl} from '../../utils/postcardSlides';
 import React, { useState } from 'react';
 import {
   Tag,
@@ -158,6 +159,10 @@ export const AdminDealsManager: React.FC = () => {
     e.preventDefault();
     if (!formData.title || !formData.businessName) {
       showToast('Deal title and business venue name are required.', 'error');
+      return;
+    }
+    if (!safeMediaUrl(formData.imageUrl) || (formData.videoUrl && !safeMediaUrl(formData.videoUrl))) {
+      showToast('Use a valid HTTPS or uploaded media URL.', 'error');
       return;
     }
 
@@ -545,7 +550,7 @@ export const AdminDealsManager: React.FC = () => {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Image URL</label>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
