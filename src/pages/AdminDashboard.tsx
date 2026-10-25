@@ -810,6 +810,8 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
+      {activeTab === 'users' && <AdminRbacManager sessionToken={sessionToken} currentAdminEmail={adminEmail} />}
+
       {/* TAB: Analytics Dashboard */}
       {activeTab === 'analytics' && (
         <div className="space-y-8">
@@ -817,12 +819,12 @@ export const AdminDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Total Marketplace Volume</span>
+                <span>Reservation Value</span>
                 <DollarSign className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">AED {totalRevenue}</div>
               <div className="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" /> +24.5% vs last month
+                Pay at venue · not verified payment revenue
               </div>
             </div>
 

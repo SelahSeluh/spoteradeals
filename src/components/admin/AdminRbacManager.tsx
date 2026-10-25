@@ -36,6 +36,8 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
   currentAdminSubRole = 'SUPER_ADMIN',
 }) => {
   const { showToast } = useToast();
+  const [canManageRoles,setCanManageRoles] = useState(false);
+  const [loadError,setLoadError] = useState('');
   const [users, setUsers] = useState<RbacUser[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,11 +50,13 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
         headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {},
       });
       const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Could not load accounts.');
+      setCanManageRoles(data.roleManagement === true);setLoadError('');
       if (data.success) {
         setUsers(data.users || []);
       }
     } catch (e) {
-      console.warn('Failed to load user list:', e);
+      setLoadError(e instanceof Error?e.message:'Could not load accounts.');
     } finally {
       setIsLoading(false);
     }
@@ -195,6 +199,8 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
         </div>
       </div>
 
+      {loadError && <p role="alert" className="text-red-700">{loadError}</p>}
+      {!canManageRoles && <p role="status" className="rounded-xl border p-4">Accounts are read-only here. Additional administrator roles are not configured. Use Business accounts above to manage venue access.</p>}
       {/* Users & Admins Management Table */}
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -252,7 +258,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <select
                         value={u.role}
-                        disabled={isMasterAdmin || currentAdminSubRole !== 'SUPER_ADMIN' || isUpdating}
+                        disabled={!canManageRoles || isMasterAdmin || currentAdminSubRole !== 'SUPER_ADMIN' || isUpdating}
                         onChange={(e) =>
                           handleUpdateRole(
                             u.id,
@@ -274,7 +280,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                         <select
                           value={u.adminSubRole || 'VIEWER'}
                           disabled={
-                            isMasterAdmin ||
+                            !canManageRoles || isMasterAdmin ||
                             currentAdminSubRole !== 'SUPER_ADMIN' ||
                             isUpdating
                           }
@@ -319,7 +325,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                               handleUpdateRole(u.id, u.email, 'ADMIN', 'CONTENT_ADMIN');
                             }
                           }}
-                          disabled={currentAdminSubRole !== 'SUPER_ADMIN' || isUpdating}
+                          disabled={!canManageRoles || currentAdminSubRole !== 'SUPER_ADMIN' || isUpdating}
                           className="text-xs font-bold text-[#0D9CFD] hover:underline disabled:opacity-50 cursor-pointer"
                         >
                           {u.role === 'ADMIN' ? 'Demote to Customer' : 'Promote to Admin'}

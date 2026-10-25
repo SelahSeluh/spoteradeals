@@ -26,6 +26,7 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
 }) => {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadError,setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'ALL' | 'SUCCESS' | 'BLOCKED' | 'FAILED'>('ALL');
   const [selectedAction, setSelectedAction] = useState<string>('ALL');
@@ -49,6 +50,8 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
         headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {},
       });
       const data = await res.json();
+      if(!res.ok || !data.success){setLoadError(data.message || 'This service is unavailable.');return;}
+      setLoadError('');
       if (data.success) {
         setLogs(data.logs || []);
       }
@@ -82,6 +85,7 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
 
   return (
     <div className="space-y-6">
+      {loadError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{loadError}</p>}
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 to-[#1E293B] text-white p-6 rounded-3xl shadow-sm border border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -91,7 +95,7 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
               <h2 className="text-xl font-black tracking-tight">Security & Audit Event Logs</h2>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Append-only audit trail recording every administrative event, access attempt, backup creation, and role modification for regulatory compliance and threat detection.
+              Recorded booking, cancellation and redemption activity. Login and content-change auditing are not configured in this deployment.
             </p>
           </div>
 

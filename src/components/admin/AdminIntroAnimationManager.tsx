@@ -31,6 +31,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
   const [formData, setFormData] = useState<IntroAnimationConfig>(introConfig);
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false);
   const [simulatorKey, setSimulatorKey] = useState(0);
+  const [simulatorPlaying, setSimulatorPlaying] = useState(true);
   const [isPublishing, setIsPublishing] = useState(false);
   const [newSlideUrl, setNewSlideUrl] = useState('');
 
@@ -52,6 +53,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
   // Replay preview in simulator
   const handleReplaySimulator = () => {
+    setSimulatorPlaying(true);
     setSimulatorKey((k) => k + 1);
   };
 
@@ -225,7 +227,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-900 rounded-full z-50 pointer-events-none" />
 
             <div key={simulatorKey} className="w-full h-full relative">
-              <OpeningAnimation previewConfig={formData} onPreviewClose={handleReplaySimulator} />
+              {simulatorPlaying ? <OpeningAnimation embedded previewConfig={formData} onPreviewClose={()=>setSimulatorPlaying(false)} /> : <div className="h-full flex items-center justify-center text-white text-sm">Preview finished. Select Replay Screen to play again.</div>}
             </div>
           </div>
 

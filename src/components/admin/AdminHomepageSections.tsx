@@ -11,21 +11,13 @@ import {
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import { HomepageSection } from '../../types';
+import {homeSections} from '../../utils/homepageLayout';
 
 export const AdminHomepageSections: React.FC = () => {
   const { homepageConfig, reorderHomepageSections, toggleHomepageSection } = useApp();
   const { showToast } = useToast();
 
-  const sections: HomepageSection[] = (
-    homepageConfig.sections || [
-      { id: 'hero', title: 'Hero Slideshow', enabled: true, order: 1 },
-      { id: 'categories', title: 'Categories Quick Filter', enabled: true, order: 2 },
-      { id: 'trending', title: 'Trending UAE Deals', subtitle: 'Popular limited-time offers with instant pass activation', enabled: true, order: 3 },
-      { id: 'near-you', title: 'Deals Near You', subtitle: 'Discounts in your selected UAE Emirate & city area', enabled: true, order: 4 },
-      { id: 'all-deals', title: 'All UAE Deals & Passes', subtitle: 'Complete catalog of verified experiences', enabled: true, order: 5 },
-      { id: 'guest-cta', title: 'Guest Member CTA Banner', enabled: true, order: 6 },
-    ]
-  ).sort((a, b) => a.order - b.order);
+  const sections: HomepageSection[] = homeSections.map(fallback=>({...fallback,...homepageConfig.sections?.find(s=>s.id===fallback.id),title:fallback.title})).sort((a,b)=>a.order-b.order);
 
   const moveSection = (index: number, direction: 'up' | 'down') => {
     const list = [...sections];

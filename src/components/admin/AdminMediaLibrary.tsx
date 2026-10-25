@@ -13,6 +13,8 @@ import {
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import { MediaItem } from '../../types';
+import {uploadAdminMedia} from './MediaUploadField';
+import {safeMediaUrl} from '../../utils/postcardSlides';
 
 export const AdminMediaLibrary: React.FC = () => {
   const { mediaLibrary, addMediaItem, deleteMediaItem } = useApp();
@@ -26,6 +28,7 @@ export const AdminMediaLibrary: React.FC = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newTag, setNewTag] = useState('General');
+  const [uploading,setUploading] = useState(false);
 
   const tags = ['all', 'Skyline', 'Theme Park', 'Food', 'Kids Play', 'Hotel', 'Branding'];
 
@@ -52,8 +55,9 @@ export const AdminMediaLibrary: React.FC = () => {
 
   const handleAddMedia = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle || !newUrl) {
-      showToast('Title and Image URL are required.', 'error');
+    if (uploading) return;
+    if (!newTitle || !safeMediaUrl(newUrl)) {
+      showToast('Add a title and a valid HTTPS or uploaded image URL.', 'error');
       return;
     }
 
@@ -71,18 +75,17 @@ export const AdminMediaLibrary: React.FC = () => {
     setIsAddingNew(false);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setNewUrl(base64);
+    setUploading(true);
+    try {
+      setNewUrl(await uploadAdminMedia(file));
       if (!newTitle) setNewTitle(file.name.replace(/\.[^/.]+$/, ''));
-      showToast('Image loaded from device. Ready to save!', 'info');
-    };
-    reader.readAsDataURL(file);
+      showToast('Image uploaded. Ready to save!', 'info');
+    } catch(error) {showToast(error instanceof Error?error.message:'Upload failed.','error')}
+    finally {setUploading(false)}
   };
 
   return (
@@ -230,7 +233,7 @@ export const AdminMediaLibrary: React.FC = () => {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Image Web URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={newUrl.startsWith('data:') ? '' : newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/..."
@@ -244,7 +247,8 @@ export const AdminMediaLibrary: React.FC = () => {
                 <p className="text-xs font-bold text-slate-700">Or pick from local computer</p>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
+                  disabled={uploading}
                   onChange={handleFileUpload}
                   className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#0D9CFD] file:text-white cursor-pointer"
                 />
@@ -283,6 +287,7 @@ export const AdminMediaLibrary: React.FC = () => {
                 </button>
                 <button
                   type="submit"
+                  disabled={uploading}
                   className="px-6 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0b8de5] text-white text-xs font-bold shadow-xs cursor-pointer"
                 >
                   Add to Media Library

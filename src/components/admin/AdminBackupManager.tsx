@@ -33,6 +33,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [versions, setVersions] = useState<VersionSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadError,setLoadError] = useState('');
   const [isCreatingBackup, setIsCreatingBackup] = useState(false);
   const [backupDescription, setBackupDescription] = useState('');
   const [selectedScope, setSelectedScope] = useState<string>('ALL');
@@ -46,6 +47,8 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
         headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {},
       });
       const data = await res.json();
+      if(!res.ok || !data.success){setLoadError(data.message || 'This service is unavailable.');return;}
+      setLoadError('');
       if (data.success) {
         setBackups(data.backups || []);
       }
@@ -66,6 +69,8 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
         headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {},
       });
       const data = await res.json();
+      if(!res.ok || !data.success){setLoadError(data.message || 'This service is unavailable.');return;}
+      setLoadError('');
       if (data.success) {
         setVersions(data.versions || []);
       }
@@ -196,6 +201,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
 
   return (
     <div className="space-y-6">
+      {loadError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{loadError}</p>}
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-slate-900 to-[#0D1B3E] text-white p-6 rounded-3xl shadow-sm border border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

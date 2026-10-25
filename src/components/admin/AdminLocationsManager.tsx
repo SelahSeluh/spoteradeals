@@ -49,7 +49,7 @@ export const AdminLocationsManager: React.FC = () => {
   const handleOpenEdit = (loc: LocationItem) => {
     setEditingLocation(loc);
     setFormData({
-      name: loc.name,
+      name: loc.name || loc.emirate || '',
       nameAr: loc.nameAr || '',
       slug: loc.slug,
       enabled: loc.enabled,
@@ -112,7 +112,7 @@ export const AdminLocationsManager: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {locationsList.map((loc) => {
           const dealCount = deals.filter(
-            (d) => d.city.toLowerCase() === loc.name.toLowerCase()
+            (d) => String(d.city || '').toLowerCase() === String(loc.name || loc.emirate || '').toLowerCase()
           ).length;
 
           return (
@@ -127,7 +127,7 @@ export const AdminLocationsManager: React.FC = () => {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-bold text-slate-900 truncate">{loc.name}</h3>
+                  <h3 className="text-sm font-bold text-slate-900 truncate">{loc.name || loc.emirate || 'Unnamed location'}</h3>
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                     {loc.nameAr && <span className="font-arabic">{loc.nameAr}</span>}
                     <span>•</span>

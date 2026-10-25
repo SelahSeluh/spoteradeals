@@ -249,8 +249,8 @@ export const AdminDealsManager: React.FC = () => {
             >
               <option value="all">All Emirates</option>
               {locationsList.map((l) => (
-                <option key={l.id} value={l.name}>
-                  {l.name}
+                <option key={l.id} value={l.name || l.emirate}>
+                  {l.name || l.emirate}
                 </option>
               ))}
             </select>
@@ -488,8 +488,8 @@ export const AdminDealsManager: React.FC = () => {
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                   >
                     {locationsList.map((l) => (
-                      <option key={l.id} value={l.name}>
-                        {l.name}
+                      <option key={l.id} value={l.name || l.emirate}>
+                        {l.name || l.emirate}
                       </option>
                     ))}
                   </select>

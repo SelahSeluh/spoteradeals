@@ -133,6 +133,17 @@ export default async function handler(req:Request,res:ServerResponse){
     }
     if(path.startsWith('/api/admin/')){
       if(!owner)return send(401,{error:'AUTHENTICATION_REQUIRED'});
+      if(path==='/api/admin/users'&&req.method==='GET'){
+        const state=(await readCommerce()).data;
+        return send(200,{success:true,roleManagement:false,users:[user(),...state.users.map(publicAccount)]});
+      }
+      if(path==='/api/admin/audit-logs'&&req.method==='GET'){
+        const state=(await readCommerce()).data;
+        let logs=state.auditLogs.map(event=>{const account=state.users.find(a=>a.id===event.actorId);return {...event,timestamp:event.at,actorEmail:event.actorId==='spotera-owner'?process.env.ADMIN_EMAIL:account?.email||event.actorId,role:account?.role||'ADMIN',status:'SUCCESS',resource:event.bookingId?'booking':undefined,resourceId:event.bookingId}});
+        const status=url.searchParams.get('status'),action=url.searchParams.get('action'),actor=url.searchParams.get('actor')?.toLowerCase();
+        if(status)logs=logs.filter(l=>l.status===status);if(action)logs=logs.filter(l=>l.action===action);if(actor)logs=logs.filter(l=>String(l.actorEmail).toLowerCase().includes(actor));
+        return send(200,{success:true,logs:logs.slice(0,Math.max(1,Math.min(200,Number(url.searchParams.get('limit'))||200)))});
+      }
       if(path==='/api/admin/upload-media'&&req.method==='POST'){
         const input=await body(req);const ext:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','video/mp4':'mp4','video/webm':'webm'};
         if(!ext[input.contentType]||typeof input.base64!=='string'||!/^[A-Za-z0-9+/]*={0,2}$/.test(input.base64))return send(400,{error:'INVALID_MEDIA'});
