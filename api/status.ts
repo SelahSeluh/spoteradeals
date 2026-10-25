@@ -61,7 +61,7 @@ export default async function handler(req:Request,res:ServerResponse){
       const input=await body(req);
       if(typeof input.email!=='string'||input.email.length>254)return send(400,{message:'Enter a valid email address.'});
       const email=input.email.trim().toLowerCase();
-      if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return send(400,{message:'Enter a valid email address.'});
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return send(400,{message:'Enter a valid email address.'});
       const generic='If this address has an account, a reset link will be sent.';
       const ip=String(req.headers['x-vercel-forwarded-for']||req.headers['x-forwarded-for']||'unknown').split(',')[0].trim();
       if(!await consumeLoginAttempt(ip))return send(429,{message:'Too many attempts. Please try again later.'});
@@ -84,7 +84,7 @@ export default async function handler(req:Request,res:ServerResponse){
       const data=JSON.parse(await new Response(record.stream).text());
       if(data.used||data.expires<Date.now()||typeof data.email!=='string')return send(400,{message:'This reset link is invalid or expired.'});
       // Conditional write ensures only one concurrent request can consume a token.
-      try{await put('auth/resets/'+id+'.json',JSON.stringify({...data,used:true}),{access:'private',addRandomSuffix:false,allowOverwrite:true,ifMatch:record.blob.etag.replace(/^W\\//,''),contentType:'application/json',cacheControlMaxAge:0})}
+      try{await put('auth/resets/'+id+'.json',JSON.stringify({...data,used:true}),{access:'private',addRandomSuffix:false,allowOverwrite:true,ifMatch:record.blob.etag.replace(/^W\//,''),contentType:'application/json',cacheControlMaxAge:0})}
       catch{return send(400,{message:'This reset link has already been used.'})}
       const hash=hashPassword(input.password);
       if(data.email===process.env.ADMIN_EMAIL){
