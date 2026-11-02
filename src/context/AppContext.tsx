@@ -36,6 +36,7 @@ import {
   LoyaltyActionType,
 } from '../types';
 import {useCmsSync} from '../hooks/useCmsSync';
+import {paymentCopy,REFUND_POLICY_VERSION} from '../utils/paymentPolicy';
 import { expeditionCatalog } from '../utils/expeditionImages';
 import { defaultIntroConfig } from '../lib/defaultConfigs';
 import {
@@ -1138,15 +1139,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const response=await fetch(path,input===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)});
     const data=await response.json();if(!response.ok||data.success===false)throw new Error(data.message||'Could not complete this request.');return data;
   };
-  const refreshBookings = async () => { try{const data=await apiAction('/api/bookings');setBookings(data.bookings||[]);}catch{setBookings([])} };
+  const refreshBookings = async () => { try{
+    const params=new URLSearchParams(window.location.search),sessionId=params.get('checkout_session_id');
+    if(sessionId&&isLoggedIn){try{const verified=await apiAction('/api/payments/verify',{sessionId});if(verified.paid){params.delete('checkout_session_id');window.history.replaceState(null,'',`${window.location.pathname}${params.size?'?'+params:''}#bookings`);setActiveView('bookings')}}catch{/* Keep pending until a verified Stripe event or reconciliation succeeds. */}}
+    const data=await apiAction('/api/bookings');setBookings(data.bookings||[]);setUser(prev=>({...prev,refundPoints:data.refundPoints||0}));
+  }catch{setBookings([])} };
   useEffect(()=>{if(!isLoggedIn&&!isAdminAuthenticated&&!isPartnerAuthenticated){setBookings([]);setCoupons([]);return}void refreshBookings();const timer=setInterval(()=>{if(!document.hidden)void refreshBookings()},30000);window.addEventListener('focus',refreshBookings);return()=>{clearInterval(timer);window.removeEventListener('focus',refreshBookings)}},[isLoggedIn,isAdminAuthenticated,isPartnerAuthenticated,user.id]);
   const createBooking = async (deal:Deal,date:string,timeSlot:string,childrenCount:number,packageName:string,totalPrice:number):Promise<Booking> => {
-    const data=await apiAction('/api/bookings',{dealId:deal.id,date,timeSlot,childrenCount});setBookings(prev=>[data.booking,...prev.filter(b=>b.id!==data.booking.id)]);return data.booking;
+    const copy=paymentCopy(language);
+    if(!window.confirm(copy.policy+'\n\n'+copy.confirm))throw new Error('Checkout cancelled. No payment was taken.');
+    const amountMinor=Math.round(deal.discountPrice*(deal.priceMode==='guest'?childrenCount:1)*100);
+    const usePoints=(user.refundPoints||0)>=amountMinor&&window.confirm(copy.points);
+    const data=await apiAction('/api/bookings',{dealId:deal.id,date,timeSlot,childrenCount,usePoints,refundPolicyVersion:REFUND_POLICY_VERSION});
+    if(data.checkoutUrl){const url=new URL(data.checkoutUrl);if(url.origin!=='https://checkout.stripe.com')throw new Error('Invalid checkout address.');window.location.assign(url.href);return data.booking;}
+    if(data.booking?.status!=='confirmed'||!['paid','paid_points'].includes(data.booking.paymentStatus))throw new Error('Payment has not been confirmed.');
+    setBookings(prev=>[data.booking,...prev.filter(b=>b.id!==data.booking.id)]);await refreshBookings();return data.booking;
   };
   const claimCoupon = async (deal:Deal):Promise<Coupon> => {
     const date=new Date(Date.now()+4*3600000).toISOString().slice(0,10);
     const b=await createBooking(deal,date,'During opening hours',1,deal.title,deal.discountPrice);
-    const coupon:Coupon={id:b.id,code:b.bookingCode,dealId:deal.id,dealTitle:deal.title,businessName:deal.businessName,userId:user.id,userName:user.name,claimedAt:b.createdAt,expiryDate:date,status:'active',qrCodeData:b.bookingCode,redemptionInstructions:'Show this code at the venue. Pay at the venue; this reservation is not proof of payment.'};setCoupons(prev=>[coupon,...prev]);return coupon;
+    if(b.status!=='confirmed'||!b.bookingCode)throw new Error('Continue to secure checkout to receive your pass.');
+    const coupon:Coupon={id:b.id,code:b.bookingCode,dealId:deal.id,dealTitle:deal.title,businessName:deal.businessName,userId:user.id,userName:user.name,claimedAt:b.createdAt,expiryDate:date,status:'active',qrCodeData:b.bookingCode,redemptionInstructions:'Show your paid, single-use pass at the venue.'};setCoupons(prev=>[coupon,...prev]);return coupon;
   };
   const redeemCode = async (code:string,businessName?:string) => {
     try{const data=await apiAction('/api/vouchers/redeem',{code:code.trim()});await refreshBookings();return data}catch(error){return {success:false,message:error instanceof Error?error.message:'Redemption failed.'}}

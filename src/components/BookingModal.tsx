@@ -22,6 +22,8 @@ import { Deal, Booking } from '../types';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { getLocalizedTitle } from '../utils/i18nHelper';
+import {PaymentPolicy} from './PaymentPolicy';
+import {paymentCopy} from '../utils/paymentPolicy';
 
 interface BookingModalProps {
   deal: Deal | null;
@@ -115,9 +117,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
         Math.round(totalPrice)
       );
 
+      if(booking.status!=='confirmed')return;
       setConfirmedBooking(booking);
       setStep('ticket');
-      showToast.success('Reservation confirmed. Pay at the venue.');
+      showToast.success('Payment verified. Your pass is ready.');
     } catch (err) {
       console.error(err);
       showToast.error(err instanceof Error?err.message:'Could not complete reservation.');
@@ -404,16 +407,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Issuing Pass...</span>
+                    <span>{paymentCopy(language).processing}</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirm & Get Ticket</span>
+                    <span>{paymentCopy(language).pay}</span>
                     <CheckCircle2 className="w-4 h-4" />
                   </>
                 )}
               </button>
             </div>
+            <PaymentPolicy language={language}/>
           </div>
         )}
 

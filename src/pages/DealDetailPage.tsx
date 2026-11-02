@@ -1,4 +1,6 @@
 import {PublicBusinessProfile} from '../components/BusinessOperations';
+import {PaymentPolicy} from '../components/PaymentPolicy';
+import {paymentCopy} from '../utils/paymentPolicy';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   ChevronLeft,
@@ -212,6 +214,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
 
     try {
       const newBooking=await createBooking(deal,bookingDate,bookingTime,guestsCount,deal.title,deal.discountPrice*(deal.priceMode==='guest'?guestsCount:1));
+      if(newBooking.status!=='confirmed')return;
       setSelectedBookingId(newBooking.id);setShowBookingModal(false);window.scrollTo({top:0});setActiveView('booking-confirm');
     } catch(error){showToast.error(error instanceof Error?error.message:'Booking failed.');} finally{setIsProcessing(false);}
 
@@ -539,7 +542,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 }`}
               >
                 {isProcessing
-                  ? t('issuingTicket')
+                  ? paymentCopy(language).processing
                   : isDealExpired
                   ? t('dealExpired')
                   : isDealUpcoming
@@ -554,9 +557,10 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 </div>
                 <div className="flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
-                  <span>{t('freeCancellation')}</span>
+                  <span>{paymentCopy(language).balance}</span>
                 </div>
               </div>
+              <PaymentPolicy language={language}/>
             </div>
           </div>
         </div>
@@ -679,8 +683,9 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               disabled={isProcessing}
               className="w-full py-3.5 rounded-2xl bg-[#1060E2] text-white font-bold text-sm shadow-md shadow-[#1060E2]/25 hover:bg-[#0C4EBD] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-75"
             >
-              {isProcessing ? t('issuingTicket') : t('confirmAndGenerateTicket')}
+              {isProcessing ? paymentCopy(language).processing : paymentCopy(language).pay}
             </button>
+            <PaymentPolicy language={language}/>
           </div>
         </div>
       )}

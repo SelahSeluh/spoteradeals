@@ -10,6 +10,10 @@ dotenv.config();
 
 const app = express();
 const PORT = 3000;
+// The legacy SQLite reservation handlers must never bypass the paid Vercel checkout.
+app.post(['/api/deals/book','/api/deals/claim','/api/qr/redeem','/api/partner/redeem-code'],(_req,res)=>{
+  res.status(410).json({success:false,message:'Legacy unpaid booking and redemption are disabled. Use the verified payment checkout on www.spoteradeals.com.'});
+});
 
 // Enable proxy trusting for Google Cloud Run SSL & custom domain headers
 app.disable("x-powered-by");

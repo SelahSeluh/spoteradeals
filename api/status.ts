@@ -5,7 +5,12 @@ import {randomUUID} from 'node:crypto';
 import {hashPassword,verifyPassword} from '../src/server/security.js';
 import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms.js';
 
-import {readCommerce,transact,publicAccount,accountCookie,verifyAccountCookie,reserve,redeem,cancel,visibleBookings,CommerceError} from '../src/server/commerce.js';
+import {readCommerce,transact,publicAccount,accountCookie,verifyAccountCookie,reserve,redeem,cancel,visibleBookings,CommerceError,payWithPoints} from '../src/server/commerce.js';
+import {paymentsConfigured,stripeClient,startCheckout,settleCheckout} from '../src/server/payments.js';
+
+// Stripe signature verification requires the exact request bytes, not parsed JSON.
+export const config={api:{bodyParser:false}};
+async function rawBody(req:Request){let size=0;const chunks:Buffer[]=[];for await(const chunk of req){const b=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk);size+=b.length;if(size>256000)throw new Error('TOO_LARGE');chunks.push(b)}return Buffer.concat(chunks)}
 
 type Request=IncomingMessage & {body?:any};
 const user=()=>({id:'spotera-owner',name:'SpoteraDeals Owner',email:process.env.ADMIN_EMAIL,role:'ADMIN',adminSubRole:'SUPER_ADMIN',membership:'Free'});
@@ -21,15 +26,27 @@ export default async function handler(req:Request,res:ServerResponse){
   const path=url.searchParams.has('route')?'/api/'+url.searchParams.get('route'):url.pathname;
   const configured=Boolean(process.env.ADMIN_EMAIL&&process.env.ADMIN_PASSWORD_HASH&&process.env.ADMIN_SESSION_SECRET&&process.env.BLOB_READ_WRITE_TOKEN);
   if(!['GET','POST'].includes(req.method||'')){res.setHeader('Allow','GET, POST');return send(405,{error:'METHOD_NOT_ALLOWED'})}
-  if(req.method==='POST'){
+  if(req.method==='POST'&&path!=='/api/payments/webhook'){
     const origin=req.headers.origin, host=req.headers.host;
     if(origin && origin!==`https://${host}` && !(host?.startsWith('localhost:')&&origin===`http://${host}`))return send(403,{error:'CROSS_ORIGIN_REQUEST'});
     if(!req.headers['content-type']?.startsWith('application/json'))return send(415,{error:'JSON_REQUIRED'});
   }
-  if(path==='/api/health')return send(200,{status:'ok',release:'postcard-promotions',adminConfigured:configured,accountsConfigured:configured});
+  if(path==='/api/health')return send(200,{status:'ok',release:'verified-payments-points-v1',adminConfigured:configured,accountsConfigured:configured,paymentsConfigured:paymentsConfigured()});
   if(path==='/api/auth/status')return send(200,{adminConfigured:configured,accountsConfigured:configured});
   if(path==='/api/auth/logout' && req.method==='POST'){res.setHeader('Set-Cookie',['spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0','spotera_account=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0']);return send(200,{success:true})}
   try{
+    if(path==='/api/payments/webhook'&&req.method==='POST'){
+      if(!paymentsConfigured())return send(503,{message:'Payments are not configured.'});
+      const signature=req.headers['stripe-signature'];if(typeof signature!=='string')return send(400,{message:'Missing payment signature.'});
+      let event;try{event=stripeClient().webhooks.constructEvent(await rawBody(req),signature,process.env.STRIPE_WEBHOOK_SECRET!)}catch{return send(400,{message:'Invalid payment signature.'})}
+      const live=process.env.STRIPE_RESTRICTED_KEY?.startsWith('rk_live_')||process.env.STRIPE_RESTRICTED_KEY?.startsWith('sk_live_');
+      if(event.livemode!==Boolean(live))return send(400,{message:'Incorrect payment environment.'});
+      if(event.type==='checkout.session.completed'||event.type==='checkout.session.async_payment_succeeded')await settleCheckout(event.data.object as any);
+      if(event.type==='checkout.session.expired'||event.type==='checkout.session.async_payment_failed'){
+        const s=event.data.object as any;await transact(state=>{const b=state.bookings.find(b=>b.checkoutSessionId===s.id);if(b&&b.status==='pending_payment'&&b.paymentStatus==='unpaid'){b.status='cancelled';b.paymentStatus=event.type==='checkout.session.expired'?'expired':'failed'}return true});
+      }
+      return send(200,{received:true});
+    }
     const owner=await session(req);
     const accountToken=req.headers.cookie?.split(';').map(c=>c.trim()).find(c=>c.startsWith('spotera_account='))?.slice(16);
     const account=accountToken?verifyAccountCookie(accountToken,(await readCommerce()).data.users):null;
@@ -43,10 +60,25 @@ export default async function handler(req:Request,res:ServerResponse){
       res.setHeader('Set-Cookie',[`spotera_account=${accountCookie(created)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`,'spotera_admin=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0']);return send(200,{success:true,token:'cookie-session',user:publicAccount(created)});
     }
     if(path==='/api/bookings'&&req.method==='GET'){
-      if(!actor)return send(401,{message:'Sign in first.'});return send(200,{success:true,bookings:visibleBookings((await readCommerce()).data,actor)});
+      if(!actor)return send(401,{message:'Sign in first.'});const state=(await readCommerce()).data;return send(200,{success:true,bookings:visibleBookings(state,actor),refundPoints:state.users.find(u=>u.id===actor.id)?.refundPoints||0,pointsLedger:(state.pointsLedger||[]).filter(l=>l.userId===actor.id)});
     }
     if(path==='/api/bookings'&&req.method==='POST'){
-      if(!account)return send(401,{message:'Sign in as a customer to book.'});const input=await body(req);const {data}=await readPublished();const deal=data.deals?.find((d:any)=>d.id===input.dealId);const booking=await transact(state=>reserve(state,account,deal,input));return send(200,{success:true,booking});
+      if(!account)return send(401,{message:'Sign in as a customer to book.'});const input=await body(req);
+      if(!input.usePoints&&!paymentsConfigured())return send(503,{message:'Online payments are not enabled yet. Booking without payment is disabled. Please try again once checkout is available.'});
+      const {data}=await readPublished();const deal=data.deals?.find((d:any)=>d.id===input.dealId);
+      if(input.usePoints){const booking=await transact(state=>{const b=reserve(state,account,deal,input);return payWithPoints(state,b.id,account)});return send(200,{success:true,booking})}
+      const booking=await transact(state=>reserve(state,account,deal,input));
+      const checkout=await startCheckout(booking);
+      if(!checkout.url||!checkout.url.startsWith('https://checkout.stripe.com/'))throw new CommerceError(503,'Secure checkout is temporarily unavailable.');
+      await transact(state=>{const b=state.bookings.find(b=>b.id===booking.id);if(!b||b.status!=='pending_payment')throw new CommerceError(409,'Booking no longer available.');b.checkoutSessionId=checkout.id;return true});
+      return send(200,{success:true,checkoutUrl:checkout.url,booking:{...booking,checkoutSessionId:checkout.id}});
+    }
+    if(path==='/api/payments/verify'&&req.method==='POST'){
+      if(!account)return send(401,{message:'Sign in to verify your booking.'});const input=await body(req);
+      if(typeof input.sessionId!=='string'||!/^cs_[A-Za-z0-9_]{10,250}$/.test(input.sessionId))return send(400,{message:'Invalid checkout reference.'});
+      const b=(await readCommerce()).data.bookings.find(b=>b.checkoutSessionId===input.sessionId&&b.userId===account.id);if(!b)return send(404,{message:'Checkout not found for this account.'});
+      const checkout=await stripeClient().checkout.sessions.retrieve(input.sessionId);const booking=await settleCheckout(checkout);
+      return send(200,{success:true,paid:checkout.payment_status==='paid',booking});
     }
     if(path==='/api/bookings/cancel'&&req.method==='POST'){
       if(!actor)return send(401,{message:'Sign in first.'});const input=await body(req);const booking=await transact(state=>cancel(state,actor,input.id));return send(200,{success:true,booking});
@@ -170,7 +202,7 @@ export default async function handler(req:Request,res:ServerResponse){
         if(!data.businesses?.some((b:any)=>b.id===input.businessId)||!/^\S+@\S+\.\S+$/.test(email)||email===process.env.ADMIN_EMAIL||typeof input.password!=='string'||input.password.length<12||input.password.length>128)return send(400,{message:'Select a business, valid email, and a password of 12–128 characters.'});
         const a=await transact(state=>{const existing=state.users.find(u=>u.email===email);if(existing&&existing.role!=='PARTNER')throw new CommerceError(409,'That email belongs to a customer.');if(existing){existing.hash=hashPassword(input.password);existing.businessId=input.businessId;existing.disabled=false;return existing}const created={id:randomUUID(),email,name:data.businesses.find((b:any)=>b.id===input.businessId).name,hash:hashPassword(input.password),role:'PARTNER' as const,businessId:input.businessId};state.users.push(created);return created});return send(200,{success:true,user:publicAccount(a)});
       }
-      if(path==='/api/admin/overview'){const state=(await readCommerce()).data;return send(200,{success:true,adminSubRole:'SUPER_ADMIN',stats:{totalUsers:state.users.length+1,activeVouchers:state.bookings.filter(b=>b.status==='confirmed').length,redeemedVouchers:state.bookings.filter(b=>b.status==='redeemed').length,totalBookings:state.bookings.length,totalBackups:0},users:[user(),...state.users.map(publicAccount)],vouchers:[],bookings:state.bookings,auditLogs:state.auditLogs,backups:[]})}
+      if(path==='/api/admin/overview'){const state=(await readCommerce()).data;return send(200,{success:true,adminSubRole:'SUPER_ADMIN',stats:{totalUsers:state.users.length+1,activeVouchers:state.bookings.filter(b=>b.status==='confirmed'&&['paid','paid_points'].includes(b.paymentStatus)).length,redeemedVouchers:state.bookings.filter(b=>b.status==='redeemed').length,totalBookings:state.bookings.length,totalBackups:0},users:[user(),...state.users.map(publicAccount)],vouchers:[],bookings:visibleBookings(state,user()),auditLogs:state.auditLogs,backups:[]})}
       return send(501,{error:'SERVICE_NOT_CONFIGURED',message:'This account feature is not configured.'});
     }
     return send(503,{success:false,error:'Account services are not configured yet. Please continue as a guest.'});

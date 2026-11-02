@@ -256,6 +256,7 @@ export interface User {
   familyProfile?: FamilyProfile;
   referralInfo?: ReferralProgram;
   walletBalanceAED?: number;
+  refundPoints?: number;
   walletEarnedTotalAED?: number;
   walletUsedTotalAED?: number;
   walletTransactions?: WalletTransaction[];
@@ -383,7 +384,9 @@ export interface Booking {
   childrenCount: number;
   packageSelected: string;
   totalPrice: number;
-  status: 'confirmed' | 'completed' | 'cancelled' | 'redeemed';
+  status: 'confirmed' | 'completed' | 'cancelled' | 'redeemed' | 'pending_payment';
+  paymentStatus?: 'unpaid' | 'paid' | 'paid_points' | 'refunded_points' | 'failed' | 'expired' | 'pay_at_venue';
+  pointsCredited?: number;
   bookingCode: string;
   qrCodeData?: string;
   createdAt: string;

@@ -1604,7 +1604,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
 
               <h4 className="font-extrabold text-slate-900 text-sm">4. Cancellation & Refunds</h4>
               <p>
-                Bookings made through third-party venue partners follow the individual venue's cancellation policy. If a venue cancels or closes unexpectedly, Spotera Support will refund full wallet credits.
+                Eligible cancellations are credited as Spotera refund points, not cash. 100 points = AED 1. Refund points can pay in full for future Spotera bookings and are separate from loyalty points. Refunds required by law are unaffected. Contact support for help with a cancellation.
               </p>
             </div>
 

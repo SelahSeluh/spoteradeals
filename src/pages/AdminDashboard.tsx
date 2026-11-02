@@ -291,7 +291,7 @@ export const AdminDashboard: React.FC = () => {
   if (!isAdminAuthenticated) return <AuthPage />;
 
   // Analytics Metrics
-  const totalRevenue = bookings.filter(b=>b.status!=='cancelled').reduce((sum,b)=>sum+b.totalPrice,0);
+  const totalRevenue = bookings.filter(b=>b.paymentStatus==='paid'&&b.status!=='cancelled').reduce((sum,b)=>sum+b.totalPrice,0);
   const totalRedemptions = coupons.filter((c) => c.status === 'redeemed').length;
 
   return (
@@ -732,12 +732,12 @@ export const AdminDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Reservation Value</span>
+                <span>Verified card booking value</span>
                 <DollarSign className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">AED {totalRevenue}</div>
               <div className="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1">
-                Pay at venue · not verified payment revenue
+                Paid by card · before Stripe fees and partner settlement
               </div>
             </div>
 

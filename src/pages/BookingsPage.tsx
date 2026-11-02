@@ -2,9 +2,11 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Calendar, QrCode, ArrowLeft, X, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
+import {PaymentPolicy} from '../components/PaymentPolicy';
+import {paymentCopy} from '../utils/paymentPolicy';
 
 export const BookingsPage: React.FC = () => {
-  const { bookings, deals, cancelBooking, setActiveView, setSelectedBookingId, isLoggedIn, requireUserAuth, t, isRtl } = useApp();
+  const { bookings, deals, cancelBooking, setActiveView, setSelectedBookingId, isLoggedIn, requireUserAuth, t, isRtl, user, language } = useApp();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
 
@@ -18,7 +20,7 @@ export const BookingsPage: React.FC = () => {
   const filteredBookings = useMemo(() => {
     if (!isLoggedIn) return [];
     return bookings.filter((booking) => {
-      if (activeTab === 'upcoming') return booking.status === 'confirmed';
+      if (activeTab === 'upcoming') return booking.status === 'confirmed'||booking.status==='pending_payment';
       if (activeTab === 'completed') return booking.status === 'completed' || booking.status === 'redeemed';
       return booking.status === activeTab;
     });
@@ -32,7 +34,7 @@ export const BookingsPage: React.FC = () => {
   );
 
   const handleCancel = async (bookingId: string) => {
-    if (window.confirm(t('confirm') + '?')) {
+    if (window.confirm(paymentCopy(language).cancel)) {
       if (await cancelBooking(bookingId)) {
         showToast(t('bookingCancelledToast') || 'Booking cancelled successfully', 'info');
       }
@@ -61,6 +63,7 @@ export const BookingsPage: React.FC = () => {
         </div>
 
         {!isLoggedIn && <div className="rounded-lg border border-[#d5c8b2] bg-[#fffdf7] p-5 text-center"><h2 className="text-2xl">Your next adventure starts here</h2><p className="text-sm my-3">Sign in to view your passes. You can keep exploring as a guest.</p><button className="px-5 py-2 rounded-lg bg-[#ff7315] text-white" onClick={()=>requireUserAuth('Sign in to view your passes.',()=>setActiveView('bookings'))}>Sign in</button></div>}
+        {isLoggedIn&&<div className="rounded-xl border border-blue-100 bg-white p-4"><p className="font-bold">{paymentCopy(language).balance}: {(user.refundPoints||0).toLocaleString()} · AED {((user.refundPoints||0)/100).toFixed(2)}</p><PaymentPolicy language={language}/></div>}
         {/* Tab Pills */}
         <div className="flex p-1 rounded-[14px] bg-white border border-[#E7EBF2] shadow-xs">
           {tabs.map((tab) => {
@@ -119,6 +122,8 @@ export const BookingsPage: React.FC = () => {
                         <span className="text-[11px] font-semibold capitalize text-[#0D1B3E]">
                           {booking.status === 'confirmed'
                             ? (t('confirmed') || 'Confirmed')
+                            : booking.status==='pending_payment'
+                            ? 'Awaiting payment — no ticket issued'
                             : booking.status === 'completed'
                             ? (t('completedTab') || 'Completed')
                             : (t('cancelledTab') || 'Cancelled')}
@@ -139,10 +144,11 @@ export const BookingsPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleViewQr(booking.id)}
+                        disabled={booking.status!=='confirmed'||!booking.bookingCode}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EBF2FF] text-[#1A4FBF] text-xs font-bold hover:bg-[#DCE7FC] transition-colors cursor-pointer"
                       >
                         <QrCode className="w-3.5 h-3.5" />
-                        <span>{t('viewVoucher') || 'View QR'}</span>
+                        <span>{booking.status==='pending_payment'?'Payment required':t('viewVoucher') || 'View QR'}</span>
                       </button>
 
                       {activeTab === 'upcoming' && (
@@ -155,6 +161,7 @@ export const BookingsPage: React.FC = () => {
                       )}
                     </div>
                   </div>
+                  {booking.pointsCredited ? <p className="text-xs text-blue-700">{booking.pointsCredited.toLocaleString()} Spotera refund points credited · AED {(booking.pointsCredited/100).toFixed(2)}</p>:null}
                 </div>
               );
             })}
