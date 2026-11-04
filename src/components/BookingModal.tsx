@@ -1,3 +1,4 @@
+import {bookingTimeSlots,validBookingSchedule,OPEN_HOURS_SLOT} from '../utils/bookingSchedule';
 import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import {
@@ -36,10 +37,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
   const [step, setStep] = useState<'select' | 'review' | 'ticket'>('select');
   const [date, setDate] = useState<string>(() => {
-    const tomorrow = new Date(Date.now() + 86400000);
+    const tomorrow = new Date(Date.now() + 86400000 + 4*3600000);
     return tomorrow.toISOString().split('T')[0];
   });
-  const [timeSlot, setTimeSlot] = useState<string>('10:00 AM - 12:00 PM');
+  const [timeSlot, setTimeSlot] = useState<string>(OPEN_HOURS_SLOT);
   const [childrenCount, setChildrenCount] = useState<number>(2);
   const [selectedPkgIndex, setSelectedPkgIndex] = useState<number>(0);
 
@@ -77,6 +78,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
     }
   }, [confirmedBooking]);
 
+  useEffect(()=>{setTimeSlot(bookingTimeSlots(deal||{})[0]||'')},[deal?.id,JSON.stringify(deal?.bookingTimeSlots)]);
+
   if (!deal) return null;
 
   const currentPkg = {
@@ -88,16 +91,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
   const totalPrice = deal.discountPrice * (deal.priceMode==='guest'?childrenCount:1);
 
-  const timeSlots = [
-    '10:00 AM - 12:00 PM',
-    '12:30 PM - 02:30 PM',
-    '03:00 PM - 05:00 PM',
-    '05:30 PM - 07:30 PM',
-    '08:00 PM - 10:00 PM',
-  ];
+  const timeSlots = bookingTimeSlots(deal);
 
   const handleProceedToReview = (e: React.FormEvent) => {
     e.preventDefault();
+    if(!validBookingSchedule(deal,date,timeSlot)){showToast.error('Choose a published venue time and valid day.');return;}
     setStep('review');
   };
 
@@ -253,6 +251,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 </label>
                 <input
                   type="date"
+                  max={deal.expiryDate?.slice(0,10)}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}

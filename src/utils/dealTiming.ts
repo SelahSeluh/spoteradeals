@@ -1,3 +1,4 @@
+import {offerBoundary} from './bookingSchedule';
 import { Deal } from '../types';
 
 export type FlashDealStatus = 'not_flash' | 'upcoming' | 'active' | 'expired';
@@ -18,7 +19,7 @@ export interface DealTimeState {
 export function getDealStartTime(deal: Deal): number | null {
   const startStr = deal.flashDealStartsAt || deal.startDate;
   if (!startStr) return null;
-  const t = new Date(startStr).getTime();
+  const t = offerBoundary(startStr) ?? NaN;
   return isNaN(t) ? null : t;
 }
 
@@ -28,7 +29,7 @@ export function getDealStartTime(deal: Deal): number | null {
 export function getDealEndTime(deal: Deal): number | null {
   const endStr = deal.flashDealExpiresAt || deal.expiryDate;
   if (!endStr) return null;
-  const t = new Date(endStr).getTime();
+  const t = offerBoundary(endStr,true) ?? NaN;
   return isNaN(t) ? null : t;
 }
 
@@ -40,7 +41,7 @@ export function getFlashDealStatus(deal: Deal, currentTime = Date.now()): DealTi
   // If not flagged as flash deal and has no flashDealExpiresAt
   if (!deal.isFlashDeal && !deal.flashDealExpiresAt) {
     // Check regular expiration
-    const regularEnd = deal.expiryDate ? new Date(deal.expiryDate).getTime() : NaN;
+    const regularEnd = deal.expiryDate ? offerBoundary(deal.expiryDate,true) ?? NaN : NaN;
     const isExpired = !isNaN(regularEnd) && currentTime >= regularEnd;
     return {
       status: isExpired ? 'expired' : 'not_flash',

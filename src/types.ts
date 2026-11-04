@@ -317,6 +317,8 @@ export interface Deal {
   originalPrice: number;
   discountPrice: number;
   priceMode?: 'booking' | 'guest';
+  bookingTimeSlots?: string[];
+  bookingWeekdays?: number[];
   discountPercent: number;
   images?: string[];
   videoUrl?: string;

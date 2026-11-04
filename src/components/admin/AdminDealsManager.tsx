@@ -117,6 +117,7 @@ export const AdminDealsManager: React.FC = () => {
   const handleOpenEdit = (deal: Deal) => {
     setEditingDeal(deal);
     setFormData({
+      ...deal,
       businessId: deal.businessId,
       businessName: deal.businessName,
       title: deal.title,
@@ -166,14 +167,17 @@ export const AdminDealsManager: React.FC = () => {
       return;
     }
 
+    const schedule={bookingTimeSlots:formData.bookingTimeSlots?.map(s=>s.trim()).filter(Boolean)};
+    if (schedule.bookingTimeSlots?.some(s=>s.length>80)||formData.bookingWeekdays?.length===0){showToast('Choose valid time slots and at least one open day.','error');return;}
     if (editingDeal) {
       editDeal({
         ...editingDeal,
         ...formData,
+        ...schedule,
       });
       showToast('Deal updated successfully!', 'success');
     } else {
-      addDeal(formData);
+      addDeal({...formData,...schedule});
       showToast('New deal created and added to catalog!', 'success');
     }
 
@@ -570,6 +574,21 @@ export const AdminDealsManager: React.FC = () => {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 />
               </div>
+
+              <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4">
+                <legend className="text-sm font-bold">Venue booking schedule</legend>
+                <label className="block text-xs font-bold">Opening hours
+                  <input className="w-full border rounded-lg p-2 mt-1" value={formData.openingHours||''} onChange={e=>setFormData({...formData,openingHours:e.target.value})} placeholder="Use the venue's confirmed opening hours"/>
+                </label>
+                <label className="block text-xs font-bold">Published time slots (one per line)
+                  <textarea className="w-full border rounded-lg p-2 mt-1" rows={3} value={(formData.bookingTimeSlots||[]).join('\n')} onChange={e=>setFormData({...formData,bookingTimeSlots:e.target.value.split('\n')})}/>
+                </label>
+                <p className="text-xs text-slate-500">Leave slots blank for an opening-hours pass. A specific entry time is only shown when you publish it here. Confirm any reservation requirement with the venue.</p>
+                <div className="flex flex-wrap gap-3">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day,index)=><label key={day} className="text-xs flex gap-1"><input type="checkbox" checked={formData.bookingWeekdays===undefined||formData.bookingWeekdays.includes(index)} onChange={e=>{const days=formData.bookingWeekdays??[0,1,2,3,4,5,6];setFormData({...formData,bookingWeekdays:e.target.checked?[...days,index]:days.filter(d=>d!==index)})}}/>{day}</label>)}</div>
+                <label className="block text-xs font-bold">Offer expiry date (UAE)
+                  <input type="date" required className="w-full border rounded-lg p-2 mt-1" value={formData.expiryDate?.slice(0,10)||''} onChange={e=>setFormData({...formData,expiryDate:e.target.value})}/>
+                </label>
+              </fieldset>
 
               {/* Flags */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">

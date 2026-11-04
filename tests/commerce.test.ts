@@ -4,7 +4,7 @@ import {emptyCommerce,reserve,redeem,cancel,visibleBookings,accountCookie,verify
 const now=Date.parse('2026-10-22T08:00:00Z');
 const customer:Account={id:'c1',name:'Customer',email:'c@example.com',role:'CUSTOMER',hash:'hashed'};
 const business={id:'p1',role:'PARTNER',businessId:'b1'},other={id:'p2',role:'PARTNER',businessId:'b2'},admin={id:'admin',role:'ADMIN'};
-const deal={id:'d1',businessId:'b1',businessName:'Venue',title:'Offer',discountPrice:50,priceMode:'guest',expiryDate:'2026-12-31',isPublished:true};
+const deal={id:'d1',businessId:'b1',businessName:'Venue',title:'Offer',discountPrice:50,priceMode:'guest',bookingTimeSlots:['12:00'],expiryDate:'2026-12-31',isPublished:true};
 const input={date:'2026-10-22',timeSlot:'12:00',childrenCount:2,totalPrice:1,refundPolicyVersion:'points-v1'};
 function paid(state:Commerce){if(!state.users.some(u=>u.id===customer.id))state.users.push({...customer});const b=reserve(state,customer,deal,input,now);b.checkoutSessionId='cs_test_verified';return confirmPaidBooking(state,b.id,{sessionId:b.checkoutSessionId,amountMinor:10000,currency:'aed',paymentStatus:'paid'},now)}
 test('reservation price comes from server offer and NO QR is issued before payment',()=>{const state=emptyCommerce();const b=reserve(state,customer,deal,input,now);assert.equal(b.totalPrice,100);assert.equal(b.bookingCode,'');assert.equal(b.paymentStatus,'unpaid');assert.equal(b.status,'pending_payment');assert.equal(state.auditLogs.length,1);assert.throws(()=>redeem(state,admin,b.bookingCode,now),/cannot be redeemed/)});
@@ -46,4 +46,26 @@ test('insufficient or forged local points do not pay; legacy unpaid passes canno
 test('refund policy consent is required and used bookings cannot be cancelled',()=>{
  assert.throws(()=>reserve(emptyCommerce(),customer,deal,{...input,refundPolicyVersion:undefined},now),/accept/);
  const state=emptyCommerce(),b=paid(state);redeem(state,admin,b.bookingCode,now);assert.throws(()=>cancel(state,admin,b.id),/Used bookings/);assert.equal(state.users[0].refundPoints,undefined);
+});
+
+
+test('partners without an assigned venue cannot read unassigned customer bookings',()=>{
+ const state=emptyCommerce();const b=reserve(state,customer,deal,input,now);delete b.businessId;
+ assert.equal(visibleBookings(state,{id:'unassigned',role:'PARTNER'}).length,0);
+ assert.equal(visibleBookings(state,customer).length,1);
+});
+test('reservations require an assigned venue and a nonempty booking time',()=>{
+ assert.throws(()=>reserve(emptyCommerce(),customer,{...deal,businessId:undefined},input,now),/no assigned venue/);
+ for(const timeSlot of ['', '   '])assert.throws(()=>reserve(emptyCommerce(),customer,deal,{...input,timeSlot},now),/booking time/);
+});
+
+test('forged venue times and closed weekdays are rejected by the server',()=>{
+ assert.throws(()=>reserve(emptyCommerce(),customer,deal,{...input,timeSlot:'01:00'},now),/published venue time/);
+ assert.throws(()=>reserve(emptyCommerce(),customer,{...deal,bookingWeekdays:[5,6]},input,now),/valid day/);
+});
+test('late verified payment after the booked UAE day credits once without a ticket',()=>{
+ const state=emptyCommerce();state.users.push({...customer});const b=reserve(state,customer,deal,input,now);b.checkoutSessionId='cs_test_late';
+ const proof={sessionId:b.checkoutSessionId,amountMinor:10000,currency:'aed',paymentStatus:'paid'};
+ confirmPaidBooking(state,b.id,proof,now+86400000);confirmPaidBooking(state,b.id,proof,now+86400000);
+ assert.equal(b.status,'cancelled');assert.equal(b.bookingCode,'');assert.equal(state.users[0].refundPoints,10000);
 });

@@ -6,7 +6,7 @@ import {hashPassword,verifyPassword} from '../src/server/security.js';
 import {CMS_SCOPES,adminPasswordHash,consumeLoginAttempt,issueAdminSession,verifyAdminSession,readContent,writeContent,readPublished,writeContents,safeContent} from '../src/server/cms.js';
 
 import {readCommerce,transact,publicAccount,accountCookie,verifyAccountCookie,reserve,redeem,cancel,visibleBookings,CommerceError,payWithPoints} from '../src/server/commerce.js';
-import {paymentsConfigured,stripeClient,startCheckout,settleCheckout} from '../src/server/payments.js';
+import {paymentsConfigured,stripeClient,startCheckout,settleCheckout,checkoutOrigin} from '../src/server/payments.js';
 
 // Stripe signature verification requires the exact request bytes, not parsed JSON.
 export const config={api:{bodyParser:false}};
@@ -68,7 +68,7 @@ export default async function handler(req:Request,res:ServerResponse){
       const {data}=await readPublished();const deal=data.deals?.find((d:any)=>d.id===input.dealId);
       if(input.usePoints){const booking=await transact(state=>{const b=reserve(state,account,deal,input);return payWithPoints(state,b.id,account)});return send(200,{success:true,booking})}
       const booking=await transact(state=>reserve(state,account,deal,input));
-      const checkout=await startCheckout(booking);
+      const checkout=await startCheckout(booking,checkoutOrigin(req.headers.host));
       if(!checkout.url||!checkout.url.startsWith('https://checkout.stripe.com/'))throw new CommerceError(503,'Secure checkout is temporarily unavailable.');
       await transact(state=>{const b=state.bookings.find(b=>b.id===booking.id);if(!b||b.status!=='pending_payment')throw new CommerceError(409,'Booking no longer available.');b.checkoutSessionId=checkout.id;return true});
       return send(200,{success:true,checkoutUrl:checkout.url,booking:{...booking,checkoutSessionId:checkout.id}});

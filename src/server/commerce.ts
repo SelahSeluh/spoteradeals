@@ -1,6 +1,7 @@
 import {get,put,BlobPreconditionFailedError} from '@vercel/blob';
 import {randomBytes,randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
-import {strongEtag} from './cms.js';
+import {readStoredJson} from './storedJson.js';
+import {validBookingSchedule} from '../utils/bookingSchedule.js';
 import {isOfferAvailable} from '../utils/offerAvailability.js';
 import type {Booking} from '../types.js';
 export type StoredBooking=Booking & {businessId?:string;amountMinor:number;currency:string;refundPolicyVersion:string;refundPolicyAcceptedAt:string;checkoutSessionId?:string};
@@ -8,20 +9,22 @@ export type Account={id:string;email:string;name:string;role:'CUSTOMER'|'PARTNER
 export type Commerce={users:Account[];bookings:any[];auditLogs:any[];pointsLedger?:any[]};
 export const emptyCommerce=():Commerce=>({users:[],bookings:[],auditLogs:[]});
 export function publicAccount(account:Account){const {hash,...safe}=account;return {...safe,membership:'Free'}}
-export async function readCommerce(){const file=await get('operations/state.json',{access:'private',useCache:false});return !file||file.statusCode!==200?{data:emptyCommerce(),etag:undefined}:{data:JSON.parse(await new Response(file.stream).text()) as Commerce,etag:strongEtag(file.blob.etag)}}
+export async function readCommerce(){const current=await readStoredJson<Commerce>('operations/state.json',emptyCommerce);if(!Array.isArray(current.data.users)||!Array.isArray(current.data.bookings)||!Array.isArray(current.data.auditLogs))throw new Error('INVALID_COMMERCE_DATA');return current}
 // Each mutation rereads after a conflict. A failed write never reports a successful redemption.
 export async function transact<T>(change:(state:Commerce)=>T){for(let attempt=0;attempt<6;attempt++){const current=await readCommerce();const result=change(current.data);try{await put('operations/state.json',JSON.stringify(current.data),{access:'private',addRandomSuffix:false,allowOverwrite:!!current.etag,contentType:'application/json',cacheControlMaxAge:0,...(current.etag?{ifMatch:current.etag}:{})});return result}catch(error){if(attempt===5||(!(error instanceof BlobPreconditionFailedError)&&current.etag))throw error}}throw new Error('CONFLICT')}
 export class CommerceError extends Error{constructor(public status:number,message:string){super(message)}}
-export function accountCookie(account:Account,now=Date.now()){const payload=Buffer.from(JSON.stringify({id:account.id,exp:now+28800000})).toString('base64url');return `${payload}.${createHmac('sha256',`${process.env.ADMIN_SESSION_SECRET}:${account.hash}`).update(payload).digest('base64url')}`}
-export function verifyAccountCookie(token:string,users:Account[],now=Date.now()){try{if(token.length>2048)return null;const [payload,sig,...extra]=token.split('.');if(extra.length||!sig)return null;const data=JSON.parse(Buffer.from(payload,'base64url').toString());const account=users.find(u=>u.id===data.id&&!u.disabled);if(!account||data.exp<=now||data.exp>now+28800000)return null;const expected=accountCookie(account,data.exp-28800000).split('.')[1];const a=Buffer.from(sig),b=Buffer.from(expected);return a.length===b.length&&timingSafeEqual(a,b)?account:null}catch{return null}}
-export function visibleBookings(state:Commerce,actor:{id:string;role:string;businessId?:string}){return state.bookings.filter(b=>actor.role==='ADMIN'||actor.role==='PARTNER'&&b.businessId===actor.businessId||actor.role==='CUSTOMER'&&b.userId===actor.id).map(b=>({...b,status:b.status==='confirmed'&&!['paid','paid_points'].includes(b.paymentStatus)?'pending_payment':b.status,...(!['paid','paid_points'].includes(b.paymentStatus)||b.status!=='confirmed'?{bookingCode:'',qrCodeData:''}:{})}))}
+export function accountCookie(account:Account,now=Date.now()){if(!process.env.ADMIN_SESSION_SECRET||!account.hash)throw new Error('SESSION_NOT_CONFIGURED');const payload=Buffer.from(JSON.stringify({id:account.id,exp:now+28800000})).toString('base64url');return `${payload}.${createHmac('sha256',`${process.env.ADMIN_SESSION_SECRET}:${account.hash}`).update(payload).digest('base64url')}`}
+export function verifyAccountCookie(token:string,users:Account[],now=Date.now()){try{if(!process.env.ADMIN_SESSION_SECRET||token.length>2048)return null;const [payload,sig,...extra]=token.split('.');if(extra.length||!sig)return null;const data=JSON.parse(Buffer.from(payload,'base64url').toString());const account=users.find(u=>u.id===data.id&&!u.disabled);if(!account||typeof data.exp!=='number'||!Number.isFinite(data.exp)||data.exp<=now||data.exp>now+28800000)return null;const expected=accountCookie(account,data.exp-28800000).split('.')[1];const a=Buffer.from(sig),b=Buffer.from(expected);return a.length===b.length&&timingSafeEqual(a,b)?account:null}catch{return null}}
+export function visibleBookings(state:Commerce,actor:{id:string;role:string;businessId?:string}){return state.bookings.filter(b=>actor.role==='ADMIN'||actor.role==='PARTNER'&&!!actor.businessId&&b.businessId===actor.businessId||actor.role==='CUSTOMER'&&b.userId===actor.id).map(b=>({...b,status:b.status==='confirmed'&&!['paid','paid_points'].includes(b.paymentStatus)?'pending_payment':b.status,...(!['paid','paid_points'].includes(b.paymentStatus)||b.status!=='confirmed'?{bookingCode:'',qrCodeData:''}:{})}))}
 export function reserve(state:Commerce,actor:Account,deal:any,input:any,now=Date.now()){
  if(actor.role!=='CUSTOMER')throw new CommerceError(403,'Only customers can reserve an offer.');
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));
  if(!deal||!isOfferAvailable(deal,now))throw new CommerceError(409,'This offer is unavailable.');
  if(typeof input.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(input.date)||Number.isNaN(Date.parse(input.date))||new Date(input.date).toISOString().slice(0,10)!==input.date||input.date<today||input.date>deal.expiryDate?.slice(0,10))throw new CommerceError(400,'Choose an available booking date.');
  const guests=Number(input.childrenCount);if(!Number.isInteger(guests)||guests<1||guests>50)throw new CommerceError(400,'Choose between 1 and 50 guests.');
- if(typeof input.timeSlot!=='string'||input.timeSlot.length>80)throw new CommerceError(400,'Choose a booking time.');
+ if(typeof input.timeSlot!=='string'||!input.timeSlot.trim()||input.timeSlot.length>80)throw new CommerceError(400,'Choose a booking time.');
+ if(!validBookingSchedule(deal,input.date,input.timeSlot))throw new CommerceError(400,'Choose a published venue time and valid day.');
+ if(!deal.businessId)throw new CommerceError(409,'This offer has no assigned venue. Please contact support.');
  if(!Number.isFinite(deal.discountPrice)||deal.discountPrice<0)throw new CommerceError(409,'Offer price unavailable.');
  if(input.refundPolicyVersion!=='points-v1')throw new CommerceError(400,'Please accept the points-credit cancellation policy before checkout.');
  const id=randomUUID();
@@ -55,7 +58,7 @@ export function confirmPaidBooking(state:Commerce,id:string,proof:{sessionId:str
  if(b.checkoutSessionId!==proof.sessionId||b.amountMinor!==proof.amountMinor||proof.currency!=='aed'||proof.paymentStatus!=='paid')throw new CommerceError(409,'Payment verification failed.');
  if(['paid','paid_points','refunded_points'].includes(b.paymentStatus))return b;
  b.paymentStatus='paid';b.paymentIntentId=proof.paymentIntent;b.paidAt=new Date(now).toISOString();
- if(b.status==='cancelled'){creditRefundPoints(state,b);return b}
+ if(b.status==='cancelled'||b.date<new Date(now+4*3600000).toISOString().slice(0,10)){b.status='cancelled';b.bookingCode='';b.qrCodeData='';creditRefundPoints(state,b);return b}
  if(b.status!=='pending_payment')throw new CommerceError(409,'Booking cannot be confirmed.');
  b.status='confirmed';b.bookingCode=`SP-${randomBytes(18).toString('base64url')}`;b.qrCodeData=b.bookingCode;
  state.auditLogs.unshift({id:randomUUID(),action:'PAYMENT_VERIFIED',actorId:'stripe',bookingId:b.id,at:b.paidAt});return b;

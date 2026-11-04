@@ -1,3 +1,4 @@
+import {bookingTimeSlots,validBookingSchedule} from '../utils/bookingSchedule';
 import {PublicBusinessProfile} from '../components/BusinessOperations';
 import {PaymentPolicy} from '../components/PaymentPolicy';
 import {paymentCopy} from '../utils/paymentPolicy';
@@ -55,7 +56,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingDate, setBookingDate] = useState(() => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()));
-  const [bookingTime, setBookingTime] = useState('11:00');
+  const [bookingTime, setBookingTime] = useState('');
   const [guestsCount, setGuestsCount] = useState(2);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPopping, setIsPopping] = useState(false);
@@ -127,6 +128,9 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
       setSelectedDealId(deal.id);
     }
   }, [deal?.id, selectedDealId, setSelectedDealId]);
+
+  const slots=bookingTimeSlots(deal||{});
+  useEffect(()=>{setBookingTime(slots[0]||'');setHasExpiredLive(false);setActiveImgIndex(0)},[deal?.id,JSON.stringify(slots)]);
 
   const images = deal?.images && deal.images.length > 0 ? deal.images : deal?.imageUrl?[deal.imageUrl]:[
     'https://images.unsplash.com/photo-1566454544259-f4b94c96a464?auto=format&fit=crop&q=80&w=800',
@@ -210,6 +214,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
       return;
     }
 
+    if(!validBookingSchedule(deal,bookingDate,bookingTime)){showToast.error('Choose a published venue time and valid day.');return;}
     setIsProcessing(true);
 
     try {
@@ -462,7 +467,9 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div>
                   <label className="font-bold text-slate-700 block mb-1.5">{t('selectDate')}</label>
                   <input
+                    aria-label={t('selectDate')}
                     type="date"
+                    max={deal.expiryDate?.slice(0,10)}
                     min={new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
                     value={bookingDate}
                     onChange={(e) => setBookingDate(e.target.value)}
@@ -473,14 +480,12 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <div>
                   <label className="font-bold text-slate-700 block mb-1.5">{t('selectTime')}</label>
                   <select
+                    aria-label={t('selectTime')}
                     value={bookingTime}
                     onChange={(e) => setBookingTime(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-semibold focus:outline-none focus:border-[#1060E2]"
                   >
-                    <option value="10:00">10:00 AM</option>
-                    <option value="11:00">11:00 AM</option>
-                    <option value="14:00">02:00 PM</option>
-                    <option value="16:00">04:00 PM</option>
+                    {slots.map(slot=><option key={slot} value={slot}>{slot}</option>)}
                   </select>
                 </div>
 
@@ -618,7 +623,9 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               <div>
                 <label className="font-bold text-slate-600 block mb-1">{t('selectDate')}</label>
                 <input
-                  type="date"
+                  aria-label={t('selectDate')}
+                    type="date"
+                    max={deal.expiryDate?.slice(0,10)}
                     min={new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
@@ -629,14 +636,12 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               <div>
                 <label className="font-bold text-slate-600 block mb-1">{t('selectTime')}</label>
                 <select
+                  aria-label={t('selectTime')}
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 text-slate-800 font-semibold"
                 >
-                  <option value="10:00">10:00 AM</option>
-                  <option value="11:00">11:00 AM</option>
-                  <option value="14:00">02:00 PM</option>
-                  <option value="16:00">04:00 PM</option>
+                  {slots.map(slot=><option key={slot} value={slot}>{slot}</option>)}
                 </select>
               </div>
 

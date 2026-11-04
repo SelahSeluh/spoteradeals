@@ -1,3 +1,4 @@
+import {offerBoundary} from '../utils/bookingSchedule';
 import React, { useState, useEffect } from 'react';
 import { Flame, Clock, AlertCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -20,7 +21,7 @@ interface TimeRemaining {
 }
 
 function calculateRemaining(target: string | number | Date): TimeRemaining {
-  const targetTime = typeof target === 'number' ? target : new Date(target).getTime();
+  const targetTime = typeof target === 'number' ? target : typeof target === 'string' ? offerBoundary(target,true) ?? NaN : target.getTime();
   if (isNaN(targetTime)) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0, total: 0, isExpired: true };
   }

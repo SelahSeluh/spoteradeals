@@ -1,3 +1,4 @@
+import {readStoredJson} from './storedJson.js';
 import {get, put, BlobPreconditionFailedError} from '@vercel/blob';
 import {createHmac, timingSafeEqual} from 'node:crypto';
 
@@ -6,10 +7,9 @@ export type CmsScope = typeof CMS_SCOPES[number];
 // CDN compression can prefix a storage ETag with W/. Conditional writes need the strong tag.
 export function strongEtag(etag:string){return etag.replace(/^W\//,'')}
 export async function readPublished() {
-  const file=await get('cms/published.json',{access:'private',useCache:false});
-  if(!file || file.statusCode!==200)return {data:{},etag:undefined};
-  const data=JSON.parse(await new Response(file.stream).text());data.businesses=completeBusinessProfiles(data.businesses,data.deals);
-  return {data,etag:strongEtag(file.blob.etag)};
+  const current=await readStoredJson<Record<string,any>>('cms/published.json',()=>({}));
+  current.data.businesses=completeBusinessProfiles(current.data.businesses,current.data.deals);
+  return current;
 }
 export async function readContent(scope:string) { return (await readPublished()).data[scope] ?? null; }
 export async function writeContents(patch:Record<string,unknown>) {
@@ -27,10 +27,9 @@ export async function adminPasswordHash(){
   // Remove ADMIN_PASSWORD_RECOVERY_HASH after changing the password in the CMS.
   const recovery=process.env.ADMIN_PASSWORD_RECOVERY_HASH;
   if(recovery && /^scrypt\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(recovery))return recovery;
-  const file=await get('auth/password.json',{access:'private',useCache:false});
-  if(!file||file.statusCode!==200)return process.env.ADMIN_PASSWORD_HASH!;
-  const stored=JSON.parse(await new Response(file.stream).text()).hash;
-  return typeof stored==='string' ? stored : process.env.ADMIN_PASSWORD_HASH!;
+  const {data}=await readStoredJson<{hash:string}>('auth/password.json',()=>({hash:process.env.ADMIN_PASSWORD_HASH!}));
+  if(typeof data.hash!=='string')throw new Error('INVALID_PASSWORD_RECORD');
+  return data.hash;
 }
 function signingKey(hash=process.env.ADMIN_PASSWORD_HASH){return `${process.env.ADMIN_SESSION_SECRET}:${hash}`}
 export function issueAdminSession(email:string,now=Date.now(),hash?:string){

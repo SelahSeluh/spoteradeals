@@ -1,3 +1,4 @@
+import {bookingTimeSlots} from '../utils/bookingSchedule';
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
   User,
@@ -1157,7 +1158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
   const claimCoupon = async (deal:Deal):Promise<Coupon> => {
     const date=new Date(Date.now()+4*3600000).toISOString().slice(0,10);
-    const b=await createBooking(deal,date,'During opening hours',1,deal.title,deal.discountPrice);
+    const b=await createBooking(deal,date,bookingTimeSlots(deal)[0],1,deal.title,deal.discountPrice);
     if(b.status!=='confirmed'||!b.bookingCode)throw new Error('Continue to secure checkout to receive your pass.');
     const coupon:Coupon={id:b.id,code:b.bookingCode,dealId:deal.id,dealTitle:deal.title,businessName:deal.businessName,userId:user.id,userName:user.name,claimedAt:b.createdAt,expiryDate:date,status:'active',qrCodeData:b.bookingCode,redemptionInstructions:'Show your paid, single-use pass at the venue.'};setCoupons(prev=>[coupon,...prev]);return coupon;
   };
