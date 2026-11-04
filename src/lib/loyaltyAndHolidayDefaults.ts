@@ -75,31 +75,13 @@ export const defaultLoyaltyTiers: LoyaltyTierConfig = {
  * Helper to compute UAE Weekend Dates (Saturday & Sunday)
  * @param offsetWeeks 0 for This Weekend, 1 for Next Weekend
  */
-export function getUaeWeekendRange(offsetWeeks = 0): { startDate: string; endDate: string } {
-  const now = new Date();
-  const day = now.getDay(); // 0 is Sunday, 6 is Saturday, 5 is Friday
-
-  // Calculate days until upcoming Saturday (day 6)
-  let daysUntilSat = (6 - day + 7) % 7;
-  // If today is already Sunday (day 0), consider this weekend as current Sat/Sun
-  if (day === 0 && offsetWeeks === 0) {
-    daysUntilSat = -1; // yesterday was Saturday
-  } else if (day === 6 && offsetWeeks === 0) {
-    daysUntilSat = 0; // today is Saturday
-  }
-
-  daysUntilSat += offsetWeeks * 7;
-
-  const sat = new Date(now);
-  sat.setDate(now.getDate() + daysUntilSat);
-
-  const sun = new Date(sat);
-  sun.setDate(sat.getDate() + 1);
-
-  const format = (d: Date) => d.toISOString().split('T')[0];
-
-  return {
-    startDate: format(sat),
-    endDate: format(sun),
-  };
+export function getUaeWeekendRange(offsetWeeks = 0, now = new Date()): { startDate: string; endDate: string } {
+  // Use the Dubai calendar day regardless of the visitor's time zone.
+  const date = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dubai',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+  const saturday = new Date(`${date}T00:00:00Z`);
+  const day=saturday.getUTCDay();
+  const daysUntilSaturday=day===0?-1:(6-day+7)%7;
+  saturday.setUTCDate(saturday.getUTCDate()+daysUntilSaturday+offsetWeeks*7);
+  const sunday=new Date(saturday);sunday.setUTCDate(sunday.getUTCDate()+1);
+  return {startDate:saturday.toISOString().slice(0,10),endDate:sunday.toISOString().slice(0,10)};
 }

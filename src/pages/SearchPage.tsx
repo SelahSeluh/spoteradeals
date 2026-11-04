@@ -1,3 +1,4 @@
+import {isOfferAvailable} from '../utils/offerAvailability';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Search,
@@ -67,7 +68,7 @@ export const SearchPage: React.FC = () => {
 
   // Comprehensive multi-filter matching logic
   const results = useMemo(() => {
-    let list = deals;
+    let list = deals.filter(deal=>isOfferAvailable(deal));
 
     // 1. Text keyword search across title, description, category, business, location, tags
     const q = localQuery.trim().toLowerCase();
@@ -76,7 +77,7 @@ export const SearchPage: React.FC = () => {
       list = list.filter((deal) => {
         const haystack = [
           deal.title,
-          deal.title_ar || '',
+          ...Object.entries(deal).filter(([key])=>/^(title|description)_/.test(key)).map(([,value])=>String(value)),
           deal.category,
           deal.city,
           deal.district || '',

@@ -1,3 +1,4 @@
+import {translateLiteral} from '../components/LocaleText';
 import {useDesignText} from '../components/DesignPrimitives';
 import React, { useState, useMemo } from 'react';
 import { SlidersHorizontal, Heart, CheckCircle2, Map, LayoutGrid } from 'lucide-react';
@@ -19,6 +20,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
   const {
     deals,
     selectedCity,
+    setSelectedCity,
     selectedCategory,
     setSelectedCategory,
     user,
@@ -26,6 +28,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     setActiveView,
     setSelectedDealId,
     holidays,
+    language,
     isRtl,
     t,
   } = useApp();
@@ -37,6 +40,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
   const [onlyFavorites, setOnlyFavorites] = useState<boolean>(false);
   const [availabilityFilter, setAvailabilityFilter] = useState<'all' | 'available' | 'limited'>('all');
   const [sortHigh, setSortHigh] = useState(false);
+  const [filterResetKey,setFilterResetKey]=useState(0);
 
   // Date Range Filter State
   const [dateFilter, setDateFilter] = useState<{
@@ -66,7 +70,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
       list = list.filter(d => d.city.toLowerCase() === String(selectedCity).toLowerCase());
     }
 
-    if(query.trim())list=list.filter(d=>`${d.title} ${d.businessName} ${d.city} ${d.category}`.toLowerCase().includes(query.toLowerCase()));
+    if(query.trim())list=list.filter(d=>Object.entries(d).filter(([key])=>/^(title|description)(_|$)|^(businessName|city|category)$/.test(key)).map(([,value])=>String(value)).join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
     // 2. Favorites only toggle
     if (onlyFavorites) {
       list = list.filter((deal) => savedDealIds.includes(deal.id));
@@ -133,7 +137,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
       <div className="fn-explore-search"><label className="fn-search"><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
       {/* Header */}
       <PageHeader
-        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : d('explore'))}
+        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? translateLiteral(selectedCategory,language) : d('explore'))}
         rightAction={
           <div className="flex items-center gap-2">
             {/* View Mode Segmented Switcher */}
@@ -256,6 +260,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
 
         {/* Date Range & UAE Holiday Period Picker */}
         <DateRangeFilter
+          key={filterResetKey}
           startDate={dateFilter.startDate}
           endDate={dateFilter.endDate}
           preset={dateFilter.preset}
@@ -277,7 +282,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
         <div className="flex items-center justify-between text-[12px] text-[#5F6B82] px-0.5">
           <span>{filteredDeals.length} {t('dealsCount')}</span>
           <span className="font-bold text-[#1A4FBF]">
-            {sortHigh ? t('sortDiscount') : t('sortPopular')}
+            {sortHigh ? t('sortDiscount') : translateLiteral('Sort: Price low to high',language)}
           </span>
         </div>
 
@@ -319,6 +324,11 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
               description={onlyFavorites ? t('emptyStateFavoritesDesc') : t('noOffersDesc')}
               actionText={onlyFavorites ? t('emptyStateBrowseDeals') : t('emptyStateResetFilters')}
               onAction={() => {
+                setFilterResetKey(key=>key+1);
+                setQuery('');
+                setSelectedCity('All');
+                setDateFilter({startDate:'',endDate:'',preset:'all'});
+                setSortHigh(false);
                 setFilter('All');
                 setOnlyFavorites(false);
                 setAvailabilityFilter('all');

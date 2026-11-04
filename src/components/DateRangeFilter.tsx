@@ -1,5 +1,7 @@
+import {useApp} from '../context/AppContext';
+import {translateLiteral} from './LocaleText';
 import {LocaleText} from './LocaleText';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Sparkles, X, ChevronDown, Check, SunMedium } from 'lucide-react';
 import { UaePublicHoliday, DateFilterPreset } from '../types';
 import { getUaeWeekendRange } from '../lib/loyaltyAndHolidayDefaults';
@@ -30,10 +32,15 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
   onClearFilter,
   resultsCount,
 }) => {
+  const {language}=useApp();
+  const tr=(value:string)=>translateLiteral(value,language);
+  const holidayName=(h:UaePublicHoliday)=>language==='ar'&&h.nameAr?h.nameAr:tr(h.name);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHolidayDropdown, setShowHolidayDropdown] = useState(false);
   const [customStart, setCustomStart] = useState(startDate);
   const [customEnd, setCustomEnd] = useState(endDate);
+
+  useEffect(()=>{setCustomStart(startDate);setCustomEnd(endDate);if(!startDate&&!endDate){setIsExpanded(false);setShowHolidayDropdown(false)}},[startDate,endDate]);
 
   const thisWeekend = getUaeWeekendRange(0);
   const nextWeekend = getUaeWeekendRange(1);
@@ -82,7 +89,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 
   const handleApplyCustomDates = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customStart && !customEnd) return;
+    if (!customStart || (customEnd && customEnd < customStart)) return;
     onApplyFilter({
       startDate: customStart,
       endDate: customEnd || customStart,
@@ -94,8 +101,8 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
   const formatDateDisplay = (dateStr: string) => {
     if (!dateStr) return '';
     try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const d = new Date(`${dateStr}T12:00:00Z`);
+      return d.toLocaleDateString(language, { month: 'short', day: 'numeric',timeZone:'Asia/Dubai' });
     } catch {
       return dateStr;
     }
@@ -168,7 +175,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>
-                {selectedHoliday ? selectedHoliday.name.split('(')[0].trim() : 'UAE Public Holidays'}
+                {selectedHoliday ? holidayName(selectedHoliday).split('(')[0].trim() : tr('UAE Public Holidays')}
               </span>
               <ChevronDown className="w-3 h-3 ml-0.5" />
             </button>
@@ -193,12 +200,12 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                       >
                         <div>
                           <div className="font-bold flex items-center gap-1.5">
-                            <span>{h.name}</span>
+                            <span>{holidayName(h)}</span>
                             {h.isOfficial && (
                               <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold"><LocaleText value={"Official"}/></span>
                             )}
                           </div>
-                          {h.nameAr && <div className="text-[11px] text-slate-400">{h.nameAr}</div>}
+                          {language!=='ar' && h.nameAr && <div className="text-[11px] text-slate-400">{h.nameAr}</div>}
                           <div className="text-[11px] text-slate-500 mt-0.5">
                             {formatDateDisplay(h.startDate)} – {formatDateDisplay(h.endDate)}
                           </div>
@@ -233,7 +240,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             type="button"
             onClick={onClearFilter}
             className="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1 px-2.5 py-1 rounded-full hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
-            title="Reset date filter"
+            title={tr('Reset date filter')}
           >
             <X className="w-3.5 h-3.5" />
             <span><LocaleText value={"Clear Dates"}/></span>
@@ -251,6 +258,8 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block"><LocaleText value={"Start Date"}/></label>
             <input
               type="date"
+              required
+              aria-label={tr('Start Date')}
               value={customStart}
               onChange={(e) => setCustomStart(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1A4FBF] min-h-[38px]"
@@ -261,6 +270,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block"><LocaleText value={"End Date"}/></label>
             <input
               type="date"
+              aria-label={tr('End Date')}
               value={customEnd}
               min={customStart}
               onChange={(e) => setCustomEnd(e.target.value)}
@@ -291,15 +301,15 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span><LocaleText value={"Filtering deals available:"}/></span>
             <span className="font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-              {startDate ? formatDateDisplay(startDate) : 'Any'}
+              {startDate ? formatDateDisplay(startDate) : tr('Anytime')}
               {endDate && endDate !== startDate ? ` – ${formatDateDisplay(endDate)}` : ''}
-              {preset === 'this_weekend' ? ' (This Weekend)' : preset === 'next_weekend' ? ' (Next Weekend)' : selectedHoliday ? ` (${selectedHoliday.name})` : ''}
+              {preset === 'this_weekend' ? ` (${tr('This Weekend')})` : preset === 'next_weekend' ? ` (${tr('Next Weekend')})` : selectedHoliday ? ` (${holidayName(selectedHoliday)})` : ''}
             </span>
           </div>
 
           {typeof resultsCount === 'number' && (
             <span className="text-[11px] font-bold text-[#1A4FBF]">
-              {resultsCount}<LocaleText value={"experience"}/>{resultsCount !== 1 ? 's' : ''}<LocaleText value={"available"}/></span>
+              {resultsCount} {tr('experiences available')}</span>
           )}
         </div>
       )}

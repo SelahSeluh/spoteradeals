@@ -1,3 +1,4 @@
+import {translateLiteral} from './LocaleText';
 import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import { Star, Heart, MapPin, Users, Link2 } from 'lucide-react';
@@ -87,7 +88,7 @@ export const DealCard: React.FC<DealCardProps> = ({
 
   const displayTitle = getLocalizedTitle(deal, language);
 
-  const dealImage = imageFailed ? expeditionImage(`${deal.title} ${deal.category}`) : safeImageUrl(deal.imageUrl) || safeImageUrl(deal.images?.[0]) || expeditionImage(`${deal.title} ${deal.category}`);
+  const dealImage = imageFailed ? expeditionImage(`${deal.title} ${translateLiteral(deal.category,language)}`) : safeImageUrl(deal.imageUrl) || safeImageUrl(deal.images?.[0]) || expeditionImage(`${deal.title} ${translateLiteral(deal.category,language)}`);
   const isCategoryPhoto = dealImage.startsWith('/places/') || dealImage.includes('images.unsplash.com/');
 
   const locationText = deal.district
@@ -115,7 +116,7 @@ export const DealCard: React.FC<DealCardProps> = ({
       >
         <img
           src={dealImage}
-          alt={isCategoryPhoto ? `Category inspiration for ${deal.category}` : displayTitle}
+          alt={isCategoryPhoto ? `Category inspiration for ${translateLiteral(deal.category,language)}` : displayTitle}
           referrerPolicy="no-referrer"
           onError={(e) => {
             if (!imageFailed) setImageFailed(true);
@@ -188,7 +189,7 @@ export const DealCard: React.FC<DealCardProps> = ({
         {/* Bottom tags on image (Category & Age Pill) */}
         <div className="deal-tags absolute bottom-2 left-2.5 right-2.5 z-10 flex items-center justify-between text-[10px] font-semibold text-white pointer-events-none">
           <span className="bg-black/55 backdrop-blur-xs px-2 py-0.5 rounded-md truncate max-w-[130px]">
-            {deal.category}
+            {translateLiteral(deal.category,language)}
           </span>
           <span className="bg-black/55 backdrop-blur-xs px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1">
             <Users className="w-2.5 h-2.5" />

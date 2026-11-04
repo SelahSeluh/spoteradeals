@@ -8,8 +8,8 @@ export const SUPPORTED_LANGUAGES: Array<{
   flag: string;
   dir: 'ltr' | 'rtl';
 }> = [
-  { code: 'en', name: 'English', nativeName: 'English (UAE)', flag: '🇦🇪', dir: 'ltr' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية (الإمارات)', flag: '🇦🇪', dir: 'rtl' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: '🇦🇪', dir: 'ltr' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇦🇪', dir: 'rtl' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', dir: 'ltr' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr' },
   { code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰', dir: 'rtl' },

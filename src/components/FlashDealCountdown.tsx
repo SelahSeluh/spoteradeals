@@ -81,7 +81,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
   // Localized label helpers
   const labels = {
     expired: {
-      en: 'Deal Expired',
+      ur:'آفر ختم ہو گئی', af:'Aanbod het verval', en: 'Deal Expired',
       ar: 'انتهى العرض',
       zh: '优惠已结束',
       ru: 'Акция завершена',
@@ -89,7 +89,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
       am: 'ቅናሹ አልቋል',
     }[language] || 'Deal Expired',
     endsIn: {
-      en: 'Deal ends in',
+      ur:'آفر ختم ہونے میں', af:'Aanbod eindig oor', en: 'Deal ends in',
       ar: 'ينتهي العرض خلال',
       zh: '优惠截止还有',
       ru: 'Акция завершится через',
@@ -97,7 +97,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
       am: 'ቅናሹ የሚያበቃው በ',
     }[language] || 'Deal ends in',
     d: {
-      en: 'd',
+      ur:'دن', af:'d', en: 'd',
       ar: 'يوم',
       zh: '天',
       ru: 'д',
@@ -105,7 +105,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
       am: 'ቀን',
     }[language] || 'd',
     h: {
-      en: 'h',
+      ur:'گھ', af:'u', en: 'h',
       ar: 'س',
       zh: '时',
       ru: 'ч',
@@ -113,7 +113,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
       am: 'ሰ',
     }[language] || 'h',
     m: {
-      en: 'm',
+      ur:'منٹ', af:'m', en: 'm',
       ar: 'د',
       zh: '分',
       ru: 'м',
@@ -121,7 +121,7 @@ export const FlashDealCountdown: React.FC<FlashDealCountdownProps> = ({
       am: 'ደ',
     }[language] || 'm',
     s: {
-      en: 's',
+      ur:'سیکنڈ', af:'s', en: 's',
       ar: 'ث',
       zh: '秒',
       ru: 'с',
