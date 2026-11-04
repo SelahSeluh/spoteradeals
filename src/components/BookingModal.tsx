@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import {bookingTimeSlots,validBookingSchedule,OPEN_HOURS_SLOT} from '../utils/bookingSchedule';
 import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
@@ -159,7 +160,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-100 hover:text-white bg-white/10 hover:bg-white/20 py-1.5 px-3 rounded-xl transition-all cursor-pointer min-h-[36px]"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Options</span>
+                <span><LocaleText value={"Options"}/></span>
               </button>
             ) : step === 'ticket' ? (
               <button
@@ -168,20 +169,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-100 hover:text-white bg-white/10 hover:bg-white/20 py-1.5 px-3 rounded-xl transition-all cursor-pointer min-h-[36px]"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Deal</span>
+                <span><LocaleText value={"Back to Deal"}/></span>
               </button>
             ) : (
               <div className="flex items-center gap-1.5 text-amber-300 text-xs font-bold uppercase tracking-wider">
                 <CalendarCheck className="w-4 h-4" />
-                <span>Reserve Activity</span>
+                <span><LocaleText value={"Reserve Activity"}/></span>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-2">
             {step !== 'ticket' && (
-              <span className="text-[11px] font-bold text-blue-200 bg-white/10 px-2.5 py-0.5 rounded-full">
-                Step {step === 'select' ? '1 of 2' : '2 of 2'}
+              <span className="text-[11px] font-bold text-blue-200 bg-white/10 px-2.5 py-0.5 rounded-full"><LocaleText value={"Step"}/>{step === 'select' ? '1 of 2' : '2 of 2'}
               </span>
             )}
             <button
@@ -214,9 +214,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
             {false && deal.packages && deal.packages.length > 0 && (
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <PackageCheck className="w-4 h-4 text-[#0C5CAB]" />
-                  Select Experience Pass
-                </label>
+                  <PackageCheck className="w-4 h-4 text-[#0C5CAB]" /><LocaleText value={"Select Experience Pass"}/></label>
                 <div className="space-y-2">
                   {(deal.packages||[]).map((pkg, idx) => (
                     <div
@@ -246,9 +244,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-[#0C5CAB]" />
-                  Activity Date
-                </label>
+                  <Calendar className="w-4 h-4 text-[#0C5CAB]" /><LocaleText value={"Activity Date"}/></label>
                 <input
                   type="date"
                   max={deal.expiryDate?.slice(0,10)}
@@ -262,9 +258,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#0C5CAB]" />
-                  Time Slot
-                </label>
+                  <Clock className="w-4 h-4 text-[#0C5CAB]" /><LocaleText value={"Time Slot"}/></label>
                 <select
                   value={timeSlot}
                   onChange={(e) => setTimeSlot(e.target.value)}
@@ -282,9 +276,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
             {/* Attendees Count */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-[#0C5CAB]" />
-                Number of Children / Guests
-              </label>
+                <Users className="w-4 h-4 text-[#0C5CAB]" /><LocaleText value={"Number of Children / Guests"}/></label>
               <div className="flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200">
                 <button
                   type="button"
@@ -305,16 +297,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 >
                   +
                 </button>
-                <span className="text-[11px] text-slate-500 ml-auto">
-                  (Includes accompanying adult entry)
-                </span>
+                <span className="text-[11px] text-slate-500 ml-auto"><LocaleText value={"(Includes accompanying adult entry)"}/></span>
               </div>
             </div>
 
             {/* Price Preview & Next Button */}
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
               <div>
-                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Estimated Total</span>
+                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider"><LocaleText value={"Estimated Total"}/></span>
                 <span className="text-xl font-black text-[#0C5CAB]">
                   AED {Math.round(totalPrice)}
                 </span>
@@ -324,7 +314,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 type="submit"
                 className="py-3 px-6 bg-[#0C5CAB] hover:bg-[#094887] text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer min-h-[44px]"
               >
-                <span>Review Reservation</span>
+                <span><LocaleText value={"Review Reservation"}/></span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -337,43 +327,41 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
         {step === 'review' && (
           <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
             <div>
-              <span className="text-xs font-black text-[#0C5CAB] uppercase tracking-wider">Review Summary</span>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                Confirm Your Family Booking
-              </h3>
+              <span className="text-xs font-black text-[#0C5CAB] uppercase tracking-wider"><LocaleText value={"Review Summary"}/></span>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 mt-0.5"><LocaleText value={"Confirm Your Family Booking"}/></h3>
             </div>
 
             {/* Booking Summary Box */}
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-xs space-y-2.5">
               <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">Activity Deal</span>
+                <span className="text-slate-500"><LocaleText value={"Activity Deal"}/></span>
                 <span className="font-bold text-slate-900 text-right max-w-[200px] truncate">{getLocalizedTitle(deal, language)}</span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">Venue / Location</span>
+                <span className="text-slate-500"><LocaleText value={"Venue / Location"}/></span>
                 <span className="font-bold text-slate-800">{deal.businessName} ({deal.city})</span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">Pass Selected</span>
+                <span className="text-slate-500"><LocaleText value={"Pass Selected"}/></span>
                 <span className="font-bold text-slate-800">{currentPkg.name}</span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">Date & Time</span>
+                <span className="text-slate-500"><LocaleText value={"Date & Time"}/></span>
                 <span className="font-bold text-slate-800">{date} • {timeSlot}</span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">Party Size</span>
-                <span className="font-bold text-slate-800">{childrenCount} Kids / Attendees</span>
+                <span className="text-slate-500"><LocaleText value={"Party Size"}/></span>
+                <span className="font-bold text-slate-800">{childrenCount}<LocaleText value={"Kids / Attendees"}/></span>
               </div>
               <div className="flex justify-between pt-1 font-bold">
-                <span className="text-slate-700">Total Price Payable at Venue</span>
+                <span className="text-slate-700"><LocaleText value={"Total Price Payable at Venue"}/></span>
                 <span className="text-[#0C5CAB] text-base font-black">AED {Math.round(totalPrice)}</span>
               </div>
             </div>
 
             {/* Contact Details */}
             <div className="p-3.5 bg-blue-50/50 rounded-2xl border border-blue-100 text-xs space-y-1">
-              <span className="text-[10px] uppercase tracking-wider text-blue-900 font-bold">Primary Contact</span>
+              <span className="text-[10px] uppercase tracking-wider text-blue-900 font-bold"><LocaleText value={"Primary Contact"}/></span>
               <div className="font-bold text-slate-900">{user.name || 'Spotera Member'}</div>
               <div className="text-slate-500 flex items-center justify-between text-[11px]">
                 <span>{user.email || 'Registered Member'}</span>
@@ -383,7 +371,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
 
             <div className="flex items-center gap-2 text-[11px] text-slate-500">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Instant confirmation. No booking fee. Free cancellation up to 24h prior.</span>
+              <span><LocaleText value={"Instant confirmation. No booking fee. Free cancellation up to 24h prior."}/></span>
             </div>
 
             {/* Actions with Single-flight Duplicate Prevention */}
@@ -393,9 +381,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 onClick={() => setStep('select')}
                 disabled={isSubmitting}
                 className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[44px]"
-              >
-                ← Edit Details
-              </button>
+              ><LocaleText value={"← Edit Details"}/></button>
 
               <button
                 type="button"
@@ -431,12 +417,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <div>
-                <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                  Confirmed • Active Pass
-                </span>
-                <h3 className="text-lg font-black text-slate-900 mt-1">
-                  Spotera Activity Ticket
-                </h3>
+                <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full"><LocaleText value={"Confirmed • Active Pass"}/></span>
+                <h3 className="text-lg font-black text-slate-900 mt-1"><LocaleText value={"Spotera Activity Ticket"}/></h3>
               </div>
             </div>
 
@@ -446,7 +428,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
               <div className="p-4 bg-gradient-to-r from-[#0C5CAB] to-[#0A4D92] text-white">
                 <div className="flex items-center justify-between text-[11px] text-blue-200 font-bold mb-1">
                   <span>{deal.businessName}</span>
-                  <span>{deal.city}, UAE</span>
+                  <span>{deal.city}<LocaleText value={", UAE"}/></span>
                 </div>
                 <h4 className="text-sm font-black text-white leading-tight">
                   {getLocalizedTitle(deal, language)}
@@ -464,7 +446,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Date & Time</span>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block"><LocaleText value={"Date & Time"}/></span>
                     <span className="font-black text-slate-900 block text-[11px]">
                       {confirmedBooking.date}
                     </span>
@@ -473,13 +455,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Package & Guests</span>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block"><LocaleText value={"Package & Guests"}/></span>
                     <span className="font-black text-slate-900 block text-[11px] truncate">
                       {confirmedBooking.packageSelected}
                     </span>
                     <span className="text-[10px] text-slate-500 font-medium">
-                      {confirmedBooking.childrenCount} Attendees
-                    </span>
+                      {confirmedBooking.childrenCount}<LocaleText value={"Attendees"}/></span>
                   </div>
                 </div>
 
@@ -500,7 +481,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                   {/* Booking Reference with Copy Action */}
                   <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-blue-200">
                     <div>
-                      <span className="text-[9px] uppercase font-bold text-slate-400 block text-left">Booking Reference</span>
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block text-left"><LocaleText value={"Booking Reference"}/></span>
                       <span className="font-mono text-sm font-black text-[#0C5CAB] tracking-wider">
                         {confirmedBooking.bookingCode}
                       </span>
@@ -515,9 +496,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                     </button>
                   </div>
 
-                  <p className="text-[11px] font-bold text-slate-600">
-                    📲 Show this QR code at the venue cashier or entrance
-                  </p>
+                  <p className="text-[11px] font-bold text-slate-600"><LocaleText value={"📲 Show this QR code at the venue cashier or entrance"}/></p>
                 </div>
               </div>
             </div>
@@ -529,9 +508,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                   type="button"
                   onClick={onClose}
                   className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-colors cursor-pointer min-h-[44px]"
-                >
-                  Close & Back to Deal
-                </button>
+                ><LocaleText value={"Close & Back to Deal"}/></button>
 
                 <button
                   type="button"
@@ -542,7 +519,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                   className="py-3 px-4 bg-[#0C5CAB] hover:bg-[#094887] text-white rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer min-h-[44px] flex items-center justify-center gap-1.5"
                 >
                   <Ticket className="w-4 h-4" />
-                  <span>View in My Bookings</span>
+                  <span><LocaleText value={"View in My Bookings"}/></span>
                 </button>
               </div>
 
@@ -552,7 +529,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
                 className="w-full py-2.5 text-slate-500 hover:text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Print or Save Ticket PDF</span>
+                <span><LocaleText value={"Print or Save Ticket PDF"}/></span>
               </button>
             </div>
           </div>

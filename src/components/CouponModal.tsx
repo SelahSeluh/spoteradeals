@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useEffect, useState, useMemo } from 'react';
 import QRCode from 'qrcode';
 import {
@@ -93,12 +94,10 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
             className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-100 hover:text-white bg-white/10 hover:bg-white/20 py-1.5 px-3 rounded-xl transition-all cursor-pointer min-h-[36px]"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Deal</span>
+            <span><LocaleText value={"Back to Deal"}/></span>
           </button>
 
-          <span className="text-[11px] font-extrabold text-amber-300 uppercase tracking-wider">
-            Spotera Digital Pass
-          </span>
+          <span className="text-[11px] font-extrabold text-amber-300 uppercase tracking-wider"><LocaleText value={"Spotera Digital Pass"}/></span>
 
           <button
             onClick={onClose}
@@ -115,14 +114,10 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
           {/* Status Badge & Header */}
           <div className="text-center space-y-1.5">
             {isExpired ? (
-              <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                Offer Expired • No Longer Redeemable
-              </span>
+              <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full"><LocaleText value={"Offer Expired • No Longer Redeemable"}/></span>
             ) : (
               <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                <CheckCircle2 className="w-3 h-3" />
-                Active Voucher • Ready to Redeem
-              </span>
+                <CheckCircle2 className="w-3 h-3" /><LocaleText value={"Active Voucher • Ready to Redeem"}/></span>
             )}
             <h3 className="text-base sm:text-lg font-black text-slate-900 leading-snug">
               {displayTitle}
@@ -147,10 +142,8 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
                 {isExpired ? (
                   <div className="w-44 h-44 rounded-xl border border-rose-200 bg-rose-50/70 flex flex-col items-center justify-center p-4 text-center">
                     <span className="text-2xl mb-1">⏱️</span>
-                    <span className="text-xs font-black text-rose-800 uppercase tracking-wider">Offer Expired</span>
-                    <span className="text-[10px] text-rose-600 mt-1 font-medium leading-tight">
-                      This voucher has passed its expiration time and cannot be redeemed.
-                    </span>
+                    <span className="text-xs font-black text-rose-800 uppercase tracking-wider"><LocaleText value={"Offer Expired"}/></span>
+                    <span className="text-[10px] text-rose-600 mt-1 font-medium leading-tight"><LocaleText value={"This voucher has passed its expiration time and cannot be redeemed."}/></span>
                   </div>
                 ) : qrUrl ? (
                   <img
@@ -166,7 +159,7 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
               {/* Unique Code with Copy Button */}
               <div className="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-blue-200 shadow-2xs">
                 <div>
-                  <span className="text-[9px] uppercase font-bold text-slate-400 block text-left">Voucher Code</span>
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block text-left"><LocaleText value={"Voucher Code"}/></span>
                   <span className="font-mono text-sm font-black text-slate-900 tracking-wider">
                     {coupon.code}
                   </span>
@@ -192,20 +185,20 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
           {/* Details & Expiry */}
           <div className="grid grid-cols-2 gap-2.5 text-xs">
             <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-slate-400 font-bold block text-[10px] uppercase">Claimed For</span>
+              <span className="text-slate-400 font-bold block text-[10px] uppercase"><LocaleText value={"Claimed For"}/></span>
               <span className="font-bold text-slate-800 truncate block text-[11px]">
                 {coupon.userName || 'Spotera Member'}
               </span>
             </div>
             <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-slate-400 font-bold block text-[10px] uppercase">Valid Until</span>
+              <span className="text-slate-400 font-bold block text-[10px] uppercase"><LocaleText value={"Valid Until"}/></span>
               <span className="font-bold text-amber-700 block text-[11px]">{coupon.expiryDate}</span>
             </div>
           </div>
 
           {/* Redemption Note */}
           <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-blue-900 leading-relaxed">
-            <strong className="font-bold">Instructions: </strong>
+            <strong className="font-bold"><LocaleText value={"Instructions:"}/></strong>
             {coupon.redemptionInstructions || 'Present this QR pass to reception/cashier upon arrival to enjoy your discounted rate.'}
           </div>
 
@@ -216,9 +209,7 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
                 type="button"
                 onClick={onClose}
                 className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-colors cursor-pointer min-h-[44px]"
-              >
-                Close & Return
-              </button>
+              ><LocaleText value={"Close & Return"}/></button>
 
               <button
                 type="button"
@@ -229,7 +220,7 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
                 className="py-3 px-4 bg-[#0C5CAB] hover:bg-[#094887] text-white rounded-xl text-xs font-black shadow-xs transition-all cursor-pointer min-h-[44px] flex items-center justify-center gap-1.5"
               >
                 <Ticket className="w-4 h-4" />
-                <span>My Bookings</span>
+                <span><LocaleText value={"My Bookings"}/></span>
               </button>
             </div>
 
@@ -239,7 +230,7 @@ export const CouponModal: React.FC<CouponModalProps> = ({ coupon, onClose }) => 
               className="w-full py-2 text-slate-500 hover:text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Print or Save Pass PDF</span>
+              <span><LocaleText value={"Print or Save Pass PDF"}/></span>
             </button>
           </div>
         </div>

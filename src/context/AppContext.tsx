@@ -487,7 +487,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = safeStorage.getItem('spotera_lang') as Language;
-    return saved || 'en';
+    return ['en','ar','fr','ru','zh','ur','af','am'].includes(saved)?saved:'en';
   });
 
   const [familyTheme, setFamilyThemeState] = useState<FamilyTheme>(() => {
@@ -1026,7 +1026,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     safeStorage.setItem('spotera_lang', language);
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = (language === 'ar'||language==='ur') ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
   }, [language]);
 
@@ -1034,7 +1034,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setLanguageState(lang);
   };
 
-  const isRtl = language === 'ar';
+  const isRtl = language === 'ar'||language==='ur';
 
   const t = (key: string): string => {
     return safeTranslate(key, language);

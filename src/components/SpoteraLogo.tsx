@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState,useEffect } from 'react';
 
 interface SpoteraLogoProps {
@@ -94,9 +95,7 @@ export const SpoteraLogo: React.FC<SpoteraLogoProps> = ({
               {customSiteName?'':'Deals'}
             </span>
             {showUaeBadge && (
-              <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-blue-50 text-[#0D9CFD] font-extrabold text-[9px] uppercase border border-blue-200/60">
-                UAE
-              </span>
+              <span className="ml-1.5 px-1.5 py-0.5 rounded-md bg-blue-50 text-[#0D9CFD] font-extrabold text-[9px] uppercase border border-blue-200/60"><LocaleText value={"UAE"}/></span>
             )}
           </div>
 

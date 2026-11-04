@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React from 'react';
 import {
   Layers,
@@ -38,11 +39,9 @@ export const AdminHomepageSections: React.FC = () => {
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
           <LayoutGrid className="w-5 h-5 text-[#0D9CFD]" />
-          <span>Homepage Sections & Layout Builder</span>
+          <span><LocaleText value={"Homepage Sections & Layout Builder"}/></span>
         </h2>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Toggle visibility and reorder the content sections displayed on the public landing page.
-        </p>
+        <p className="text-xs text-slate-500 mt-0.5"><LocaleText value={"Toggle visibility and reorder the content sections displayed on the public landing page."}/></p>
       </div>
 
       <div className="space-y-3">

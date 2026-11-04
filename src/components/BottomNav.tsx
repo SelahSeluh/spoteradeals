@@ -1,14 +1,15 @@
+import {useDesignText} from './DesignPrimitives';
 import React from 'react';
-import { Home, Compass, Ticket, Heart, User, Users, Gift } from 'lucide-react';
+import { Home, Compass, Ticket, Heart, User, Users, Gift,Wallet } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
   const { activeView, setActiveView, user, isGuest, bookings, t } = useApp();
 
+  const d=useDesignText();
   // Hide on deal-detail, bookings-confirm, partners and admin
   if (
-    activeView === 'deal-detail' ||
-    activeView === 'booking-confirm' ||
+    activeView === 'auth' ||
     activeView === 'partners' ||
     activeView === 'admin'
   ) {
@@ -21,7 +22,7 @@ export const BottomNav: React.FC = () => {
   const tabs = [
     {
       id: 'home',
-      label: t('navHome') || 'Home',
+      label: d('home'),
       icon: Home,
       isActive: activeView === 'home',
       onClick: () => {
@@ -31,7 +32,7 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'explore',
-      label: 'Explore',
+      label: d('explore'),
       icon: Compass,
       isActive: activeView === 'explore' || activeView === 'categories' || activeView === 'search',
       onClick: () => {
@@ -41,7 +42,7 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'bookings',
-      label: 'My passes',
+      label: d('passes'),
       icon: Ticket,
       badge: bookingsCount > 0 ? bookingsCount : undefined,
       isActive: activeView === 'family' || activeView === 'bookings',
@@ -52,8 +53,8 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'rewards',
-      label: 'Rewards',
-      icon: Gift,
+      label: d('wallet'),
+      icon: Wallet,
       badge: savedCount > 0 ? savedCount : undefined,
       isActive: activeView === 'rewards',
       onClick: () => {
@@ -63,9 +64,9 @@ export const BottomNav: React.FC = () => {
     },
     {
       id: 'profile',
-      label: 'Profile',
+      label: d('profile'),
       icon: User,
-      isActive: activeView === 'profile' || activeView === 'settings' || activeView === 'auth' || activeView === 'membership',
+      isActive: activeView === 'profile' || activeView === 'settings' || activeView === 'membership',
       onClick: () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setActiveView('profile');
@@ -95,7 +96,7 @@ export const BottomNav: React.FC = () => {
               <div className="relative">
                 <Icon
                   className={`w-[22px] h-[22px] transition-colors ${
-                    active ? 'text-[#1455D9] stroke-[2.4px]' : 'text-slate-400 stroke-[1.8px] group-hover:text-slate-600'
+                    active ? 'text-[#ff7900] stroke-[2.4px]' : 'text-slate-400 stroke-[1.8px] group-hover:text-slate-600'
                   }`}
                 />
 
@@ -108,7 +109,7 @@ export const BottomNav: React.FC = () => {
 
               <span
                 className={`text-[9px] min-[375px]:text-[10px] mt-1 font-bold tracking-tight text-center leading-tight transition-colors ${
-                  active ? 'text-[#0D9CFD]' : 'text-slate-500 group-hover:text-slate-700'
+                  active ? 'text-[#ff7900]' : 'text-slate-500 group-hover:text-slate-700'
                 }`}
               >
                 {tab.label}

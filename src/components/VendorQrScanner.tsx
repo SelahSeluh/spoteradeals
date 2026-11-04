@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   QrCode,
@@ -165,7 +166,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
     handleVerify(inputCode);
   };
 
-  if(!isAdminAuthenticated&&!isPartnerAuthenticated)return <p>Only signed-in administrators and businesses can scan vouchers.</p>;
+  if(!isAdminAuthenticated&&!isPartnerAuthenticated)return <p><LocaleText value={"Only signed-in administrators and businesses can scan vouchers."}/></p>;
   return (
     <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden space-y-0">
       {/* Top Header */}
@@ -175,9 +176,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
             <div className="w-7 h-7 rounded-lg bg-white/20 text-white flex items-center justify-center font-bold">
               <QrCode className="w-4 h-4" />
             </div>
-            <span className="text-blue-100 font-extrabold text-[11px] uppercase tracking-wider">
-              Spotera QR Scanner
-            </span>
+            <span className="text-blue-100 font-extrabold text-[11px] uppercase tracking-wider"><LocaleText value={"Spotera QR Scanner"}/></span>
           </div>
           <h2 className="text-lg sm:text-xl font-black font-sans">{title}</h2>
           <p className="text-xs text-blue-100/90">
@@ -197,12 +196,12 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
             {isCameraActive ? (
               <>
                 <CameraOff className="w-3.5 h-3.5" />
-                <span>Turn Off Camera</span>
+                <span><LocaleText value={"Turn Off Camera"}/></span>
               </>
             ) : (
               <>
                 <Camera className="w-3.5 h-3.5 text-[#1D6FE0]" />
-                <span>Launch Camera</span>
+                <span><LocaleText value={"Launch Camera"}/></span>
               </>
             )}
           </button>
@@ -228,7 +227,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
           <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
-              <div className="font-bold">Camera Access Notice</div>
+              <div className="font-bold"><LocaleText value={"Camera Access Notice"}/></div>
               <p className="leading-relaxed text-[11px]">{cameraError}</p>
             </div>
           </div>
@@ -258,16 +257,14 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
 
             <div className="p-2 bg-slate-900/90 text-[10px] sm:text-[11px] text-blue-200 font-bold flex items-center justify-center gap-1.5 rounded-b-xl mt-1">
               <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
-              <span>Camera Active • Align Spotera QR Code inside target</span>
+              <span><LocaleText value={"Camera Active • Align Spotera QR Code inside target"}/></span>
             </div>
           </div>
         </div>
 
         {/* Manual Code Form */}
         <form onSubmit={handleFormSubmit} className="space-y-2.5">
-          <label className="font-extrabold text-xs text-slate-800 block">
-            Manual Booking Ref Code or Voucher Number
-          </label>
+          <label className="font-extrabold text-xs text-slate-800 block"><LocaleText value={"Manual Booking Ref Code or Voucher Number"}/></label>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
@@ -284,7 +281,7 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
               className="py-2.5 px-5 bg-[#1D6FE0] hover:bg-[#1557b0] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4" />
-              <span>Verify Code</span>
+              <span><LocaleText value={"Verify Code"}/></span>
             </button>
           </div>
         </form>
@@ -318,11 +315,10 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
                 {scanResult.customerName && (
                   <div className="pt-2 border-t border-slate-200/60 flex flex-wrap items-center gap-3 text-[11px] text-slate-700 font-bold">
                     <span className="flex items-center gap-1">
-                      <User className="w-3.5 h-3.5 text-blue-600" /> Pass Holder: {scanResult.customerName}
+                      <User className="w-3.5 h-3.5 text-blue-600" /><LocaleText value={"Pass Holder:"}/>{scanResult.customerName}
                     </span>
                     {scanResult.code && (
-                      <span className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200">
-                        Code: {scanResult.code}
+                      <span className="font-mono bg-white px-2 py-0.5 rounded border border-slate-200"><LocaleText value={"Code:"}/>{scanResult.code}
                       </span>
                     )}
                   </div>
@@ -335,10 +331,8 @@ export const VendorQrScanner: React.FC<VendorQrScannerProps> = ({
         {/* Real Venue Scanning Instructions */}
         <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-            Verified Spotera Merchant Redemption Protocol
-          </span>
-          <span>Camera or 10-char code</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /><LocaleText value={"Verified Spotera Merchant Redemption Protocol"}/></span>
+          <span><LocaleText value={"Camera or 10-char code"}/></span>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React from 'react';
 import { Tag, ArrowRight, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -24,11 +25,8 @@ export const PromoCouponBanner: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-base sm:text-lg lg:text-xl font-black text-white tracking-tight">
-              Extra 10% OFF on your first booking!
-            </h3>
-            <p className="text-xs sm:text-sm text-blue-100 font-medium">
-              Use Code: <span className="font-black text-amber-300 tracking-wider bg-white/15 px-2 py-0.5 rounded-md border border-white/20">SPOTERA10</span>
+            <h3 className="text-base sm:text-lg lg:text-xl font-black text-white tracking-tight"><LocaleText value={"Extra 10% OFF on your first booking!"}/></h3>
+            <p className="text-xs sm:text-sm text-blue-100 font-medium"><LocaleText value={"Use Code:"}/><span className="font-black text-amber-300 tracking-wider bg-white/15 px-2 py-0.5 rounded-md border border-white/20"><LocaleText value={"SPOTERA10"}/></span>
             </p>
           </div>
         </div>
@@ -38,7 +36,7 @@ export const PromoCouponBanner: React.FC = () => {
           onClick={handleGrabDeal}
           className="px-6 py-2.5 sm:py-3 bg-[#FD9302] hover:bg-[#e68400] active:scale-95 text-white text-xs sm:text-sm font-black rounded-full shadow-lg transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
         >
-          <span>Grab Deal</span>
+          <span><LocaleText value={"Grab Deal"}/></span>
           <span className="text-base leading-none font-bold">+</span>
         </button>
 

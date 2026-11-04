@@ -1,3 +1,4 @@
+import {LanguagePicker,MapArtwork,useDesignText} from '../components/DesignPrimitives';
 import React, { useState } from 'react';
 import {
   Mail,
@@ -41,6 +42,8 @@ export const AuthPage: React.FC = () => {
     t,
   } = useApp();
   const { showToast } = useToast();
+  const d=useDesignText();
+  const [consent,setConsent]=useState(false);
 
   const targetDeal = selectedDealId ? deals.find((d) => d.id === selectedDealId) : null;
 
@@ -91,12 +94,13 @@ export const AuthPage: React.FC = () => {
     }
 
     if (!password || password.length < (activeTab==='register'?12:1)) {
-      setErrorMsg(activeTab==='register' ? 'Use at least 12 characters when creating an account.' : 'Please enter your password.');
+      setErrorMsg(activeTab==='register'?d('passwordRule'):t('enterPassword'));
       return;
     }
 
     setIsSubmitting(true);
 
+    if(activeTab==='register'&&!consent){setErrorMsg(d('consent'));setIsSubmitting(false);return;}
     if (activeTab === 'register') {
       const res = await authService.signUpWithEmail({
         email: cleanEmail.includes('@') ? cleanEmail : `${cleanEmail}@spotera.ae`,
@@ -163,40 +167,25 @@ export const AuthPage: React.FC = () => {
     showToast.info('Welcome! Browsing UAE family deals as a Guest.');
   };
 
-  const languages: { code: Language; label: string; flag: string }[] = [
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'ar', label: 'العربية', flag: '🇦🇪' },
-    { code: 'zh', label: '中文', flag: '🇨🇳' },
-    { code: 'fr', label: 'Français', flag: '🇫🇷' },
-    { code: 'ru', label: 'Русский', flag: '🇷🇺' },
-  ];
-
-  return <div className="expedition-auth">
-    <aside className="expedition-auth-aside" aria-hidden="true"><div className="expedition-auth-map"/><p>Explore. Discover. Together.</p><h2>Your next adventure<br/>starts right here.</h2><ExpeditionSkyline/></aside>
-    <div className="expedition-auth-main">
-      <div className="expedition-auth-tools"><button type="button" onClick={handleGuest}>← Explore as a guest</button><label><Globe size={15}/><select aria-label="Choose language" value={language} onChange={e=>setLanguage(e.target.value as Language)}>{languages.map(l=><option key={l.code} value={l.code}>{l.label}</option>)}</select></label></div>
-      <section className="expedition-auth-card"><PaperWordmark/><span className="expedition-eyebrow">YOUR FAMILY ADVENTURE STARTS HERE</span><h1>Welcome, explorer.</h1><p className="expedition-auth-description">Find your next great day out in the UAE.</p>
-        {authModalReason && <p className="expedition-auth-notice">{authModalReason}</p>}
-        {targetDeal && <p className="expedition-auth-notice">Continue to {targetDeal.title}</p>}
-        {errorMsg && <p role="alert" className="expedition-form-error">{errorMsg}</p>}
-        <div className="expedition-auth-actions"><button type="button" className="expedition-guest-button" onClick={handleGuest}><Compass size={18}/>Browse as Guest<ArrowRight size={16}/></button></div>
-        <p className="text-xs text-slate-500">Sign in with email. Your account opens the customer, business or admin dashboard automatically.</p>
-        {(showOtherMethods||resetToken) && <div className="expedition-email">{!resetMode&&!resetToken && <div className="expedition-auth-tabs"><button type="button" aria-pressed={activeTab==='login'} onClick={()=>{setActiveTab('login');setErrorMsg(null)}}>Sign in</button><button type="button" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab('register');setErrorMsg(null)}}>Create account</button></div>}
-        {(resetMode||resetToken)?<form onSubmit={handlePasswordRecovery}>
-          <h2>{resetToken?'Choose a new password':'Forgot password?'}</h2>
-          {!resetToken?<label>Email<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>:<label>New password<input type="password" minLength={12} maxLength={128} required autoComplete="new-password" value={resetPassword} onChange={e=>setResetPassword(e.target.value)}/></label>}
-          <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':resetToken?'Reset password':'Send reset link'}</button>
-          <button type="button" onClick={()=>{setResetMode(false);setResetToken('');setActiveTab('login')}}>Back to sign in</button>
-        </form>:<form onSubmit={handleSubmit}>
-          {activeTab==='register' && <label>Full name<input required autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
-          <label>Email<input type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/></label>
-          <label>Password<span className="expedition-password"><input type={showPassword?'text':'password'} required minLength={activeTab==='register'?12:1} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
-          <button type="submit" disabled={isSubmitting}>{isSubmitting?'Please wait…':activeTab==='login'?'Sign in':'Create account'}</button>
-        </form>}
-        {!resetMode&&!resetToken&&activeTab==='login'&&<button type="button" onClick={()=>setResetMode(true)}>Forgot password?</button>}
-        </div>}
-        <p className="expedition-auth-legal">By continuing, you agree to our <button onClick={()=>setActiveView('terms')}>Terms</button> and <button onClick={()=>setActiveView('privacy')}>Privacy Policy</button>.</p>
-      </section><ExpeditionSkyline/><small className="expedition-auth-caption">More discovery. More together.</small>
+  return <div className="fn-auth">
+    <aside className="fn-auth-art"><MapArtwork/><div><PaperWordmark/><h2>{d('headline')}</h2><p>{d('tagline')}</p></div></aside>
+    <div className="fn-auth-main"><div className="fn-auth-toolbar"><button onClick={handleGuest}>← {d('guest')}</button><LanguagePicker/></div>
+      <section className="fn-auth-card"><div className="fn-auth-brand"><PaperWordmark/></div><h1>{resetToken?d('choosePassword'):resetMode?d('forgot'):activeTab==='login'?d('welcome'):d('createAccount')}</h1><p>{d('discovery')}</p>
+      {targetDeal&&<p className="fn-notice">{targetDeal.title}</p>}{authModalReason&&<p className="fn-notice">{authModalReason}</p>}{errorMsg&&<p role="alert" className="fn-error">{errorMsg}</p>}
+      {(resetMode||resetToken)?<form onSubmit={handlePasswordRecovery}>
+        {!resetToken?<label>{d('email')}<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>:<label>{d('newPassword')}<input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={resetPassword} onChange={e=>setResetPassword(e.target.value)}/></label>}
+        <button className="fn-primary" disabled={isSubmitting}>{isSubmitting?d('wait'):resetToken?d('reset'):d('resetLink')}</button><button type="button" className="fn-text-button" onClick={()=>{setResetMode(false);setResetToken('');setErrorMsg(null)}}>{d('back')}</button>
+      </form>:<form onSubmit={handleSubmit}>
+        {activeTab==='register'&&<label>{d('name')}<input required maxLength={120} autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
+        <label>{d('email')}<input type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com" dir="ltr" value={email} onChange={e=>setEmail(e.target.value)}/></label>
+        <label>{d('password')}<span className="fn-password"><input type={showPassword?'text':'password'} required minLength={activeTab==='register'?12:1} maxLength={128} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?d('hidePassword'):d('showPassword')} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
+        {activeTab==='register'&&<label className="fn-consent"><input type="checkbox" required checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>{d('consent')}</span></label>}
+        <button className="fn-primary" type="submit" disabled={isSubmitting}>{isSubmitting?d('wait'):activeTab==='login'?d('login'):d('register')}</button>
+        {activeTab==='login'&&<button className="fn-text-button" type="button" onClick={()=>{setResetMode(true);setErrorMsg(null)}}>{d('forgot')}</button>}
+      </form>}
+      {!resetMode&&!resetToken&&<div className="fn-auth-alternatives"><button className="fn-outline" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab(activeTab==='login'?'register':'login');setErrorMsg(null)}}>{activeTab==='login'?d('register'):d('login')}</button><button className="fn-guest" onClick={handleGuest}>{d('guest')}</button></div>}
+      <div className="fn-auth-legal"><button onClick={()=>setActiveView('terms')}>{d('terms')}</button><span> · </span><button onClick={()=>setActiveView('privacy')}>{d('privacy')}</button></div>
+      </section><p className="fn-auth-caption">{d('tagline')}</p>
     </div>
   </div>;
 };

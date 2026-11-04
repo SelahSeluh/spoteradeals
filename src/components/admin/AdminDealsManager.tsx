@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import {MediaUploadField} from './MediaUploadField';
 import {safeMediaUrl} from '../../utils/postcardSlides';
 import React, { useState } from 'react';
@@ -192,11 +193,9 @@ export const AdminDealsManager: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <Tag className="w-5 h-5 text-[#0D9CFD]" />
-            <span>Deals & Passes Management</span>
+            <span><LocaleText value={"Deals & Passes Management"}/></span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Create, edit, duplicate, publish/unpublish, and toggle trending status for all UAE deals.
-          </p>
+          <p className="text-xs text-slate-500 mt-0.5"><LocaleText value={"Create, edit, duplicate, publish/unpublish, and toggle trending status for all UAE deals."}/></p>
         </div>
 
         <button
@@ -204,7 +203,7 @@ export const AdminDealsManager: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-[#0D9CFD] hover:bg-[#0b8de5] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Deal</span>
+          <span><LocaleText value={"Add New Deal"}/></span>
         </button>
       </div>
 
@@ -229,11 +228,11 @@ export const AdminDealsManager: React.FC = () => {
               onChange={(e) => setStatusFilter(e.target.value as any)}
               className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer"
             >
-              <option value="all">All Statuses ({deals.length})</option>
-              <option value="published">Published</option>
-              <option value="draft">Drafts / Hidden</option>
-              <option value="trending">Trending (🔥)</option>
-              <option value="featured">Featured (⭐)</option>
+              <option value="all">{"All Statuses ("}{deals.length})</option>
+              <option value="published">{"Published"}</option>
+              <option value="draft">{"Drafts / Hidden"}</option>
+              <option value="trending">{"Trending (🔥)"}</option>
+              <option value="featured">{"Featured (⭐)"}</option>
             </select>
 
             {/* Category Filter */}
@@ -242,7 +241,7 @@ export const AdminDealsManager: React.FC = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer"
             >
-              <option value="all">All Categories</option>
+              <option value="all">{"All Categories"}</option>
               {categoriesList.map((c) => (
                 <option key={c.id} value={c.name}>
                   {c.name}
@@ -256,7 +255,7 @@ export const AdminDealsManager: React.FC = () => {
               onChange={(e) => setSelectedCity(e.target.value)}
               className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer"
             >
-              <option value="all">All Emirates</option>
+              <option value="all">{"All Emirates"}</option>
               {locationsList.map((l) => (
                 <option key={l.id} value={l.name || l.emirate}>
                   {l.name || l.emirate}
@@ -303,13 +302,11 @@ export const AdminDealsManager: React.FC = () => {
                     </span>
                     {deal.isTrending && (
                       <span className="text-[10px] bg-orange-50 text-[#FD9302] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Flame className="w-3 h-3" /> Trending
-                      </span>
+                        <Flame className="w-3 h-3" /><LocaleText value={"Trending"}/></span>
                     )}
                     {deal.isFeatured && (
                       <span className="text-[10px] bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-amber-400" /> Featured
-                      </span>
+                        <Star className="w-3 h-3 fill-amber-400" /><LocaleText value={"Featured"}/></span>
                     )}
                     <span className="text-[10px] text-slate-400 font-bold">{deal.category}</span>
                   </div>
@@ -430,7 +427,7 @@ export const AdminDealsManager: React.FC = () => {
                 <h3 className="text-lg font-bold text-slate-900">
                   {editingDeal ? 'Edit Deal & Pass' : 'Create New UAE Deal'}
                 </h3>
-                <p className="text-xs text-slate-500">Configure pricing in AED, venue, image, and flags.</p>
+                <p className="text-xs text-slate-500"><LocaleText value={"Configure pricing in AED, venue, image, and flags."}/></p>
               </div>
               <button
                 onClick={() => {
@@ -446,7 +443,7 @@ export const AdminDealsManager: React.FC = () => {
             <form onSubmit={handleSave} className="space-y-4">
               {/* Title */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Deal Title</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Deal Title"}/></label>
                 <input
                   type="text"
                   required
@@ -460,7 +457,7 @@ export const AdminDealsManager: React.FC = () => {
               {/* Venue & Category */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Business / Venue Name</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Business / Venue Name"}/></label>
                   <input
                     type="text"
                     required
@@ -472,7 +469,7 @@ export const AdminDealsManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Category</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Category"}/></label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
@@ -490,7 +487,7 @@ export const AdminDealsManager: React.FC = () => {
               {/* City & Specific Location */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Emirate Location</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Emirate Location"}/></label>
                   <select
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value as any })}
@@ -505,7 +502,7 @@ export const AdminDealsManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Specific Area / Address</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Specific Area / Address"}/></label>
                   <input
                     type="text"
                     value={formData.location}
@@ -519,7 +516,7 @@ export const AdminDealsManager: React.FC = () => {
               {/* Pricing in AED */}
               <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Original Price (AED)</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Original Price (AED)"}/></label>
                   <input
                     type="number"
                     min="1"
@@ -531,7 +528,7 @@ export const AdminDealsManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Discount Price (AED)</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Discount Price (AED)"}/></label>
                   <input
                     type="number"
                     min="0"
@@ -543,16 +540,15 @@ export const AdminDealsManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Calculated Discount</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Calculated Discount"}/></label>
                   <div className="w-full bg-orange-50 border border-orange-200 rounded-xl px-3 py-2 text-xs font-extrabold text-[#FD9302] flex items-center justify-center">
-                    {formData.discountPercent}% OFF
-                  </div>
+                    {formData.discountPercent}<LocaleText value={"% OFF"}/></div>
                 </div>
               </div>
 
               {/* Image URL */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Image URL</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Image URL"}/></label>
                 <input
                   type="text"
                   required
@@ -561,11 +557,11 @@ export const AdminDealsManager: React.FC = () => {
                   placeholder="https://images.unsplash.com/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 />
-              </div><label className="block text-xs font-bold py-3">Price applies to<select className="w-full border rounded-xl p-3" value={formData.priceMode||'booking'} onChange={e=>setFormData({...formData,priceMode:e.target.value as 'booking'|'guest'})}><option value="booking">Whole booking / package</option><option value="guest">Each guest</option></select></label><div className="block text-xs font-bold py-3"><label>Inside offer cover video (optional MP4/WebM)<input className="w-full border rounded-xl p-3 mt-2" placeholder="https://…/restaurant.mp4" value={formData.videoUrl||''} onChange={e=>setFormData({...formData,videoUrl:e.target.value})}/></label><MediaUploadField onUploaded={(url,type)=>setFormData(prev=>({...prev,...(type.startsWith('video/')?{videoUrl:url}:{imageUrl:url,images:[url]})}))}/><span className="text-slate-500 font-normal">Video replaces the inside cover photo. Category tiles stay unchanged.</span></div>
+              </div><label className="block text-xs font-bold py-3"><LocaleText value={"Price applies to"}/><select className="w-full border rounded-xl p-3" value={formData.priceMode||'booking'} onChange={e=>setFormData({...formData,priceMode:e.target.value as 'booking'|'guest'})}><option value="booking">{"Whole booking / package"}</option><option value="guest">{"Each guest"}</option></select></label><div className="block text-xs font-bold py-3"><label><LocaleText value={"Inside offer cover video (optional MP4/WebM)"}/><input className="w-full border rounded-xl p-3 mt-2" placeholder="https://…/restaurant.mp4" value={formData.videoUrl||''} onChange={e=>setFormData({...formData,videoUrl:e.target.value})}/></label><MediaUploadField onUploaded={(url,type)=>setFormData(prev=>({...prev,...(type.startsWith('video/')?{videoUrl:url}:{imageUrl:url,images:[url]})}))}/><span className="text-slate-500 font-normal"><LocaleText value={"Video replaces the inside cover photo. Category tiles stay unchanged."}/></span></div>
 
               {/* Description */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Description & Inclusions</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Description & Inclusions"}/></label>
                 <textarea
                   rows={3}
                   value={formData.description}
@@ -576,17 +572,14 @@ export const AdminDealsManager: React.FC = () => {
               </div>
 
               <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4">
-                <legend className="text-sm font-bold">Venue booking schedule</legend>
-                <label className="block text-xs font-bold">Opening hours
-                  <input className="w-full border rounded-lg p-2 mt-1" value={formData.openingHours||''} onChange={e=>setFormData({...formData,openingHours:e.target.value})} placeholder="Use the venue's confirmed opening hours"/>
+                <legend className="text-sm font-bold"><LocaleText value={"Venue booking schedule"}/></legend>
+                <label className="block text-xs font-bold"><LocaleText value={"Opening hours"}/><input className="w-full border rounded-lg p-2 mt-1" value={formData.openingHours||''} onChange={e=>setFormData({...formData,openingHours:e.target.value})} placeholder="Use the venue's confirmed opening hours"/>
                 </label>
-                <label className="block text-xs font-bold">Published time slots (one per line)
-                  <textarea className="w-full border rounded-lg p-2 mt-1" rows={3} value={(formData.bookingTimeSlots||[]).join('\n')} onChange={e=>setFormData({...formData,bookingTimeSlots:e.target.value.split('\n')})}/>
+                <label className="block text-xs font-bold"><LocaleText value={"Published time slots (one per line)"}/><textarea className="w-full border rounded-lg p-2 mt-1" rows={3} value={(formData.bookingTimeSlots||[]).join('\n')} onChange={e=>setFormData({...formData,bookingTimeSlots:e.target.value.split('\n')})}/>
                 </label>
-                <p className="text-xs text-slate-500">Leave slots blank for an opening-hours pass. A specific entry time is only shown when you publish it here. Confirm any reservation requirement with the venue.</p>
+                <p className="text-xs text-slate-500"><LocaleText value={"Leave slots blank for an opening-hours pass. A specific entry time is only shown when you publish it here. Confirm any reservation requirement with the venue."}/></p>
                 <div className="flex flex-wrap gap-3">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day,index)=><label key={day} className="text-xs flex gap-1"><input type="checkbox" checked={formData.bookingWeekdays===undefined||formData.bookingWeekdays.includes(index)} onChange={e=>{const days=formData.bookingWeekdays??[0,1,2,3,4,5,6];setFormData({...formData,bookingWeekdays:e.target.checked?[...days,index]:days.filter(d=>d!==index)})}}/>{day}</label>)}</div>
-                <label className="block text-xs font-bold">Offer expiry date (UAE)
-                  <input type="date" required className="w-full border rounded-lg p-2 mt-1" value={formData.expiryDate?.slice(0,10)||''} onChange={e=>setFormData({...formData,expiryDate:e.target.value})}/>
+                <label className="block text-xs font-bold"><LocaleText value={"Offer expiry date (UAE)"}/><input type="date" required className="w-full border rounded-lg p-2 mt-1" value={formData.expiryDate?.slice(0,10)||''} onChange={e=>setFormData({...formData,expiryDate:e.target.value})}/>
                 </label>
               </fieldset>
 
@@ -599,7 +592,7 @@ export const AdminDealsManager: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
                     className="w-4 h-4 rounded text-[#0D9CFD]"
                   />
-                  <span>Published Live</span>
+                  <span><LocaleText value={"Published Live"}/></span>
                 </label>
 
                 <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
@@ -609,7 +602,7 @@ export const AdminDealsManager: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, isTrending: e.target.checked })}
                     className="w-4 h-4 rounded text-[#FD9302]"
                   />
-                  <span>Trending Banner (🔥)</span>
+                  <span><LocaleText value={"Trending Banner (🔥)"}/></span>
                 </label>
 
                 <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
@@ -619,7 +612,7 @@ export const AdminDealsManager: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
                     className="w-4 h-4 rounded text-amber-500"
                   />
-                  <span>Featured Pass (⭐)</span>
+                  <span><LocaleText value={"Featured Pass (⭐)"}/></span>
                 </label>
               </div>
 
@@ -632,9 +625,7 @@ export const AdminDealsManager: React.FC = () => {
                     setEditingDeal(null);
                   }}
                   className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0b8de5] text-white text-xs font-bold shadow-xs cursor-pointer"

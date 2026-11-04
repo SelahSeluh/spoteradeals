@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
@@ -136,13 +137,9 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <UserCog className="w-6 h-6 text-[#0D9CFD]" />
-              <h2 className="text-xl font-black tracking-tight">
-                Role-Based Access Control (RBAC)
-              </h2>
+              <h2 className="text-xl font-black tracking-tight"><LocaleText value={"Role-Based Access Control (RBAC)"}/></h2>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
-              Enforce strict departmental segregation of duties across Spotera operations. Assign specific sub-roles to team members with automatic server-side permission validation.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl"><LocaleText value={"Enforce strict departmental segregation of duties across Spotera operations. Assign specific sub-roles to team members with automatic server-side permission validation."}/></p>
           </div>
 
           <button
@@ -150,7 +147,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
             className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all text-xs font-bold flex items-center gap-2 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Accounts</span>
+            <span><LocaleText value={"Refresh Accounts"}/></span>
           </button>
         </div>
       </div>
@@ -158,9 +155,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
       {/* Permissions Matrix Overview */}
       <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-2xs space-y-4">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <Lock className="w-4 h-4 text-[#0D9CFD]" />
-          Admin Sub-Role Permissions Matrix
-        </h3>
+          <Lock className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Admin Sub-Role Permissions Matrix"}/></h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {(
             [
@@ -200,13 +195,13 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
       </div>
 
       {loadError && <p role="alert" className="text-red-700">{loadError}</p>}
-      {!canManageRoles && <p role="status" className="rounded-xl border p-4">Accounts are read-only here. Additional administrator roles are not configured. Use Business accounts above to manage venue access.</p>}
+      {!canManageRoles && <p role="status" className="rounded-xl border p-4"><LocaleText value={"Accounts are read-only here. Additional administrator roles are not configured. Use Business accounts above to manage venue access."}/></p>}
       {/* Users & Admins Management Table */}
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-[#0D9CFD]" />
-            <h3 className="text-sm font-bold text-slate-900">User Accounts & Team Permissions</h3>
+            <h3 className="text-sm font-bold text-slate-900"><LocaleText value={"User Accounts & Team Permissions"}/></h3>
             <span className="text-xs text-slate-400 font-semibold">({filteredUsers.length})</span>
           </div>
 
@@ -226,11 +221,11 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200/80 uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="py-3 px-4">User Details</th>
-                <th className="py-3 px-4">Role</th>
-                <th className="py-3 px-4">Admin Sub-Role</th>
-                <th className="py-3 px-4">Membership</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4"><LocaleText value={"User Details"}/></th>
+                <th className="py-3 px-4"><LocaleText value={"Role"}/></th>
+                <th className="py-3 px-4"><LocaleText value={"Admin Sub-Role"}/></th>
+                <th className="py-3 px-4"><LocaleText value={"Membership"}/></th>
+                <th className="py-3 px-4 text-right"><LocaleText value={"Actions"}/></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
@@ -244,9 +239,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                       <div className="font-bold text-slate-900 flex items-center gap-1.5">
                         <span>{u.name}</span>
                         {isMasterAdmin && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-100 text-rose-800">
-                            MASTER ROOT
-                          </span>
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-100 text-rose-800"><LocaleText value={"MASTER ROOT"}/></span>
                         )}
                       </div>
                       <span className="text-[11px] text-slate-500 block">{u.email}</span>
@@ -269,9 +262,9 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                         }
                         className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white text-slate-800 disabled:bg-slate-50 disabled:text-slate-400 focus:outline-none focus:border-[#0D9CFD]"
                       >
-                        <option value="CUSTOMER">Customer</option>
-                        <option value="PARTNER">Partner / Merchant</option>
-                        <option value="ADMIN">Administrator</option>
+                        <option value="CUSTOMER">{"Customer"}</option>
+                        <option value="PARTNER">{"Partner / Merchant"}</option>
+                        <option value="ADMIN">{"Administrator"}</option>
                       </select>
                     </td>
 
@@ -294,14 +287,14 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
                           }
                           className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white text-slate-800 disabled:bg-slate-50 disabled:text-slate-400 focus:outline-none focus:border-[#0D9CFD]"
                         >
-                          <option value="SUPER_ADMIN">Super Administrator</option>
-                          <option value="CONTENT_ADMIN">Content Admin</option>
-                          <option value="MARKETING_ADMIN">Marketing Admin</option>
-                          <option value="SUPPORT_ADMIN">Support Admin</option>
-                          <option value="VIEWER">Read-Only Viewer</option>
+                          <option value="SUPER_ADMIN">{"Super Administrator"}</option>
+                          <option value="CONTENT_ADMIN">{"Content Admin"}</option>
+                          <option value="MARKETING_ADMIN">{"Marketing Admin"}</option>
+                          <option value="SUPPORT_ADMIN">{"Support Admin"}</option>
+                          <option value="VIEWER">{"Read-Only Viewer"}</option>
                         </select>
                       ) : (
-                        <span className="text-slate-400 text-xs italic">N/A (Non-Admin)</span>
+                        <span className="text-slate-400 text-xs italic"><LocaleText value={"N/A (Non-Admin)"}/></span>
                       )}
                     </td>
 
@@ -313,9 +306,7 @@ export const AdminRbacManager: React.FC<AdminRbacManagerProps> = ({
 
                     <td className="py-3.5 px-4 whitespace-nowrap text-right">
                       {isMasterAdmin ? (
-                        <span className="text-[11px] text-slate-400 font-semibold italic">
-                          Protected Account
-                        </span>
+                        <span className="text-[11px] text-slate-400 font-semibold italic"><LocaleText value={"Protected Account"}/></span>
                       ) : (
                         <button
                           onClick={() => {

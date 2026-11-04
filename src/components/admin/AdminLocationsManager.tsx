@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState } from 'react';
 import {
   Plus,
@@ -92,11 +93,9 @@ export const AdminLocationsManager: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <MapPin className="w-5 h-5 text-[#FD9302]" />
-            <span>UAE Locations & Emirates Manager</span>
+            <span><LocaleText value={"UAE Locations & Emirates Manager"}/></span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Configure the 7 UAE Emirates and regional hubs displayed across headers, deal filters, and maps.
-          </p>
+          <p className="text-xs text-slate-500 mt-0.5"><LocaleText value={"Configure the 7 UAE Emirates and regional hubs displayed across headers, deal filters, and maps."}/></p>
         </div>
 
         <button
@@ -104,7 +103,7 @@ export const AdminLocationsManager: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-[#0D9CFD] hover:bg-[#0b8de5] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Location</span>
+          <span><LocaleText value={"Add New Location"}/></span>
         </button>
       </div>
 
@@ -131,7 +130,7 @@ export const AdminLocationsManager: React.FC = () => {
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                     {loc.nameAr && <span className="font-arabic">{loc.nameAr}</span>}
                     <span>•</span>
-                    <span className="font-semibold text-slate-600">{dealCount} deals</span>
+                    <span className="font-semibold text-slate-600">{dealCount}<LocaleText value={"deals"}/></span>
                   </div>
                 </div>
               </div>
@@ -188,7 +187,7 @@ export const AdminLocationsManager: React.FC = () => {
                 <h3 className="text-lg font-bold text-slate-900">
                   {editingLocation ? 'Edit UAE Location' : 'Add New UAE Location'}
                 </h3>
-                <p className="text-xs text-slate-500">Configure Emirate or region details.</p>
+                <p className="text-xs text-slate-500"><LocaleText value={"Configure Emirate or region details."}/></p>
               </div>
               <button
                 onClick={() => {
@@ -203,7 +202,7 @@ export const AdminLocationsManager: React.FC = () => {
 
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Location Name (English)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Location Name (English)"}/></label>
                 <input
                   type="text"
                   required
@@ -215,7 +214,7 @@ export const AdminLocationsManager: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Location Name (Arabic)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Location Name (Arabic)"}/></label>
                 <input
                   type="text"
                   value={formData.nameAr}
@@ -233,9 +232,7 @@ export const AdminLocationsManager: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
                   className="w-4 h-4 rounded text-[#0D9CFD] cursor-pointer"
                 />
-                <label htmlFor="loc_enabled" className="text-xs font-bold text-slate-700 cursor-pointer">
-                  Enable and show in location pickers & city filters
-                </label>
+                <label htmlFor="loc_enabled" className="text-xs font-bold text-slate-700 cursor-pointer"><LocaleText value={"Enable and show in location pickers & city filters"}/></label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
@@ -246,9 +243,7 @@ export const AdminLocationsManager: React.FC = () => {
                     setEditingLocation(null);
                   }}
                   className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0b8de5] text-white text-xs font-bold shadow-xs cursor-pointer"

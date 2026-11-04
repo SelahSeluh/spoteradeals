@@ -1,3 +1,5 @@
+import {DesignReview} from './components/DesignReview';
+import {DiscoveryHelpPage as FaqPage,DiscoveryContactPage as ContactPage} from './pages/DiscoveryHelpPage';
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { ToastProvider } from './context/ToastContext';
@@ -36,8 +38,7 @@ import { AuthPage } from './pages/AuthPage';
 import { RequestsPage } from './pages/RequestsPage';
 import {
   AboutPage,
-  ContactPage,
-  FaqPage,
+
   PrivacyPage,
   TermsPage,
 } from './pages/ContentPages';
@@ -98,7 +99,7 @@ const MainAppContent: React.FC = () => {
   // 2. SECURE ADMIN APPLICATION: If signed in as Admin, strictly render the Admin Dashboard
   if (user && user.role === 'ADMIN') {
     return (
-      <div className="min-h-screen w-full flex flex-col font-sans bg-slate-50 text-slate-900">
+      <div className="fn-admin-shell min-h-screen w-full flex flex-col font-sans bg-slate-50 text-slate-900">
         <AdminDashboard />
         <QrScannerModal />
         <ToastContainer />
@@ -215,6 +216,7 @@ export default function App() {
   return (
     <AppProvider>
       <ToastProvider>
+        <DesignReview/>
         <MainAppContent />
       </ToastProvider>
     </AppProvider>

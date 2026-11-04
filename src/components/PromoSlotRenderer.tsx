@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState, useEffect } from 'react';
 import { PromoMediaSlot } from '../types';
 import { Play, Volume2, VolumeX, Image as ImageIcon } from 'lucide-react';
@@ -56,8 +57,7 @@ export const PromoSlotRenderer: React.FC<PromoSlotRendererProps> = ({
             allow="autoplay; encrypted-media"
           />
           <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1">
-            <Play className="w-2.5 h-2.5 fill-current" /> Video
-          </div>
+            <Play className="w-2.5 h-2.5 fill-current" /><LocaleText value={"Video"}/></div>
         </div>
       );
     }
@@ -103,8 +103,7 @@ export const PromoSlotRenderer: React.FC<PromoSlotRendererProps> = ({
         </button>
 
         <div className="absolute top-2.5 right-2.5 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-wider flex items-center gap-1 pointer-events-none">
-          <Play className="w-2.5 h-2.5 fill-current" /> Live
-        </div>
+          <Play className="w-2.5 h-2.5 fill-current" /><LocaleText value={"Live"}/></div>
       </div>
     );
   }

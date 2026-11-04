@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React from 'react';
 import { Sparkles, RefreshCw, Lightbulb, Compass, MapPin, Tag, ChevronRight, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -31,7 +32,7 @@ export const DailySpotlightSection: React.FC<DailySpotlightSectionProps> = ({
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-[11px] font-black uppercase tracking-wider shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
-                <span>AI Daily Family Spotlight</span>
+                <span><LocaleText value={"AI Daily Family Spotlight"}/></span>
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight">
                 {dailySpotlight.title}
@@ -58,9 +59,7 @@ export const DailySpotlightSection: React.FC<DailySpotlightSectionProps> = ({
                 <Lightbulb className="w-5 h-5 fill-slate-950" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-xs font-extrabold text-amber-300 uppercase tracking-wide">
-                  UAE Family Insider Tip
-                </h4>
+                <h4 className="text-xs font-extrabold text-amber-300 uppercase tracking-wide"><LocaleText value={"UAE Family Insider Tip"}/></h4>
                 <p className="text-xs sm:text-sm text-blue-50 leading-relaxed font-normal">
                   {dailySpotlight.familyTip}
                 </p>
@@ -132,7 +131,7 @@ export const DailySpotlightSection: React.FC<DailySpotlightSectionProps> = ({
               onClick={() => setActiveView('explore')}
               className="text-white hover:text-amber-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
             >
-              <span>Explore all {dailySpotlight.featuredCategory} deals</span>
+              <span><LocaleText value={"Explore all"}/>{dailySpotlight.featuredCategory}<LocaleText value={"deals"}/></span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

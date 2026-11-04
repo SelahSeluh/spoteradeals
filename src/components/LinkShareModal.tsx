@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import {
   X,
@@ -117,14 +118,10 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
               <div className="w-8 h-8 rounded-xl bg-cyan-400 text-slate-950 flex items-center justify-center font-black">
                 <Share2 className="w-4 h-4" />
               </div>
-              <span className="text-cyan-400 font-extrabold text-xs uppercase tracking-widest">
-                Spotera Link Guide & Access Hub
-              </span>
+              <span className="text-cyan-400 font-extrabold text-xs uppercase tracking-widest"><LocaleText value={"Spotera Link Guide & Access Hub"}/></span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black font-sans">Which Link To Share Where</h2>
-            <p className="text-xs text-slate-300">
-              Clean shortened links & live direct URLs for Public, Vendors, and Admin.
-            </p>
+            <h2 className="text-xl sm:text-2xl font-black font-sans"><LocaleText value={"Which Link To Share Where"}/></h2>
+            <p className="text-xs text-slate-300"><LocaleText value={"Clean shortened links & live direct URLs for Public, Vendors, and Admin."}/></p>
           </div>
           <button
             onClick={onClose}
@@ -138,18 +135,15 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
         <div className="bg-blue-900/90 text-white p-4 text-xs space-y-2 border-b border-blue-800">
           <div className="font-bold flex items-center gap-2 text-cyan-300">
             <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>EXPLANATION OF LINKS:</span>
+            <span><LocaleText value={"EXPLANATION OF LINKS:"}/></span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] text-slate-200">
             <div className="bg-slate-900/60 p-2 rounded-xl border border-blue-400/30">
-              <strong className="text-cyan-300">🌍 PUBLIC CUSTOMERS:</strong> Share Link #1 (Home Marketplace). Perfect for marketing!
-            </div>
+              <strong className="text-cyan-300"><LocaleText value={"🌍 PUBLIC CUSTOMERS:"}/></strong><LocaleText value={"Share Link #1 (Home Marketplace). Perfect for marketing!"}/></div>
             <div className="bg-slate-900/60 p-2 rounded-xl border border-amber-400/30">
-              <strong className="text-amber-300">🛡️ FOR YOU (ADMIN):</strong> Keep Link #2 private. It lets you manage deals & revenue.
-            </div>
+              <strong className="text-amber-300"><LocaleText value={"🛡️ FOR YOU (ADMIN):"}/></strong><LocaleText value={"Keep Link #2 private. It lets you manage deals & revenue."}/></div>
             <div className="bg-slate-900/60 p-2 rounded-xl border border-emerald-400/30">
-              <strong className="text-emerald-300">🏢 FOR PLAY AREA VENUES:</strong> Send Link #3 to reception staff to scan QR codes.
-            </div>
+              <strong className="text-emerald-300"><LocaleText value={"🏢 FOR PLAY AREA VENUES:"}/></strong><LocaleText value={"Send Link #3 to reception staff to scan QR codes."}/></div>
           </div>
         </div>
 
@@ -189,7 +183,7 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
                   {/* Clean Shortened Display */}
                   <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Clean Short Name</div>
+                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Clean Short Name"}/></div>
                       <div className="font-mono font-bold text-slate-900 text-xs truncate">{link.prettyDomain}</div>
                     </div>
                     <button
@@ -204,7 +198,7 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
                   {/* Live Direct URL */}
                   <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="text-[9px] font-bold text-blue-600 uppercase tracking-wider">Live Direct App URL</div>
+                      <div className="text-[9px] font-bold text-blue-600 uppercase tracking-wider"><LocaleText value={"Live Direct App URL"}/></div>
                       <div className="font-mono font-bold text-blue-600 text-xs truncate">{link.liveUrl}</div>
                     </div>
                     <button
@@ -226,7 +220,7 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
                     }}
                     className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-cyan-300 text-xs font-black flex items-center gap-1.5 shadow-sm transition-all"
                   >
-                    <span>Launch View Now</span>
+                    <span><LocaleText value={"Launch View Now"}/></span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -238,14 +232,11 @@ export const LinkShareModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
         {/* Footer info */}
         <div className="bg-slate-50 border-t border-slate-200 p-4 text-center text-xs text-slate-600 flex items-center justify-between">
           <span className="flex items-center gap-1.5 font-bold text-slate-900">
-            <Sparkles className="w-4 h-4 text-amber-500" /> SpoteraDeals Verified Marketplace
-          </span>
+            <Sparkles className="w-4 h-4 text-amber-500" /><LocaleText value={"SpoteraDeals Verified Marketplace"}/></span>
           <button
             onClick={onClose}
             className="px-5 py-2 bg-slate-900 hover:bg-slate-800 font-bold text-xs rounded-xl text-white shadow-sm"
-          >
-            Done
-          </button>
+          ><LocaleText value={"Done"}/></button>
         </div>
       </div>
     </div>

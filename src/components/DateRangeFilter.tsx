@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import { Calendar, Sparkles, X, ChevronDown, Check, SunMedium } from 'lucide-react';
 import { UaePublicHoliday, DateFilterPreset } from '../types';
@@ -107,7 +108,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap flex-1">
           <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1 mr-1">
             <Calendar className="w-3.5 h-3.5 text-[#1A4FBF]" />
-            <span className="hidden sm:inline">Dates:</span>
+            <span className="hidden sm:inline"><LocaleText value={"Dates:"}/></span>
           </span>
 
           {/* Any Date / All */}
@@ -119,9 +120,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                 ? 'bg-[#1A4FBF] text-white shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
-          >
-            Anytime
-          </button>
+          ><LocaleText value={"Anytime"}/></button>
 
           {/* This Weekend */}
           <button
@@ -134,7 +133,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             }`}
           >
             <SunMedium className="w-3.5 h-3.5" />
-            <span>This Weekend</span>
+            <span><LocaleText value={"This Weekend"}/></span>
             <span className="text-[10px] opacity-80 hidden md:inline">
               ({formatDateDisplay(thisWeekend.startDate)} - {formatDateDisplay(thisWeekend.endDate)})
             </span>
@@ -150,7 +149,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            <span>Next Weekend</span>
+            <span><LocaleText value={"Next Weekend"}/></span>
             <span className="text-[10px] opacity-80 hidden md:inline">
               ({formatDateDisplay(nextWeekend.startDate)} - {formatDateDisplay(nextWeekend.endDate)})
             </span>
@@ -177,7 +176,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             {showHolidayDropdown && (
               <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-30 animate-in fade-in zoom-in-95">
                 <div className="px-3 py-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
-                  <span>Select UAE Holiday Period</span>
+                  <span><LocaleText value={"Select UAE Holiday Period"}/></span>
                   <span className="text-emerald-600">2026 / 2027</span>
                 </div>
                 <div className="max-h-60 overflow-y-auto space-y-1 p-1">
@@ -196,9 +195,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                           <div className="font-bold flex items-center gap-1.5">
                             <span>{h.name}</span>
                             {h.isOfficial && (
-                              <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold">
-                                Official
-                              </span>
+                              <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold"><LocaleText value={"Official"}/></span>
                             )}
                           </div>
                           {h.nameAr && <div className="text-[11px] text-slate-400">{h.nameAr}</div>}
@@ -226,7 +223,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Custom Range</span>
+            <span><LocaleText value={"Custom Range"}/></span>
           </button>
         </div>
 
@@ -239,7 +236,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             title="Reset date filter"
           >
             <X className="w-3.5 h-3.5" />
-            <span>Clear Dates</span>
+            <span><LocaleText value={"Clear Dates"}/></span>
           </button>
         )}
       </div>
@@ -251,9 +248,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
           className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end animate-in fade-in slide-in-from-top-2"
         >
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
-              Start Date
-            </label>
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block"><LocaleText value={"Start Date"}/></label>
             <input
               type="date"
               value={customStart}
@@ -263,9 +258,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
-              End Date
-            </label>
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block"><LocaleText value={"End Date"}/></label>
             <input
               type="date"
               value={customEnd}
@@ -280,15 +273,13 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
               type="submit"
               className="flex-1 bg-[#1A4FBF] hover:bg-blue-800 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-xs transition-colors cursor-pointer min-h-[38px] flex items-center justify-center gap-1.5"
             >
-              <span>Apply Dates</span>
+              <span><LocaleText value={"Apply Dates"}/></span>
             </button>
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
               className="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-100 rounded-xl cursor-pointer min-h-[38px]"
-            >
-              Cancel
-            </button>
+            ><LocaleText value={"Cancel"}/></button>
           </div>
         </form>
       )}
@@ -298,7 +289,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
         <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2">
           <div className="flex items-center gap-1.5 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Filtering deals available:</span>
+            <span><LocaleText value={"Filtering deals available:"}/></span>
             <span className="font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
               {startDate ? formatDateDisplay(startDate) : 'Any'}
               {endDate && endDate !== startDate ? ` – ${formatDateDisplay(endDate)}` : ''}
@@ -308,8 +299,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 
           {typeof resultsCount === 'number' && (
             <span className="text-[11px] font-bold text-[#1A4FBF]">
-              {resultsCount} experience{resultsCount !== 1 ? 's' : ''} available
-            </span>
+              {resultsCount}<LocaleText value={"experience"}/>{resultsCount !== 1 ? 's' : ''}<LocaleText value={"available"}/></span>
           )}
         </div>
       )}

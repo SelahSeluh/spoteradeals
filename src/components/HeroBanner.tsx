@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import {
   ChevronLeft,
@@ -60,12 +61,10 @@ export const HeroBanner: React.FC = () => {
               <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
                 <span className="bg-[#FD9302] text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-1.5 tracking-tight">
                   <Tag className="w-4 h-4 text-white" />
-                  <span>{currentDeal.discountPercent}% OFF</span>
+                  <span>{currentDeal.discountPercent}<LocaleText value={"% OFF"}/></span>
                 </span>
 
-                <span className="bg-[#0D9CFD] text-white text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
-                  FEATURED DEAL
-                </span>
+                <span className="bg-[#0D9CFD] text-white text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-xl shadow-md"><LocaleText value={"FEATURED DEAL"}/></span>
               </div>
 
               {/* Category Pill */}
@@ -123,7 +122,7 @@ export const HeroBanner: React.FC = () => {
               <div className="pt-4 border-t border-slate-100 space-y-3">
                 <div className="flex items-baseline justify-between">
                   <div>
-                    <span className="text-xs text-slate-400 block font-medium">Ticket Price</span>
+                    <span className="text-xs text-slate-400 block font-medium"><LocaleText value={"Ticket Price"}/></span>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-black text-slate-900 tracking-tight">
                         <span className="text-xs font-bold text-[#0D9CFD] mr-1">AED</span>
@@ -137,8 +136,7 @@ export const HeroBanner: React.FC = () => {
                     </div>
                   </div>
 
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
-                    Save AED {currentDeal.originalPrice - currentDeal.discountPrice}
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100"><LocaleText value={"Save AED"}/>{currentDeal.originalPrice - currentDeal.discountPrice}
                   </span>
                 </div>
 
@@ -147,7 +145,7 @@ export const HeroBanner: React.FC = () => {
                   className="w-full py-3 bg-[#0D9CFD] hover:bg-[#0b8de5] active:scale-[0.99] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Ticket className="w-4 h-4" />
-                  <span>View Ticket Deal</span>
+                  <span><LocaleText value={"View Ticket Deal"}/></span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

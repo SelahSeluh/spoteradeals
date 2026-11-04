@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState } from 'react';
 import { Award, Trophy, Star, ShieldCheck, Save, PlusCircle, CheckCircle2, Users } from 'lucide-react';
 import { LoyaltyRuleConfig, LoyaltyTierConfig, User } from '../../types';
@@ -69,11 +70,9 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
         <div>
           <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
             <Trophy className="w-5 h-5 text-amber-500" />
-            <span>Spotera Loyalty Points & VIP Membership Engine</span>
+            <span><LocaleText value={"Spotera Loyalty Points & VIP Membership Engine"}/></span>
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Configure how many points users earn from bookings, redemptions, referrals, and manage VIP/Premium thresholds.
-          </p>
+          <p className="text-xs text-slate-500 mt-1"><LocaleText value={"Configure how many points users earn from bookings, redemptions, referrals, and manage VIP/Premium thresholds."}/></p>
         </div>
       </div>
 
@@ -82,14 +81,14 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
             <Award className="w-5 h-5 text-[#1A4FBF]" />
-            <h3 className="font-bold text-slate-900 text-sm">Points Awarded Per Action</h3>
+            <h3 className="font-bold text-slate-900 text-sm"><LocaleText value={"Points Awarded Per Action"}/></h3>
           </div>
 
           <form onSubmit={handleSaveRules} className="space-y-3.5">
             <div>
               <label className="text-xs font-bold text-slate-700 flex justify-between">
-                <span>Completed Booking Pass</span>
-                <span className="text-[#1A4FBF] font-black">{rules.bookingPoints} pts</span>
+                <span><LocaleText value={"Completed Booking Pass"}/></span>
+                <span className="text-[#1A4FBF] font-black">{rules.bookingPoints}<LocaleText value={"pts"}/></span>
               </label>
               <input
                 type="number"
@@ -98,15 +97,13 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 onChange={(e) => setRules({ ...rules, bookingPoints: Number(e.target.value) })}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#1A4FBF] mt-1"
               />
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                Awarded once per unique booking reference upon completion
-              </span>
+              <span className="text-[10px] text-slate-400 block mt-0.5"><LocaleText value={"Awarded once per unique booking reference upon completion"}/></span>
             </div>
 
             <div>
               <label className="text-xs font-bold text-slate-700 flex justify-between">
-                <span>Deal / Coupon Voucher Redemption</span>
-                <span className="text-[#1A4FBF] font-black">{rules.redemptionPoints} pts</span>
+                <span><LocaleText value={"Deal / Coupon Voucher Redemption"}/></span>
+                <span className="text-[#1A4FBF] font-black">{rules.redemptionPoints}<LocaleText value={"pts"}/></span>
               </label>
               <input
                 type="number"
@@ -119,8 +116,8 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
 
             <div>
               <label className="text-xs font-bold text-slate-700 flex justify-between">
-                <span>Points Per AED Spent on Purchases</span>
-                <span className="text-[#1A4FBF] font-black">{rules.purchasePointsPerAED} pt / AED</span>
+                <span><LocaleText value={"Points Per AED Spent on Purchases"}/></span>
+                <span className="text-[#1A4FBF] font-black">{rules.purchasePointsPerAED}<LocaleText value={"pt / AED"}/></span>
               </label>
               <input
                 type="number"
@@ -134,8 +131,8 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
 
             <div>
               <label className="text-xs font-bold text-slate-700 flex justify-between">
-                <span>Successful Friend Referral</span>
-                <span className="text-[#1A4FBF] font-black">{rules.referralPoints} pts</span>
+                <span><LocaleText value={"Successful Friend Referral"}/></span>
+                <span className="text-[#1A4FBF] font-black">{rules.referralPoints}<LocaleText value={"pts"}/></span>
               </label>
               <input
                 type="number"
@@ -148,8 +145,8 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
 
             <div>
               <label className="text-xs font-bold text-slate-700 flex justify-between">
-                <span>Promotional Campaign Activity</span>
-                <span className="text-[#1A4FBF] font-black">{rules.promotionPoints} pts</span>
+                <span><LocaleText value={"Promotional Campaign Activity"}/></span>
+                <span className="text-[#1A4FBF] font-black">{rules.promotionPoints}<LocaleText value={"pts"}/></span>
               </label>
               <input
                 type="number"
@@ -166,7 +163,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 className="w-full bg-[#1A4FBF] hover:bg-blue-800 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>Save Points Earning Rules</span>
+                <span><LocaleText value={"Save Points Earning Rules"}/></span>
               </button>
             </div>
           </form>
@@ -177,7 +174,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Trophy className="w-5 h-5 text-[#F5820A]" />
-              <h3 className="font-bold text-slate-900 text-sm">Membership Level Thresholds</h3>
+              <h3 className="font-bold text-slate-900 text-sm"><LocaleText value={"Membership Level Thresholds"}/></h3>
             </div>
 
             <form onSubmit={handleSaveTiers} className="space-y-4">
@@ -186,11 +183,10 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-amber-900 flex items-center gap-1.5">
                     <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-                    <span>Spotera VIP Tier</span>
+                    <span><LocaleText value={"Spotera VIP Tier"}/></span>
                   </span>
                   <span className="text-xs font-black text-[#F5820A]">
-                    {tiers.vipThreshold} Points Required
-                  </span>
+                    {tiers.vipThreshold}<LocaleText value={"Points Required"}/></span>
                 </div>
                 <input
                   type="number"
@@ -200,9 +196,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                   onChange={(e) => setTiers({ ...tiers, vipThreshold: Number(e.target.value) })}
                   className="w-full bg-white border border-amber-200 rounded-xl p-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                <span className="text-[10px] text-amber-800 block">
-                  Members below this score are Bronze/Free members.
-                </span>
+                <span className="text-[10px] text-amber-800 block"><LocaleText value={"Members below this score are Bronze/Free members."}/></span>
               </div>
 
               {/* Premium VIP Threshold */}
@@ -210,11 +204,10 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-purple-900 flex items-center gap-1.5">
                     <ShieldCheck className="w-4 h-4 text-purple-600" />
-                    <span>Spotera Premium VIP Tier</span>
+                    <span><LocaleText value={"Spotera Premium VIP Tier"}/></span>
                   </span>
                   <span className="text-xs font-black text-purple-700">
-                    {tiers.premiumThreshold} Points Required
-                  </span>
+                    {tiers.premiumThreshold}<LocaleText value={"Points Required"}/></span>
                 </div>
                 <input
                   type="number"
@@ -224,9 +217,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                   onChange={(e) => setTiers({ ...tiers, premiumThreshold: Number(e.target.value) })}
                   className="w-full bg-white border border-purple-200 rounded-xl p-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
-                <span className="text-[10px] text-purple-800 block">
-                  Top tier members unlocking maximum discounts, concierge booking, and VIP partner passes.
-                </span>
+                <span className="text-[10px] text-purple-800 block"><LocaleText value={"Top tier members unlocking maximum discounts, concierge booking, and VIP partner passes."}/></span>
               </div>
 
               <button
@@ -234,7 +225,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 className="w-full bg-[#F5820A] hover:bg-amber-600 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>Save Tier Thresholds</span>
+                <span><LocaleText value={"Save Tier Thresholds"}/></span>
               </button>
             </form>
           </div>
@@ -243,14 +234,12 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-3">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
               <PlusCircle className="w-4 h-4 text-emerald-600" />
-              <h3 className="font-bold text-slate-900 text-sm">Admin Manual Points Grant</h3>
+              <h3 className="font-bold text-slate-900 text-sm"><LocaleText value={"Admin Manual Points Grant"}/></h3>
             </div>
 
             <form onSubmit={handleGrantSubmit} className="space-y-2.5">
               <div>
-                <label className="text-[11px] font-bold text-slate-600 block mb-0.5">
-                  Member Email
-                </label>
+                <label className="text-[11px] font-bold text-slate-600 block mb-0.5"><LocaleText value={"Member Email"}/></label>
                 <input
                   type="email"
                   required
@@ -263,9 +252,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-600 block mb-0.5">
-                    Points Amount
-                  </label>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-0.5"><LocaleText value={"Points Amount"}/></label>
                   <input
                     type="number"
                     min="1"
@@ -275,9 +262,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-slate-600 block mb-0.5">
-                    Reason / Note
-                  </label>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-0.5"><LocaleText value={"Reason / Note"}/></label>
                   <input
                     type="text"
                     value={grantReason}
@@ -292,7 +277,7 @@ export const AdminLoyaltyManager: React.FC<AdminLoyaltyManagerProps> = ({
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Grant Points to Member</span>
+                <span><LocaleText value={"Grant Points to Member"}/></span>
               </button>
             </form>
           </div>

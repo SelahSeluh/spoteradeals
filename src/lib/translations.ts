@@ -1,6 +1,8 @@
+import {extraLanguages} from './extraLanguages';
 import { Language } from '../types';
 
 export const translations: Record<Language, Record<string, string>> = {
+  ...extraLanguages,
   en: {
     siteName: 'SpoteraDeals',
     tagline: 'Discover More. Save More. Enjoy More.',

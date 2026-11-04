@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState, useRef, useEffect } from 'react';
 import { Headphones, MessageSquare, Phone, Mail, X, CheckCircle2, ChevronRight, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -39,11 +40,9 @@ export const WhatsAppButton: React.FC = () => {
                 <Headphones className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Spotera Support</h4>
+                <h4 className="text-xs font-bold text-slate-900"><LocaleText value={"Spotera Support"}/></h4>
                 <div className="flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  UAE Concierge Online
-                </div>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /><LocaleText value={"UAE Concierge Online"}/></div>
               </div>
             </div>
             <button
@@ -55,9 +54,7 @@ export const WhatsAppButton: React.FC = () => {
             </button>
           </div>
 
-          <p className="text-[11px] text-slate-600 leading-relaxed">
-            Need help claiming a pass or booking a family experience? Choose how you'd like to reach us:
-          </p>
+          <p className="text-[11px] text-slate-600 leading-relaxed"><LocaleText value={"Need help claiming a pass or booking a family experience? Choose how you'd like to reach us:"}/></p>
 
           {/* Action Options */}
           <div className="space-y-2">
@@ -74,7 +71,7 @@ export const WhatsAppButton: React.FC = () => {
                   <MessageSquare className="w-3.5 h-3.5" />
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#0D9CFD]">Chat on WhatsApp</div>
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#0D9CFD]"><LocaleText value={"Chat on WhatsApp"}/></div>
                   <div className="text-[10px] text-slate-500">+971 50 304 8978</div>
                 </div>
               </div>
@@ -92,8 +89,8 @@ export const WhatsAppButton: React.FC = () => {
                   <Phone className="w-3.5 h-3.5" />
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#0C5CAB]">Call Hotline</div>
-                  <div className="text-[10px] text-slate-500">9 AM – 9 PM GST</div>
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#0C5CAB]"><LocaleText value={"Call Hotline"}/></div>
+                  <div className="text-[10px] text-slate-500"><LocaleText value={"9 AM – 9 PM GST"}/></div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -110,8 +107,8 @@ export const WhatsAppButton: React.FC = () => {
                   <Mail className="w-3.5 h-3.5" />
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#FD9302]">Email Support</div>
-                  <div className="text-[10px] text-slate-500">support@spoteradeals.com</div>
+                  <div className="text-xs font-bold text-slate-900 group-hover:text-[#FD9302]"><LocaleText value={"Email Support"}/></div>
+                  <div className="text-[10px] text-slate-500"><LocaleText value={"support@spoteradeals.com"}/></div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
@@ -126,8 +123,7 @@ export const WhatsAppButton: React.FC = () => {
                 setActiveView('contact');
               }}
               className="text-[11px] font-bold text-[#0D9CFD] hover:underline flex items-center justify-center gap-1 mx-auto"
-            >
-              Open Help & Support Center <ExternalLink className="w-3 h-3" />
+            ><LocaleText value={"Open Help & Support Center"}/><ExternalLink className="w-3 h-3" />
             </button>
           </div>
         </div>

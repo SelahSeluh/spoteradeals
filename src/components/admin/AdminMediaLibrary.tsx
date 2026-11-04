@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState } from 'react';
 import {
   Image as ImageIcon,
@@ -95,11 +96,9 @@ export const AdminMediaLibrary: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-[#0D9CFD]" />
-            <span>Media & Asset Library</span>
+            <span><LocaleText value={"Media & Asset Library"}/></span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Store, preview, copy URLs, and upload Dubai skyline images, logos, and deal banners.
-          </p>
+          <p className="text-xs text-slate-500 mt-0.5"><LocaleText value={"Store, preview, copy URLs, and upload Dubai skyline images, logos, and deal banners."}/></p>
         </div>
 
         <button
@@ -107,7 +106,7 @@ export const AdminMediaLibrary: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-[#0D9CFD] hover:bg-[#0b8de5] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Media Asset</span>
+          <span><LocaleText value={"Add Media Asset"}/></span>
         </button>
       </div>
 
@@ -206,8 +205,8 @@ export const AdminMediaLibrary: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-100">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Add Media Asset</h3>
-                <p className="text-xs text-slate-500">Provide an image URL or upload directly.</p>
+                <h3 className="text-lg font-bold text-slate-900"><LocaleText value={"Add Media Asset"}/></h3>
+                <p className="text-xs text-slate-500"><LocaleText value={"Provide an image URL or upload directly."}/></p>
               </div>
               <button
                 onClick={() => setIsAddingNew(false)}
@@ -219,7 +218,7 @@ export const AdminMediaLibrary: React.FC = () => {
 
             <form onSubmit={handleAddMedia} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Media Title</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Media Title"}/></label>
                 <input
                   type="text"
                   required
@@ -231,7 +230,7 @@ export const AdminMediaLibrary: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Image Web URL</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Image Web URL"}/></label>
                 <input
                   type="text"
                   value={newUrl.startsWith('data:') ? '' : newUrl}
@@ -244,7 +243,7 @@ export const AdminMediaLibrary: React.FC = () => {
               {/* Upload local image */}
               <div className="border border-dashed border-slate-300 rounded-xl p-4 text-center space-y-2 bg-slate-50">
                 <UploadCloud className="w-6 h-6 text-slate-400 mx-auto" />
-                <p className="text-xs font-bold text-slate-700">Or pick from local computer</p>
+                <p className="text-xs font-bold text-slate-700"><LocaleText value={"Or pick from local computer"}/></p>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -255,19 +254,19 @@ export const AdminMediaLibrary: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Category Tag</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Category Tag"}/></label>
                 <select
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="Skyline">Skyline</option>
-                  <option value="Theme Park">Theme Park</option>
-                  <option value="Food">Food</option>
-                  <option value="Kids Play">Kids Play</option>
-                  <option value="Hotel">Hotel</option>
-                  <option value="Branding">Branding</option>
-                  <option value="General">General</option>
+                  <option value="Skyline">{"Skyline"}</option>
+                  <option value="Theme Park">{"Theme Park"}</option>
+                  <option value="Food">{"Food"}</option>
+                  <option value="Kids Play">{"Kids Play"}</option>
+                  <option value="Hotel">{"Hotel"}</option>
+                  <option value="Branding">{"Branding"}</option>
+                  <option value="General">{"General"}</option>
                 </select>
               </div>
 
@@ -282,16 +281,12 @@ export const AdminMediaLibrary: React.FC = () => {
                   type="button"
                   onClick={() => setIsAddingNew(false)}
                   className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   disabled={uploading}
                   className="px-6 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0b8de5] text-white text-xs font-bold shadow-xs cursor-pointer"
-                >
-                  Add to Media Library
-                </button>
+                ><LocaleText value={"Add to Media Library"}/></button>
               </div>
             </form>
           </div>

@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert,
@@ -92,11 +93,9 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-6 h-6 text-[#10B981]" />
-              <h2 className="text-xl font-black tracking-tight">Security & Audit Event Logs</h2>
+              <h2 className="text-xl font-black tracking-tight"><LocaleText value={"Security & Audit Event Logs"}/></h2>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Recorded booking, cancellation and redemption activity. Login and content-change auditing are not configured in this deployment.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl"><LocaleText value={"Recorded booking, cancellation and redemption activity. Login and content-change auditing are not configured in this deployment."}/></p>
           </div>
 
           <button
@@ -104,7 +103,7 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
             className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all text-xs font-bold flex items-center gap-2 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Stream</span>
+            <span><LocaleText value={"Refresh Stream"}/></span>
           </button>
         </div>
       </div>
@@ -150,7 +149,7 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
 
         {/* Action Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pt-1">
-          <span className="text-[11px] font-bold text-slate-400 shrink-0">Action:</span>
+          <span className="text-[11px] font-bold text-slate-400 shrink-0"><LocaleText value={"Action:"}/></span>
           {uniqueActions.map((act) => (
             <button
               key={act}
@@ -171,16 +170,15 @@ export const AdminAuditLogsManager: React.FC<AdminAuditLogsManagerProps> = ({
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-[#0D9CFD]" />
-            Recorded Events ({logs.length})
+            <FileText className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Recorded Events ("}/>{logs.length})
           </h3>
-          <span className="text-xs text-slate-400 font-semibold">Latest 200 security logs</span>
+          <span className="text-xs text-slate-400 font-semibold"><LocaleText value={"Latest 200 security logs"}/></span>
         </div>
 
         {logs.length === 0 ? (
           <div className="p-12 text-center text-slate-400 space-y-2">
             <ShieldAlert className="w-10 h-10 mx-auto stroke-1 text-slate-300" />
-            <p className="text-sm font-medium">No events match the selected criteria.</p>
+            <p className="text-sm font-medium"><LocaleText value={"No events match the selected criteria."}/></p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">

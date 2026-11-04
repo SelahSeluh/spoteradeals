@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import {
   X,
@@ -125,7 +126,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
               className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Back</span>
+              <span><LocaleText value={"Back"}/></span>
             </button>
           ) : (
             <div />
@@ -182,7 +183,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
               className="w-full py-2.5 px-4 bg-[#0D9CFD] hover:bg-[#0b8de5] active:scale-[0.99] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <User className="w-4 h-4" />
-              <span>Register</span>
+              <span><LocaleText value={"Register"}/></span>
             </button>
 
             {/* Log In */}
@@ -194,7 +195,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
               className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-800 rounded-xl text-xs sm:text-sm font-bold border border-slate-300 transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <Mail className="w-4 h-4 text-slate-600" />
-              <span>Log In</span>
+              <span><LocaleText value={"Log In"}/></span>
             </button>
 
             {/* Divider */}
@@ -203,7 +204,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
                 <div className="w-full border-t border-slate-200" />
               </div>
               <div className="relative flex justify-center text-[11px] text-slate-400">
-                <span className="bg-white px-2">or continue with</span>
+                <span className="bg-white px-2"><LocaleText value={"or continue with"}/></span>
               </div>
             </div>
 
@@ -215,7 +216,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
               <svg className="w-4 h-4 fill-current" viewBox="0 0 170 170">
                 <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.08-7.7-7.92-12.04-14.5-5.99-9.13-10.66-19.48-14.01-31.06-3.35-11.57-5.03-22.75-5.03-33.52 0-14.35 3.63-26.33 10.89-35.95 7.26-9.62 16.5-14.52 27.71-14.7 4.9.12 10.3 1.34 16.2 3.68 5.9 2.34 9.58 3.56 11.04 3.68 2.02-.34 5.99-1.63 11.91-3.86 5.92-2.24 11.13-3.26 15.63-3.07 10.89.73 19.86 4.75 26.91 12.06-9.51 5.75-14.18 13.9-14.01 24.45.18 8.44 3.32 15.53 9.42 21.28 6.1 5.75 13.36 9.07 21.78 9.96-2.12 6.52-4.78 13.06-7.99 19.61zM119.22 31.02c0-7.25 2.66-13.9 7.98-19.95 5.32-6.05 11.75-9.69 19.29-10.92.23 1.36.35 2.61.35 3.75 0 7.25-2.77 14.12-8.31 20.61-5.54 6.49-12.18 10.13-19.91 10.92-.2-1.36-.31-2.61-.31-3.75z" />
               </svg>
-              <span>Continue with Apple</span>
+              <span><LocaleText value={"Continue with Apple"}/></span>
             </button>
 
             {/* Continue with Google */}
@@ -232,7 +233,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
               onClick={handleGuest}
               className="w-full py-2.5 px-4 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] text-slate-700 rounded-xl text-xs sm:text-sm font-semibold border border-slate-200 transition-colors flex items-center justify-center gap-2 cursor-pointer mt-1"
             >
-              <span>Continue as Guest</span>
+              <span><LocaleText value={"Continue as Guest"}/></span>
               <ArrowRight className="w-4 h-4 text-slate-400" />
             </button>
           </div>
@@ -241,9 +242,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
           <form onSubmit={handleSubmit} className="space-y-3 pt-1">
             {authView === 'email-register' && (
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">
-                  Full Name
-                </label>
+                <label className="text-xs font-bold text-slate-700 block mb-1"><LocaleText value={"Full Name"}/></label>
                 <div className="relative">
                   <input
                     type="text"
@@ -259,9 +258,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
             )}
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">
-                Email Address
-              </label>
+              <label className="text-xs font-bold text-slate-700 block mb-1"><LocaleText value={"Email Address"}/></label>
               <div className="relative">
                 <input
                   type="email"
@@ -276,9 +273,7 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">
-                Password
-              </label>
+              <label className="text-xs font-bold text-slate-700 block mb-1"><LocaleText value={"Password"}/></label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -323,16 +318,14 @@ export const WelcomeAuthModal: React.FC<WelcomeAuthModalProps> = ({ isOpen, onCl
                 type="button"
                 onClick={handleGuest}
                 className="font-medium text-slate-500 hover:text-slate-800 cursor-pointer"
-              >
-                Continue as Guest →
-              </button>
+              ><LocaleText value={"Continue as Guest →"}/></button>
             </div>
           </form>
         )}
 
         <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-slate-400 text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>SpoteraDeals Verified UAE Platform</span>
+          <span><LocaleText value={"SpoteraDeals Verified UAE Platform"}/></span>
         </div>
       </div>
     </div>

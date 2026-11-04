@@ -12,11 +12,13 @@ export const SUPPORTED_LANGUAGES: Array<{
   { code: 'ar', name: 'Arabic', nativeName: 'العربية (الإمارات)', flag: '🇦🇪', dir: 'rtl' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', dir: 'ltr' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr' },
+  { code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰', dir: 'rtl' },
+  { code: 'af', name: 'Afrikaans', nativeName: 'Afrikaans', flag: '🇿🇦', dir: 'ltr' },
   { code: 'zh', name: 'Chinese', nativeName: '中文 (普通话)', flag: '🇨🇳', dir: 'ltr' },
 ];
 
 export function isRtlLang(lang: Language): boolean {
-  return lang === 'ar';
+  return lang === 'ar' || lang === 'ur';
 }
 
 /**
@@ -45,6 +47,8 @@ export function safeTranslate(key: string, lang: Language): string {
  */
 export function getLocalizedTitle(deal: Deal, lang: Language): string {
   if (!deal) return '';
+  if (lang === 'ur' && deal.title_ur?.trim()) return deal.title_ur;
+  if (lang === 'af' && deal.title_af?.trim()) return deal.title_af;
   if (lang === 'ar' && deal.title_ar?.trim()) return deal.title_ar;
   if (lang === 'ru' && deal.title_ru?.trim()) return deal.title_ru;
   if (lang === 'fr' && deal.title_fr?.trim()) return deal.title_fr;
@@ -57,6 +61,8 @@ export function getLocalizedTitle(deal: Deal, lang: Language): string {
  */
 export function getLocalizedDescription(deal: Deal, lang: Language): string {
   if (!deal) return '';
+  if (lang === 'ur' && deal.description_ur?.trim()) return deal.description_ur;
+  if (lang === 'af' && deal.description_af?.trim()) return deal.description_af;
   if (lang === 'ar' && deal.description_ar?.trim()) return deal.description_ar;
   if (lang === 'ru' && deal.description_ru?.trim()) return deal.description_ru;
   if (lang === 'fr' && deal.description_fr?.trim()) return deal.description_fr;

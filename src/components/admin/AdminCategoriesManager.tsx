@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState } from 'react';
 import {
   Plus,
@@ -136,11 +137,9 @@ export const AdminCategoriesManager: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <Tag className="w-5 h-5 text-[#0D9CFD]" />
-            <span>Category Management</span>
+            <span><LocaleText value={"Category Management"}/></span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Add, reorder, edit icons and promotional badges for category pills on the home page and filters.
-          </p>
+          <p className="text-xs text-slate-500 mt-0.5"><LocaleText value={"Add, reorder, edit icons and promotional badges for category pills on the home page and filters."}/></p>
         </div>
 
         <button
@@ -148,7 +147,7 @@ export const AdminCategoriesManager: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 bg-[#0D9CFD] hover:bg-[#0b8de5] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-colors self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Category</span>
+          <span><LocaleText value={"Add New Category"}/></span>
         </button>
       </div>
 
@@ -179,7 +178,7 @@ export const AdminCategoriesManager: React.FC = () => {
                   <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                     {cat.nameAr && <span className="font-arabic">{cat.nameAr}</span>}
                     <span>•</span>
-                    <span className="font-semibold text-slate-600">{dealCount} active deals</span>
+                    <span className="font-semibold text-slate-600">{dealCount}<LocaleText value={"active deals"}/></span>
                   </div>
                 </div>
               </div>
@@ -255,7 +254,7 @@ export const AdminCategoriesManager: React.FC = () => {
                 <h3 className="text-lg font-bold text-slate-900">
                   {editingCategory ? 'Edit Category' : 'Create New Category'}
                 </h3>
-                <p className="text-xs text-slate-500">Configure name, Arabic translation, badge and icon.</p>
+                <p className="text-xs text-slate-500"><LocaleText value={"Configure name, Arabic translation, badge and icon."}/></p>
               </div>
               <button
                 onClick={() => {
@@ -270,7 +269,7 @@ export const AdminCategoriesManager: React.FC = () => {
 
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Category Name (English)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Category Name (English)"}/></label>
                 <input
                   type="text"
                   required
@@ -282,7 +281,7 @@ export const AdminCategoriesManager: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Category Name (Arabic)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Category Name (Arabic)"}/></label>
                 <input
                   type="text"
                   value={formData.nameAr}
@@ -294,7 +293,7 @@ export const AdminCategoriesManager: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Badge Label (Optional)</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Badge Label (Optional)"}/></label>
                   <input
                     type="text"
                     value={formData.badge}
@@ -305,7 +304,7 @@ export const AdminCategoriesManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Icon Type</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Icon Type"}/></label>
                   <select
                     value={formData.iconName}
                     onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
@@ -328,9 +327,7 @@ export const AdminCategoriesManager: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
                   className="w-4 h-4 rounded text-[#0D9CFD] cursor-pointer"
                 />
-                <label htmlFor="cat_enabled" className="text-xs font-bold text-slate-700 cursor-pointer">
-                  Display and enable on Homepage filter bar
-                </label>
+                <label htmlFor="cat_enabled" className="text-xs font-bold text-slate-700 cursor-pointer"><LocaleText value={"Display and enable on Homepage filter bar"}/></label>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
@@ -341,9 +338,7 @@ export const AdminCategoriesManager: React.FC = () => {
                     setEditingCategory(null);
                   }}
                   className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#0D9CFD] hover:bg-[#0b8de5] text-white text-xs font-bold shadow-xs cursor-pointer"

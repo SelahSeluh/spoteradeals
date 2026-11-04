@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import React, { useState } from 'react';
 import {
   Sparkles,
@@ -96,15 +97,11 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
         <div className="max-w-5xl mx-auto space-y-3 relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-bold border border-white/20">
             <Users className="w-3.5 h-3.5 text-cyan-200" />
-            <span>UAE Family Hub</span>
+            <span><LocaleText value={"UAE Family Hub"}/></span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Family
-          </h1>
-          <p className="text-sm sm:text-base text-blue-100 max-w-xl font-normal leading-relaxed">
-            Find something everyone will love. Verified play areas, kid-friendly restaurants, waterparks, and weekend adventures across the UAE.
-          </p>
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight"><LocaleText value={"Family"}/></h1>
+          <p className="text-sm sm:text-base text-blue-100 max-w-xl font-normal leading-relaxed"><LocaleText value={"Find something everyone will love. Verified play areas, kid-friendly restaurants, waterparks, and weekend adventures across the UAE."}/></p>
         </div>
       </div>
 
@@ -138,8 +135,7 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
           {/* Age Filters */}
           <div className="flex flex-wrap items-center gap-1.5 text-xs font-bold">
             <span className="text-slate-500 mr-1 flex items-center gap-1">
-              <Users className="w-3.5 h-3.5 text-[#0C5CAB]" /> Age:
-            </span>
+              <Users className="w-3.5 h-3.5 text-[#0C5CAB]" /><LocaleText value={"Age:"}/></span>
             {ageFilters.map((age) => (
               <button
                 key={age.id}
@@ -168,9 +164,7 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
                   ? 'bg-blue-50 border-[#0C5CAB] text-[#0C5CAB]'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
-            >
-              🏢 Indoor Play
-            </button>
+            ><LocaleText value={"🏢 Indoor Play"}/></button>
             <button
               onClick={() =>
                 setSelectedEnvironment(
@@ -182,20 +176,16 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
                   ? 'bg-blue-50 border-[#0C5CAB] text-[#0C5CAB]'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
-            >
-              ☀️ Outdoor Fun
-            </button>
+            ><LocaleText value={"☀️ Outdoor Fun"}/></button>
           </div>
         </div>
 
         {/* 4. RESULTS SECTION */}
         <div className="flex items-center justify-between pt-2">
           <h2 className="text-base sm:text-xl font-black text-slate-900">
-            {filteredDeals.length} Family Offers in {selectedCity === 'All' ? 'UAE' : selectedCity}
+            {filteredDeals.length}<LocaleText value={"Family Offers in"}/>{selectedCity === 'All' ? 'UAE' : selectedCity}
           </h2>
-          <span className="text-xs text-slate-500 font-medium">
-            Updated today with instant QR passes
-          </span>
+          <span className="text-xs text-slate-500 font-medium"><LocaleText value={"Updated today with instant QR passes"}/></span>
         </div>
 
         {filteredDeals.length === 0 ? (
@@ -203,10 +193,8 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
             <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#0C5CAB] flex items-center justify-center mx-auto">
               <Smile className="w-8 h-8 text-[#0C5CAB]" />
             </div>
-            <h3 className="text-lg font-black text-slate-900">No matching family deals found</h3>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
-              Try adjusting your age filters or choose "All Emirates" to see more family passes and play areas.
-            </p>
+            <h3 className="text-lg font-black text-slate-900"><LocaleText value={"No matching family deals found"}/></h3>
+            <p className="text-xs text-slate-500 max-w-xs mx-auto"><LocaleText value={"Try adjusting your age filters or choose \"All Emirates\" to see more family passes and play areas."}/></p>
             <button
               onClick={() => {
                 setActiveSection('all');
@@ -215,9 +203,7 @@ export const FamilyPage: React.FC<FamilyPageProps> = ({ onClaimCoupon, onBookNow
                 setSelectedCity('All');
               }}
               className="px-5 py-2.5 bg-[#0C5CAB] text-white rounded-xl text-xs font-bold hover:bg-[#094887] transition-all cursor-pointer"
-            >
-              Reset Filters
-            </button>
+            ><LocaleText value={"Reset Filters"}/></button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">

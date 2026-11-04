@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React from 'react';
 import {
   Heart,
@@ -225,19 +226,19 @@ export const SpoteraEmptyState: React.FC<SpoteraEmptyStateProps> = ({
               {searchQuery && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 text-xs font-bold text-slate-800 rounded-full shadow-2xs">
                   <Search className="w-3 h-3 text-[#1D6FE0]" />
-                  <span>Keyword: "{searchQuery}"</span>
+                  <span><LocaleText value={"Keyword: \""}/>{searchQuery}"</span>
                 </span>
               )}
               {activeCategory && activeCategory !== 'All' && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 text-xs font-bold text-slate-800 rounded-full shadow-2xs">
                   <Tag className="w-3 h-3 text-[#1D6FE0]" />
-                  <span>Category: {activeCategory}</span>
+                  <span><LocaleText value={"Category:"}/>{activeCategory}</span>
                 </span>
               )}
               {activeCity && activeCity !== 'All' && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 text-xs font-bold text-slate-800 rounded-full shadow-2xs">
                   <MapPin className="w-3 h-3 text-[#1D6FE0]" />
-                  <span>City: {activeCity}</span>
+                  <span><LocaleText value={"City:"}/>{activeCity}</span>
                 </span>
               )}
             </div>
@@ -279,15 +280,15 @@ export const SpoteraEmptyState: React.FC<SpoteraEmptyStateProps> = ({
           <div className="pt-4 border-t border-blue-100/80 grid grid-cols-3 gap-2 text-[11px] font-bold text-slate-500">
             <div className="flex items-center justify-center gap-1.5 text-slate-600">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1FAE7B] shrink-0" />
-              <span className="truncate">Instant Digital Passes</span>
+              <span className="truncate"><LocaleText value={"Instant Digital Passes"}/></span>
             </div>
             <div className="flex items-center justify-center gap-1.5 text-slate-600">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1FAE7B] shrink-0" />
-              <span className="truncate">100% Verified Partners</span>
+              <span className="truncate"><LocaleText value={"100% Verified Partners"}/></span>
             </div>
             <div className="flex items-center justify-center gap-1.5 text-slate-600">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#1FAE7B] shrink-0" />
-              <span className="truncate">0 Booking Fees</span>
+              <span className="truncate"><LocaleText value={"0 Booking Fees"}/></span>
             </div>
           </div>
         </div>
@@ -354,9 +355,7 @@ export const SpoteraEmptyState: React.FC<SpoteraEmptyStateProps> = ({
                 <h4 className="text-sm sm:text-base font-black text-slate-900 font-sans tracking-tight">
                   {t('emptyStateTrendingUAE') || 'Trending Offers Across UAE'}
                 </h4>
-                <p className="text-[11px] text-slate-500 font-medium">
-                  Verified customer favorites with instant Buy 1 Get 1 and discounts
-                </p>
+                <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Verified customer favorites with instant Buy 1 Get 1 and discounts"}/></p>
               </div>
             </div>
 

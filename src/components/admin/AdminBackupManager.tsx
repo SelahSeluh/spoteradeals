@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState, useEffect } from 'react';
 import {
   Database,
@@ -208,14 +209,9 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Database className="w-6 h-6 text-[#0D9CFD]" />
-              <h2 className="text-xl font-black tracking-tight">
-                Database Backup & Rollback System
-              </h2>
+              <h2 className="text-xl font-black tracking-tight"><LocaleText value={"Database Backup & Rollback System"}/></h2>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Maintain full enterprise-grade data durability for SpoteraDeals. Create automated or on-demand
-              SHA-256 verified snapshots, download archives, and restore with automatic pre-recovery safety points.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed"><LocaleText value={"Maintain full enterprise-grade data durability for SpoteraDeals. Create automated or on-demand SHA-256 verified snapshots, download archives, and restore with automatic pre-recovery safety points."}/></p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -247,7 +243,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
             }`}
           >
             <HardDrive className="w-4 h-4" />
-            <span>Complete Snapshots ({backups.length})</span>
+            <span><LocaleText value={"Complete Snapshots ("}/>{backups.length})</span>
           </button>
           <button
             onClick={() => setActiveSubTab('versions')}
@@ -258,7 +254,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
             }`}
           >
             <History className="w-4 h-4" />
-            <span>Content Version History ({versions.length})</span>
+            <span><LocaleText value={"Content Version History ("}/>{versions.length})</span>
           </button>
         </div>
       </div>
@@ -268,9 +264,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
           {/* Create Backup Action Box */}
           <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-2xs space-y-4">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-[#0D9CFD]" />
-              Generate Immediate System Backup Snapshot
-            </h3>
+              <Plus className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Generate Immediate System Backup Snapshot"}/></h3>
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <input
                 type="text"
@@ -292,40 +286,35 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
                 <span>{isCreatingBackup ? 'Saving Snapshot...' : 'Create Snapshot'}</span>
               </button>
             </div>
-            <p className="text-[11px] text-slate-500">
-              Snapshots capture all user profiles, active & redeemed vouchers, bookings, content configs, and audit traces in an immutable SHA-256 sealed JSON archive on the server.
-            </p>
+            <p className="text-[11px] text-slate-500"><LocaleText value={"Snapshots capture all user profiles, active & redeemed vouchers, bookings, content configs, and audit traces in an immutable SHA-256 sealed JSON archive on the server."}/></p>
           </div>
 
           {/* Backups List Table */}
           <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-[#10B981]" />
-                Archived Snapshots & Verification Status
-              </h3>
+                <FileCheck className="w-4 h-4 text-[#10B981]" /><LocaleText value={"Archived Snapshots & Verification Status"}/></h3>
               <span className="text-xs text-slate-400 font-semibold">
-                {backups.length} snapshot{backups.length === 1 ? '' : 's'} recorded
-              </span>
+                {backups.length}<LocaleText value={"snapshot"}/>{backups.length === 1 ? '' : 's'}<LocaleText value={"recorded"}/></span>
             </div>
 
             {backups.length === 0 ? (
               <div className="p-12 text-center text-slate-400 space-y-2">
                 <HardDrive className="w-10 h-10 mx-auto stroke-1" />
-                <p className="text-sm font-medium">No snapshots found.</p>
-                <p className="text-xs">Click "Create Snapshot" above to establish your initial restore point.</p>
+                <p className="text-sm font-medium"><LocaleText value={"No snapshots found."}/></p>
+                <p className="text-xs"><LocaleText value={"Click \"Create Snapshot\" above to establish your initial restore point."}/></p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200/80 uppercase tracking-wider text-[10px]">
                     <tr>
-                      <th className="py-3 px-4">Date & Time</th>
-                      <th className="py-3 px-4">Description / Archive</th>
-                      <th className="py-3 px-4">Size & Integrity</th>
-                      <th className="py-3 px-4">Records Count</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4 text-right">Actions</th>
+                      <th className="py-3 px-4"><LocaleText value={"Date & Time"}/></th>
+                      <th className="py-3 px-4"><LocaleText value={"Description / Archive"}/></th>
+                      <th className="py-3 px-4"><LocaleText value={"Size & Integrity"}/></th>
+                      <th className="py-3 px-4"><LocaleText value={"Records Count"}/></th>
+                      <th className="py-3 px-4"><LocaleText value={"Status"}/></th>
+                      <th className="py-3 px-4 text-right"><LocaleText value={"Actions"}/></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
@@ -346,30 +335,27 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
                           <span className="text-[11px] text-slate-500 font-mono truncate block">
                             {bcp.filename}
                           </span>
-                          <span className="text-[10px] text-slate-400 block mt-0.5">
-                            By: {bcp.actorEmail}
+                          <span className="text-[10px] text-slate-400 block mt-0.5"><LocaleText value={"By:"}/>{bcp.actorEmail}
                           </span>
                         </td>
 
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="font-bold text-slate-700">{formatBytes(bcp.sizeBytes)}</div>
-                          <span className="text-[10px] text-slate-400 font-mono block mt-0.5" title={bcp.checksum}>
-                            SHA-256: {bcp.checksum.substring(0, 10)}...
+                          <span className="text-[10px] text-slate-400 font-mono block mt-0.5" title={bcp.checksum}><LocaleText value={"SHA-256:"}/>{bcp.checksum.substring(0, 10)}...
                           </span>
                         </td>
 
                         <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-slate-600">
                           {bcp.recordCounts ? (
                             <div className="space-y-0.5">
-                              <span>Users: {bcp.recordCounts.users}</span>
+                              <span><LocaleText value={"Users:"}/>{bcp.recordCounts.users}</span>
                               <span className="mx-1.5">·</span>
-                              <span>Bookings: {bcp.recordCounts.bookings}</span>
-                              <div className="text-slate-400 text-[10px]">
-                                Vouchers: {bcp.recordCounts.vouchers} · Deals: {bcp.recordCounts.deals}
+                              <span><LocaleText value={"Bookings:"}/>{bcp.recordCounts.bookings}</span>
+                              <div className="text-slate-400 text-[10px]"><LocaleText value={"Vouchers:"}/>{bcp.recordCounts.vouchers}<LocaleText value={"· Deals:"}/>{bcp.recordCounts.deals}
                               </div>
                             </div>
                           ) : (
-                            <span>Full Data Dump</span>
+                            <span><LocaleText value={"Full Data Dump"}/></span>
                           )}
                         </td>
 
@@ -394,7 +380,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
                             title="Download JSON Archive"
                           >
                             <Download className="w-3.5 h-3.5" />
-                            <span>Download</span>
+                            <span><LocaleText value={"Download"}/></span>
                           </a>
 
                           <button
@@ -426,10 +412,8 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-2xs flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Content Scope Filter</h3>
-              <p className="text-xs text-slate-500">
-                View audit snapshots of Homepage, Promotions, Branding, and Deals.
-              </p>
+              <h3 className="text-sm font-bold text-slate-900"><LocaleText value={"Content Scope Filter"}/></h3>
+              <p className="text-xs text-slate-500"><LocaleText value={"View audit snapshots of Homepage, Promotions, Branding, and Deals."}/></p>
             </div>
 
             <div className="flex items-center gap-2 overflow-x-auto">
@@ -452,21 +436,16 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
           <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <History className="w-4 h-4 text-[#0D9CFD]" />
-                Version Timeline & Safety Checkpoints
-              </h3>
+                <History className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Version Timeline & Safety Checkpoints"}/></h3>
               <span className="text-xs text-slate-400 font-semibold">
-                {versions.length} version{versions.length === 1 ? '' : 's'} available
-              </span>
+                {versions.length}<LocaleText value={"version"}/>{versions.length === 1 ? '' : 's'}<LocaleText value={"available"}/></span>
             </div>
 
             {versions.length === 0 ? (
               <div className="p-12 text-center text-slate-400 space-y-2">
                 <History className="w-10 h-10 mx-auto stroke-1" />
-                <p className="text-sm font-medium">No recorded versions in this scope yet.</p>
-                <p className="text-xs">
-                  Whenever an admin updates homepage banners, colors, fonts, or deals, snapshots are logged automatically here.
-                </p>
+                <p className="text-sm font-medium"><LocaleText value={"No recorded versions in this scope yet."}/></p>
+                <p className="text-xs"><LocaleText value={"Whenever an admin updates homepage banners, colors, fonts, or deals, snapshots are logged automatically here."}/></p>
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
@@ -485,7 +464,7 @@ export const AdminBackupManager: React.FC<AdminBackupManagerProps> = ({
                       <div className="flex items-center gap-2 text-[11px] text-slate-500">
                         <span>{new Date(ver.timestamp).toLocaleString()}</span>
                         <span>·</span>
-                        <span>Author: {ver.authorEmail}</span>
+                        <span><LocaleText value={"Author:"}/>{ver.authorEmail}</span>
                         <span>·</span>
                         <span className="font-mono text-slate-400">{ver.id}</span>
                       </div>

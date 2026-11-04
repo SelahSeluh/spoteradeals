@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React from 'react';
 import { SkeletonCard, SkeletonCategoryPill, SkeletonHero, SkeletonDetail } from './Skeleton';
 import { ViewMode } from '../context/AppContext';
@@ -64,7 +65,7 @@ export const MainViewSkeleton: React.FC<MainViewSkeletonProps> = ({
       className={`min-h-[75vh] w-full max-w-full overflow-x-hidden pb-16 transition-opacity duration-300 ${className}`}
     >
       {/* Screen-reader announcement */}
-      <span className="sr-only">Loading SpoteraDeals UAE experiences and passes...</span>
+      <span className="sr-only"><LocaleText value={"Loading SpoteraDeals UAE experiences and passes..."}/></span>
 
       {/* Subtle Top Loading Status Pill */}
       <div className="w-full flex justify-center py-2.5 px-4 sticky top-16 sm:top-20 z-20 pointer-events-none">

@@ -7,11 +7,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
-import './expedition.css';
-import './paper-picnic.css';
-import './cool-picnic.css';
-import './responsive-fixes.css';
-import './ocean-blue.css';
+
+import './find-your-next.css';
 
 // Safely unregister stale service workers in development to prevent caching issues in iframe preview
 if (import.meta.env.DEV) {

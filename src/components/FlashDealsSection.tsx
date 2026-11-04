@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useMemo, useState } from 'react';
 import { Flame, ArrowRight, Zap, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -75,9 +76,7 @@ export const FlashDealsSection: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                 <span>{sectionTitles.title}</span>
                 <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping" />
-                  Live
-                </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping" /><LocaleText value={"Live"}/></span>
               </h2>
             </div>
           </div>

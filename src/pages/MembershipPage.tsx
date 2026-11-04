@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import React, { useState } from 'react';
 import { Crown, CheckCircle2, Sparkles, ShieldCheck, Zap, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -20,22 +21,14 @@ export const MembershipPage: React.FC = () => {
           <Crown className="w-8 h-8 text-[#0C5CAB]" />
         </div>
         <div className="space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-amber-300">
-            SpoteraDeals VIP Family Pass
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-black font-sans text-white">
-            Save Up to 50% More on Every Family Activity
-          </h1>
-          <p className="text-xs sm:text-sm text-blue-100 font-medium max-w-2xl mx-auto">
-            One membership for the entire family. Enjoy priority camp seats, exclusive VIP vouchers, and zero activity booking fees across Dubai and all 7 Emirates.
-          </p>
+          <span className="text-xs font-black uppercase tracking-widest text-amber-300"><LocaleText value={"SpoteraDeals VIP Family Pass"}/></span>
+          <h1 className="text-3xl sm:text-4xl font-black font-sans text-white"><LocaleText value={"Save Up to 50% More on Every Family Activity"}/></h1>
+          <p className="text-xs sm:text-sm text-blue-100 font-medium max-w-2xl mx-auto"><LocaleText value={"One membership for the entire family. Enjoy priority camp seats, exclusive VIP vouchers, and zero activity booking fees across Dubai and all 7 Emirates."}/></p>
         </div>
       </div>
 
       {successMsg && (
-        <div className="p-4 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded-2xl text-center font-bold text-xs">
-          🎉 Congratulations! Your SpoteraDeals VIP Family Pass has been activated!
-        </div>
+        <div className="p-4 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded-2xl text-center font-bold text-xs"><LocaleText value={"🎉 Congratulations! Your SpoteraDeals VIP Family Pass has been activated!"}/></div>
       )}
 
       {/* Pricing Plans Grid */}
@@ -43,22 +36,17 @@ export const MembershipPage: React.FC = () => {
         {/* Free Plan */}
         <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 flex flex-col justify-between">
           <div className="space-y-4">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Standard Pass</span>
-            <div className="text-3xl font-black text-slate-900">
-              FREE
-            </div>
-            <p className="text-xs text-slate-500">Perfect for occasional weekend family outings.</p>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block"><LocaleText value={"Standard Pass"}/></span>
+            <div className="text-3xl font-black text-slate-900"><LocaleText value={"FREE"}/></div>
+            <p className="text-xs text-slate-500"><LocaleText value={"Perfect for occasional weekend family outings."}/></p>
 
             <ul className="space-y-3 text-xs text-slate-700 pt-4 border-t border-slate-100">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Browse & claim standard coupons
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" /><LocaleText value={"Browse & claim standard coupons"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Book venue activity time slots
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" /><LocaleText value={"Book venue activity time slots"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Digital QR code wallet
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" /><LocaleText value={"Digital QR code wallet"}/></li>
             </ul>
           </div>
 
@@ -72,36 +60,28 @@ export const MembershipPage: React.FC = () => {
 
         {/* VIP Premium Plan */}
         <div className="bg-gradient-to-br from-[#0C5CAB] via-[#094887] to-[#063462] text-white p-8 rounded-3xl shadow-xl border border-blue-400/40 space-y-6 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-4 right-4 bg-amber-400 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
-            Best Value
-          </div>
+          <div className="absolute top-4 right-4 bg-amber-400 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md"><LocaleText value={"Best Value"}/></div>
 
           <div className="space-y-4">
             <span className="text-xs font-bold text-amber-300 uppercase tracking-wider block flex items-center gap-1">
-              <Crown className="w-4 h-4 text-amber-300" /> SpoteraDeals VIP Pass
-            </span>
+              <Crown className="w-4 h-4 text-amber-300" /><LocaleText value={"SpoteraDeals VIP Pass"}/></span>
             <div className="text-3xl font-black text-white flex items-baseline gap-1">
-              <span>AED 199</span>
-              <span className="text-xs text-blue-200 font-medium">/ year</span>
+              <span><LocaleText value={"AED 199"}/></span>
+              <span className="text-xs text-blue-200 font-medium"><LocaleText value={"/ year"}/></span>
             </div>
-            <p className="text-xs text-blue-100">Covers 2 Adults + up to 4 Children.</p>
+            <p className="text-xs text-blue-100"><LocaleText value={"Covers 2 Adults + up to 4 Children."}/></p>
 
             <ul className="space-y-3 text-xs text-blue-50 pt-4 border-t border-white/10">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" /> Extra 10% - 50% discount on all deals
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-amber-300" /><LocaleText value={"Extra 10% - 50% discount on all deals"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" /> Priority summer & holiday camp registration
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-amber-300" /><LocaleText value={"Priority summer & holiday camp registration"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" /> Zero activity booking convenience fees
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-amber-300" /><LocaleText value={"Zero activity booking convenience fees"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" /> VIP Birthday venue voucher booklet
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-amber-300" /><LocaleText value={"VIP Birthday venue voucher booklet"}/></li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-300" /> SpoteraDeals concierge support
-              </li>
+                <CheckCircle2 className="w-4 h-4 text-amber-300" /><LocaleText value={"SpoteraDeals concierge support"}/></li>
             </ul>
           </div>
 

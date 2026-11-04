@@ -1,3 +1,4 @@
+import {useDesignText} from '../components/DesignPrimitives';
 import React, { useState, useMemo } from 'react';
 import { SlidersHorizontal, Heart, CheckCircle2, Map, LayoutGrid } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -29,6 +30,8 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     t,
   } = useApp();
 
+  const d=useDesignText();
+  const [query,setQuery]=useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [filter, setFilter] = useState<'All' | 'Nearby' | 'Featured' | 'Popular'>('All');
   const [onlyFavorites, setOnlyFavorites] = useState<boolean>(false);
@@ -63,6 +66,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
       list = list.filter(d => d.city.toLowerCase() === String(selectedCity).toLowerCase());
     }
 
+    if(query.trim())list=list.filter(d=>`${d.title} ${d.businessName} ${d.city} ${d.category}`.toLowerCase().includes(query.toLowerCase()));
     // 2. Favorites only toggle
     if (onlyFavorites) {
       list = list.filter((deal) => savedDealIds.includes(deal.id));
@@ -122,13 +126,14 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
         ? b.discountPercent - a.discountPercent
         : a.discountPrice - b.discountPrice
     );
-  }, [deals, selectedCategory, selectedCity, filter, onlyFavorites, availabilityFilter, dateFilter, sortHigh, savedDealIds]);
+  }, [deals, selectedCategory, selectedCity, query, filter, onlyFavorites, availabilityFilter, dateFilter, sortHigh, savedDealIds]);
 
   return (
     <div className="paper-explore min-h-screen bg-[#F5F7FA] pb-28">
+      <div className="fn-explore-search"><label className="fn-search"><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
       {/* Header */}
       <PageHeader
-        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : (isRtl ? 'استكشف التجارب' : 'Explore experiences'))}
+        title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? selectedCategory : d('explore'))}
         rightAction={
           <div className="flex items-center gap-2">
             {/* View Mode Segmented Switcher */}

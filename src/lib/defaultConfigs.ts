@@ -2,9 +2,9 @@ import { IntroAnimationConfig } from '../types';
 
 export const defaultIntroConfig: IntroAnimationConfig = {
   enabled: true,
-  durationSeconds: 4.5,
+  durationSeconds: 3,
   animationStyle: 'smooth-combined',
-  backgroundType: 'video',
+  backgroundType: 'image',
   solidGradient: {
     from: '#0A2540',
     via: '#0D3B66',
@@ -12,7 +12,7 @@ export const defaultIntroConfig: IntroAnimationConfig = {
     accent: '#FD9302',
     showSkyline: true,
   },
-  backgroundImageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1920',
+  backgroundImageUrl: '/find-your-next/map-4k.webp',
   slideshowImages: [
     'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1600',
     'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&q=80&w=1600',
@@ -20,7 +20,7 @@ export const defaultIntroConfig: IntroAnimationConfig = {
   ],
   slideshowIntervalSeconds: 2.0,
   slideshowTransition: 'fade',
-  videoUrl: '/spotera-intro.mp4',
+  videoUrl: '',
   videoMuted: true,
   videoLoop: true,
   logoUrl: '/spoteradeals-logo.png',

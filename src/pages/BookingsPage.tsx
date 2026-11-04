@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import React, { useState, useMemo, useCallback } from 'react';
 import { Calendar, QrCode, ArrowLeft, X, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -62,8 +63,8 @@ export const BookingsPage: React.FC = () => {
           <div className="w-10" />
         </div>
 
-        {!isLoggedIn && <div className="rounded-lg border border-[#d5c8b2] bg-[#fffdf7] p-5 text-center"><h2 className="text-2xl">Your next adventure starts here</h2><p className="text-sm my-3">Sign in to view your passes. You can keep exploring as a guest.</p><button className="px-5 py-2 rounded-lg bg-[#ff7315] text-white" onClick={()=>requireUserAuth('Sign in to view your passes.',()=>setActiveView('bookings'))}>Sign in</button></div>}
-        {isLoggedIn&&<div className="rounded-xl border border-blue-100 bg-white p-4"><p className="font-bold">{paymentCopy(language).balance}: {(user.refundPoints||0).toLocaleString()} · AED {((user.refundPoints||0)/100).toFixed(2)}</p><PaymentPolicy language={language}/></div>}
+        {!isLoggedIn && <div className="rounded-lg border border-[#d5c8b2] bg-[#fffdf7] p-5 text-center"><h2 className="text-2xl"><LocaleText value={"Your next adventure starts here"}/></h2><p className="text-sm my-3"><LocaleText value={"Sign in to view your passes. You can keep exploring as a guest."}/></p><button className="px-5 py-2 rounded-lg bg-[#ff7315] text-white" onClick={()=>requireUserAuth('Sign in to view your passes.',()=>setActiveView('bookings'))}><LocaleText value={"Sign in"}/></button></div>}
+        {isLoggedIn&&<div className="rounded-xl border border-blue-100 bg-white p-4"><p className="font-bold">{paymentCopy(language).balance}: {(user.refundPoints||0).toLocaleString()}<LocaleText value={"· AED"}/>{((user.refundPoints||0)/100).toFixed(2)}</p><PaymentPolicy language={language}/></div>}
         {/* Tab Pills */}
         <div className="flex p-1 rounded-[14px] bg-white border border-[#E7EBF2] shadow-xs">
           {tabs.map((tab) => {
@@ -137,8 +138,7 @@ export const BookingsPage: React.FC = () => {
 
                   {/* Bottom: Ref & Actions */}
                   <div className="flex items-center justify-between pt-0.5">
-                    <span className="text-xs font-mono font-semibold text-[#5F6B82]">
-                      Ref: {(booking.bookingCode || booking.id).slice(-8).toUpperCase()}
+                    <span className="text-xs font-mono font-semibold text-[#5F6B82]"><LocaleText value={"Ref:"}/>{(booking.bookingCode || booking.id).slice(-8).toUpperCase()}
                     </span>
 
                     <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export const BookingsPage: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  {booking.pointsCredited ? <p className="text-xs text-blue-700">{booking.pointsCredited.toLocaleString()} Spotera refund points credited · AED {(booking.pointsCredited/100).toFixed(2)}</p>:null}
+                  {booking.pointsCredited ? <p className="text-xs text-blue-700">{booking.pointsCredited.toLocaleString()}<LocaleText value={"Spotera refund points credited · AED"}/>{(booking.pointsCredited/100).toFixed(2)}</p>:null}
                 </div>
               );
             })}

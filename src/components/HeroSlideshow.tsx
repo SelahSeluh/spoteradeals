@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ChevronLeft,
@@ -236,7 +237,7 @@ export const HeroSlideshow: React.FC<HeroSlideshowProps> = ({
                       className="px-4 sm:px-5 py-2.5 sm:py-3 bg-white/15 hover:bg-white/25 active:scale-[0.98] backdrop-blur-xs text-white border border-white/30 text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       <MapPin className="w-3.5 h-3.5 text-[#FD9302]" />
-                      <span>Explore UAE Map</span>
+                      <span><LocaleText value={"Explore UAE Map"}/></span>
                     </button>
                   </div>
                 </div>

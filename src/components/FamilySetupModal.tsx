@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import { Users, Heart, Sparkles, X, Check, MapPin, Calendar, Camera, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -97,8 +98,8 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-extrabold font-sans">Setup Your Family Profile</h3>
-              <p className="text-xs text-cyan-200">Personalize deals for your children & favorite UAE spots</p>
+              <h3 className="text-lg font-extrabold font-sans"><LocaleText value={"Setup Your Family Profile"}/></h3>
+              <p className="text-xs text-cyan-200"><LocaleText value={"Personalize deals for your children & favorite UAE spots"}/></p>
             </div>
           </div>
 
@@ -114,7 +115,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
                 <Users className="w-4 h-4 text-blue-600" />
-                <span>Your Children ({children.length})</span>
+                <span><LocaleText value={"Your Children ("}/>{children.length})</span>
               </div>
 
               <button
@@ -122,8 +123,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
                 onClick={handleAddChild}
                 className="px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold flex items-center gap-1"
               >
-                <Plus className="w-3.5 h-3.5" /> Add Child
-              </button>
+                <Plus className="w-3.5 h-3.5" /><LocaleText value={"Add Child"}/></button>
             </div>
 
             <div className="space-y-3">
@@ -146,7 +146,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
                     />
 
                     <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-2 text-xs font-bold">
-                      <span className="text-slate-400">Age:</span>
+                      <span className="text-slate-400"><LocaleText value={"Age:"}/></span>
                       <select
                         value={child.age}
                         onChange={(e) => {
@@ -156,7 +156,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
                         className="bg-transparent text-slate-900 focus:outline-none w-full cursor-pointer"
                       >
                         {Array.from({ length: 17 }, (_, i) => i + 1).map((a) => (
-                          <option key={a} value={a}>{a} years old</option>
+                          <option key={a} value={a}>{a}{"years old"}</option>
                         ))}
                       </select>
                     </div>
@@ -180,7 +180,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
             <div className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
               <MapPin className="w-4 h-4 text-cyan-600" />
-              <span>Where does your family spend time?</span>
+              <span><LocaleText value={"Where does your family spend time?"}/></span>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -208,7 +208,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
             <div className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
               <Heart className="w-4 h-4 text-rose-600" />
-              <span>What activities do your kids love?</span>
+              <span><LocaleText value={"What activities do your kids love?"}/></span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -236,9 +236,7 @@ export const FamilySetupModal: React.FC<FamilySetupModalProps> = ({ isOpen, onCl
           <button
             type="submit"
             className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white rounded-2xl text-sm font-black shadow-lg shadow-blue-600/30 transition-all active:scale-98"
-          >
-            Save Family Adventure Profile
-          </button>
+          ><LocaleText value={"Save Family Adventure Profile"}/></button>
         </form>
       </div>
     </div>

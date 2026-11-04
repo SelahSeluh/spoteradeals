@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useState } from 'react';
 import { Star, Heart, MapPin, Users, Link2 } from 'lucide-react';
 import { expeditionImage, safeImageUrl } from '../utils/expeditionImages';
@@ -126,34 +127,23 @@ export const DealCard: React.FC<DealCardProps> = ({
         {/* Top-Left: Discount Badge in Brand Orange + Availability */}
         <div className="deal-badges absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 flex-wrap">
           <span className="bg-[#F5820A] text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-xs tracking-tight">
-            {deal.discountPercent}% OFF
-          </span>
+            {deal.discountPercent}<LocaleText value={"% OFF"}/></span>
 
           {deal.availability === 'limited' && (
-            <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase">
-              Limited
-            </span>
+            <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase"><LocaleText value={"Limited"}/></span>
           )}
           {deal.availability === 'fully-booked' && (
-            <span className="bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase">
-              Booked
-            </span>
+            <span className="bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase"><LocaleText value={"Booked"}/></span>
           )}
           {deal.availability === 'not-available' && (
-            <span className="bg-slate-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase">
-              Unavailable
-            </span>
+            <span className="bg-slate-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-xs tracking-tight uppercase"><LocaleText value={"Unavailable"}/></span>
           )}
           {(deal.availability === 'available' || !deal.availability) && (
             <span className="bg-emerald-600/95 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-xs tracking-tight flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-white" />
-              Available
-            </span>
+              <span className="w-1 h-1 rounded-full bg-white" /><LocaleText value={"Available"}/></span>
           )}
           {deal.isFeatured && (
-            <span className="bg-[#0C5CAB] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs tracking-tight hidden sm:inline-block">
-              FEATURED
-            </span>
+            <span className="bg-[#0C5CAB] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs tracking-tight hidden sm:inline-block"><LocaleText value={"FEATURED"}/></span>
           )}
           {(deal.isFlashDeal || deal.flashDealExpiresAt) && (
             <FlashDealCountdown
@@ -209,7 +199,7 @@ export const DealCard: React.FC<DealCardProps> = ({
 
       {/* 2. BODY CONTENT */}
       <div className="deal-body p-3.5 flex-1 flex flex-col justify-between space-y-2">
-        {isCategoryPhoto && <small className="deal-photo-note">Category photo · venue may differ</small>}
+        {isCategoryPhoto && <small className="deal-photo-note"><LocaleText value={"Category photo · venue may differ"}/></small>}
         <div>
           {/* Title (max 2 lines, bold, readable) */}
           <h3 className="text-[14px] font-bold text-[#0D1B3E] leading-snug line-clamp-2 group-hover:text-[#0C5CAB] transition-colors">
@@ -227,7 +217,7 @@ export const DealCard: React.FC<DealCardProps> = ({
         <div className="deal-price-rating flex items-center justify-between pt-2 border-t border-[#F0F4F8]">
           {/* Price with clear 'From' label and struck-through original */}
           <div className="flex flex-col">
-            <span className="text-[10px] font-semibold text-[#8D98AA] leading-none">From</span>
+            <span className="text-[10px] font-semibold text-[#8D98AA] leading-none"><LocaleText value={"From"}/></span>
             <div className="deal-prices flex items-baseline gap-1.5 mt-0.5">
               <span className="text-[15px] font-black text-[#0C5CAB] leading-none">
                 AED {deal.discountPrice}
@@ -241,15 +231,15 @@ export const DealCard: React.FC<DealCardProps> = ({
           </div>
 
           {/* Star Rating with Review Count */}
-          <div className="deal-rating flex items-center gap-1 bg-[#FFF9F0] border border-[#FFE7C2] px-2 py-1 rounded-lg">
+          {deal.reviewCount>0&&deal.rating>0&&<div className="deal-rating flex items-center gap-1 bg-[#FFF9F0] border border-[#FFE7C2] px-2 py-1 rounded-lg">
             <Star className="w-3 h-3 fill-[#F5820A] text-[#F5820A]" />
             <span className="text-[11.5px] font-bold text-[#0D1B3E] leading-none">
-              {deal.rating || 4.8}
+              {deal.rating}
             </span>
             <span className="text-[10px] text-[#8D98AA] font-medium leading-none">
-              ({deal.reviewCount || 34})
+              ({deal.reviewCount})
             </span>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import React, { useState } from 'react';
 import QRCode from 'qrcode';
 import {
@@ -220,10 +221,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
           <Users className="w-10 h-10 text-white" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-black text-slate-900 font-sans tracking-tight">Profile</h1>
-          <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
-            Sign in to access your 50 AED bonus wallet, saved deals, active voucher QR passes, and family bookings.
-          </p>
+          <h1 className="text-2xl font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Profile"}/></h1>
+          <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto"><LocaleText value={"Sign in to access your 50 AED bonus wallet, saved deals, active voucher QR passes, and family bookings."}/></p>
         </div>
 
         <div className="space-y-3 pt-2">
@@ -240,16 +239,12 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
           <button
             onClick={() => setActiveView('auth')}
             className="w-full py-3 px-6 bg-[#0D9CFD] hover:bg-[#0B8AE0] text-white text-xs font-extrabold rounded-2xl shadow-xs transition-all cursor-pointer min-h-[44px]"
-          >
-            Sign In with Email / Register
-          </button>
+          ><LocaleText value={"Sign In with Email / Register"}/></button>
 
           <button
             onClick={() => setActiveView('explore')}
             className="w-full py-2.5 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition-all cursor-pointer min-h-[44px]"
-          >
-            Continue Browsing Deals
-          </button>
+          ><LocaleText value={"Continue Browsing Deals"}/></button>
         </div>
       </div>
     );
@@ -281,9 +276,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-wide uppercase">
-              Profile
-            </h1>
+            <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-wide uppercase"><LocaleText value={"Profile"}/></h1>
             <span className="text-xs font-semibold text-[#0C5CAB] bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200/60 font-mono">
               @{usernameInput}
             </span>
@@ -320,7 +313,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 className="mt-1 px-4 py-1.5 bg-white hover:bg-sky-50 text-[#0C5CAB] text-xs font-semibold rounded-full transition-all inline-flex items-center gap-1.5 border border-sky-200 shadow-2xs cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                <span>Edit Profile</span>
+                <span><LocaleText value={"Edit Profile"}/></span>
               </button>
             </div>
           </div>
@@ -340,7 +333,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>Overview</span>
+            <span><LocaleText value={"Overview"}/></span>
           </button>
 
           <button
@@ -352,7 +345,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             }`}
           >
             <Heart className="w-4 h-4" />
-            <span>Favorites</span>
+            <span><LocaleText value={"Favorites"}/></span>
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                 profileTab === 'favorites' ? 'bg-white/20 text-white' : 'bg-sky-50 text-[#0C5CAB]'
@@ -371,7 +364,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             }`}
           >
             <Ticket className="w-4 h-4" />
-            <span>My Deals</span>
+            <span><LocaleText value={"My Deals"}/></span>
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                 profileTab === 'deals' ? 'bg-white/20 text-white' : 'bg-sky-50 text-[#0C5CAB]'
@@ -400,12 +393,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   <Building2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight">
-                    Personal Information
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    Profile, contact & family
-                  </p>
+                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Personal Information"}/></h3>
+                  <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Profile, contact & family"}/></p>
                 </div>
               </div>
 
@@ -414,7 +403,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#0C5CAB] font-bold text-xs rounded-xl border border-blue-200 transition-all flex items-center gap-1 shrink-0 cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                <span>Edit</span>
+                <span><LocaleText value={"Edit"}/></span>
               </button>
             </div>
 
@@ -424,9 +413,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="flex items-start gap-3 p-2.5 bg-slate-50/80 rounded-2xl border border-slate-100">
                 <Mail className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    Contact Email
-                  </div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Contact Email"}/></div>
                   <div className="font-bold text-slate-900 truncate">{emailInput}</div>
                 </div>
               </div>
@@ -435,9 +422,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="flex items-start gap-3 p-2.5 bg-slate-50/80 rounded-2xl border border-slate-100">
                 <Phone className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    Phone Number
-                  </div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Phone Number"}/></div>
                   <div className="font-bold text-slate-900 truncate">{phoneInput}</div>
                 </div>
               </div>
@@ -450,9 +435,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="flex items-start gap-3 min-w-0">
                   <MapPin className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 mt-0.5 transition-colors" />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Location / City
-                    </div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Location / City"}/></div>
                     <div className="font-bold text-slate-900 truncate">{cityInput}</div>
                     <div className="text-[11px] text-slate-500 truncate">{addressInput}</div>
                   </div>
@@ -468,9 +451,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="flex items-center gap-3 min-w-0">
                   <Globe2 className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
                   <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Nationality
-                    </div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Nationality"}/></div>
                     <div className="font-bold text-slate-900 truncate">{nationalityInput}</div>
                   </div>
                 </div>
@@ -485,12 +466,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="flex items-center gap-3 min-w-0">
                   <Users className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
                   <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Family Profile
-                    </div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Family Profile"}/></div>
                     <div className="font-bold text-slate-900 truncate">
-                      {childrenAges.length} Child{childrenAges.length !== 1 ? 'ren' : ''} ({childrenAges.map((c) => c.age).join(', ')} yrs)
-                    </div>
+                      {childrenAges.length}<LocaleText value={"Child"}/>{childrenAges.length !== 1 ? 'ren' : ''} ({childrenAges.map((c) => c.age).join(', ')}<LocaleText value={"yrs)"}/></div>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
@@ -504,9 +482,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="flex items-center gap-3 min-w-0">
                   <Languages className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
                   <div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Language
-                    </div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Language"}/></div>
                     <div className="font-bold text-slate-900 truncate">{languageInput}</div>
                   </div>
                 </div>
@@ -526,18 +502,14 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   <Crown className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight">
-                    Membership Status
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    VIP tier perks & privileges
-                  </p>
+                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Membership Status"}/></h3>
+                  <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"VIP tier perks & privileges"}/></p>
                 </div>
               </div>
 
               <span className="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200/80 rounded-full font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1 shadow-2xs">
                 <Crown className="w-3.5 h-3.5 text-amber-500" />
-                <span>Gold VIP</span>
+                <span><LocaleText value={"Gold VIP"}/></span>
               </span>
             </div>
 
@@ -545,37 +517,33 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm space-y-2 relative overflow-hidden">
               <div className="absolute top-0 right-0 -mt-6 -mr-6 w-24 h-24 bg-white/10 rounded-full blur-md pointer-events-none" />
               <div className="flex items-center justify-between z-10 relative">
-                <div className="text-xs font-black uppercase tracking-wider font-sans text-amber-100">
-                  Spotera Gold Member
-                </div>
+                <div className="text-xs font-black uppercase tracking-wider font-sans text-amber-100"><LocaleText value={"Spotera Gold Member"}/></div>
                 <Sparkles className="w-4 h-4 text-amber-200" />
               </div>
-              <p className="text-[11px] text-amber-50 font-medium leading-relaxed z-10 relative">
-                Enjoy priority voucher redemption, 10% cashback on staycations & zero platform service fees.
-              </p>
+              <p className="text-[11px] text-amber-50 font-medium leading-relaxed z-10 relative"><LocaleText value={"Enjoy priority voucher redemption, 10% cashback on staycations & zero platform service fees."}/></p>
             </div>
 
             {/* VIP Perks Checklist */}
             <div className="space-y-2.5 text-xs text-slate-700 font-medium bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100">
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>10% Cashback on UAE Staycations</span>
+                <span><LocaleText value={"10% Cashback on UAE Staycations"}/></span>
               </div>
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Priority VIP Booking & Voucher Access</span>
+                <span><LocaleText value={"Priority VIP Booking & Voucher Access"}/></span>
               </div>
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Zero Platform Booking Service Fees</span>
+                <span><LocaleText value={"Zero Platform Booking Service Fees"}/></span>
               </div>
             </div>
 
             {/* Tier Progress */}
             <div className="pt-3 border-t border-slate-100 space-y-2">
               <div className="flex justify-between text-xs font-bold text-slate-700">
-                <span>Progress to Platinum VIP</span>
-                <span className="text-amber-600 font-extrabold">8 / 10 Deals</span>
+                <span><LocaleText value={"Progress to Platinum VIP"}/></span>
+                <span className="text-amber-600 font-extrabold"><LocaleText value={"8 / 10 Deals"}/></span>
               </div>
               <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                 <div className="bg-gradient-to-r from-amber-500 to-yellow-500 h-2.5 rounded-full w-[80%] shadow-2xs" />
@@ -594,12 +562,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   <Wallet className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight">
-                    Wallet & Rewards
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    Credits, cashback & referrals
-                  </p>
+                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Wallet & Rewards"}/></h3>
+                  <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Credits, cashback & referrals"}/></p>
                 </div>
               </div>
 
@@ -607,7 +571,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 onClick={() => setActiveModal('wallet')}
                 className="px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#1FAE7B] font-bold text-xs rounded-xl border border-emerald-200/80 transition-all flex items-center gap-1 shrink-0"
               >
-                <span>Details</span>
+                <span><LocaleText value={"Details"}/></span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -621,7 +585,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="space-y-1 z-10">
                 <div className="text-[11px] font-bold text-emerald-100 uppercase tracking-wider flex items-center gap-1.5">
                   <Wallet className="w-3.5 h-3.5" />
-                  <span>Available Balance</span>
+                  <span><LocaleText value={"Available Balance"}/></span>
                 </div>
                 <div className="text-3xl font-black font-sans tracking-tight">
                   {walletBalance} AED
@@ -629,9 +593,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div className="pt-2 border-t border-emerald-400/30 flex items-center justify-between text-[11px] text-emerald-100 font-semibold z-10">
-                <span>Auto-applied at checkout</span>
+                <span><LocaleText value={"Auto-applied at checkout"}/></span>
                 <span className="underline decoration-emerald-200 flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-                  <span>History</span>
+                  <span><LocaleText value={"History"}/></span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </span>
               </div>
@@ -642,11 +606,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="space-y-1">
                 <div className="text-xs font-extrabold text-slate-900 font-sans flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-[#1FAE7B]" />
-                  <span>Referral Program</span>
+                  <span><LocaleText value={"Referral Program"}/></span>
                 </div>
-                <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
-                  Earn <span className="font-extrabold text-[#1FAE7B]">+20 AED</span> per friend who registers.
-                </p>
+                <p className="text-[11px] text-slate-600 font-medium leading-relaxed"><LocaleText value={"Earn"}/><span className="font-extrabold text-[#1FAE7B]"><LocaleText value={"+20 AED"}/></span><LocaleText value={"per friend who registers."}/></p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -680,12 +642,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   <Ticket className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight">
-                    Bookings & Saved Deals
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    Vouchers, claims & saved items
-                  </p>
+                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Bookings & Saved Deals"}/></h3>
+                  <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Vouchers, claims & saved items"}/></p>
                 </div>
               </div>
             </div>
@@ -701,10 +659,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                     <Ticket className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-extrabold text-slate-900 font-sans">My Active Bookings</div>
+                    <div className="font-extrabold text-slate-900 font-sans"><LocaleText value={"My Active Bookings"}/></div>
                     <div className="text-[11px] text-slate-500 font-medium">
-                      {userCoupons.length + userBookings.length} Active Vouchers & Passes
-                    </div>
+                      {userCoupons.length + userBookings.length}<LocaleText value={"Active Vouchers & Passes"}/></div>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -719,10 +676,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                     <Heart className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-extrabold text-slate-900 font-sans">Saved Wishlist</div>
+                    <div className="font-extrabold text-slate-900 font-sans"><LocaleText value={"Saved Wishlist"}/></div>
                     <div className="text-[11px] text-slate-500 font-medium">
-                      {savedDeals.length} Favorite Family Deals
-                    </div>
+                      {savedDeals.length}<LocaleText value={"Favorite Family Deals"}/></div>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -737,10 +693,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                     <CreditCard className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-extrabold text-slate-900 font-sans">Payment Cards</div>
-                    <div className="text-[11px] text-slate-500 font-medium">
-                      Manage payment methods
-                    </div>
+                    <div className="font-extrabold text-slate-900 font-sans"><LocaleText value={"Payment Cards"}/></div>
+                    <div className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Manage payment methods"}/></div>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -759,12 +713,8 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight">
-                    Preferences & Legal
-                  </h3>
-                  <p className="text-[11px] text-slate-500 font-medium">
-                    Terms, policies & customer care
-                  </p>
+                  <h3 className="text-base font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Preferences & Legal"}/></h3>
+                  <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Terms, policies & customer care"}/></p>
                 </div>
               </div>
             </div>
@@ -777,7 +727,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               >
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
-                  <span className="font-bold text-slate-800 font-sans">Our Story</span>
+                  <span className="font-bold text-slate-800 font-sans"><LocaleText value={"Our Story"}/></span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </button>
@@ -788,7 +738,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               >
                 <div className="flex items-center gap-3">
                   <FileText className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
-                  <span className="font-bold text-slate-800 font-sans">Terms & Conditions</span>
+                  <span className="font-bold text-slate-800 font-sans"><LocaleText value={"Terms & Conditions"}/></span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </button>
@@ -799,7 +749,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               >
                 <div className="flex items-center gap-3">
                   <ShieldAlert className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
-                  <span className="font-bold text-slate-800 font-sans">Privacy Policy</span>
+                  <span className="font-bold text-slate-800 font-sans"><LocaleText value={"Privacy Policy"}/></span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </button>
@@ -810,7 +760,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               >
                 <div className="flex items-center gap-3">
                   <LifeBuoy className="w-4 h-4 text-slate-400 group-hover:text-[#1D6FE0] shrink-0 transition-colors" />
-                  <span className="font-bold text-slate-800 font-sans">Contact Support</span>
+                  <span className="font-bold text-slate-800 font-sans"><LocaleText value={"Contact Support"}/></span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </button>
@@ -823,7 +773,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 className="w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100/80 text-rose-600 rounded-2xl text-xs font-bold border border-rose-200/60 transition-colors flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Sign Out Account</span>
+                <span><LocaleText value={"Sign Out Account"}/></span>
               </button>
             </div>
           </div>
@@ -840,19 +790,16 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 font-sans tracking-tight">
-                  Saved Favorites ({savedDeals.length})
+                <h3 className="text-base sm:text-lg font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"Saved Favorites ("}/>{savedDeals.length})
                 </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Your bookmarked family activities, dining deals, and staycations in the UAE
-                </p>
+                <p className="text-xs text-slate-500 font-medium"><LocaleText value={"Your bookmarked family activities, dining deals, and staycations in the UAE"}/></p>
               </div>
               <button
                 onClick={() => setActiveView('explore')}
                 className="px-4 py-2.5 bg-gradient-to-r from-[#1D6FE0] to-[#0B3D75] hover:from-[#155fc7] text-white rounded-xl text-xs font-extrabold shadow-md transition-all flex items-center justify-center gap-1.5 self-start sm:self-auto cursor-pointer"
               >
                 <Compass className="w-4 h-4" />
-                <span>Discover More Deals</span>
+                <span><LocaleText value={"Discover More Deals"}/></span>
               </button>
             </div>
 
@@ -890,19 +837,16 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 font-sans tracking-tight">
-                  My Active Vouchers & Bookings ({userCoupons.length + userBookings.length})
+                <h3 className="text-base sm:text-lg font-black text-slate-900 font-sans tracking-tight"><LocaleText value={"My Active Vouchers & Bookings ("}/>{userCoupons.length + userBookings.length})
                 </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Digital passes ready for QR scan or coupon code presentation at the venue
-                </p>
+                <p className="text-xs text-slate-500 font-medium"><LocaleText value={"Digital passes ready for QR scan or coupon code presentation at the venue"}/></p>
               </div>
               <button
                 onClick={() => setActiveView('explore')}
                 className="px-4 py-2.5 bg-gradient-to-r from-[#1D6FE0] to-[#0B3D75] text-white rounded-xl text-xs font-extrabold shadow-md transition-all flex items-center justify-center gap-1.5 self-start sm:self-auto cursor-pointer"
               >
                 <Ticket className="w-4 h-4" />
-                <span>Claim New Voucher</span>
+                <span><LocaleText value={"Claim New Voucher"}/></span>
               </button>
             </div>
 
@@ -918,8 +862,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-[#1FAE7B] border border-emerald-200/80">
                         {coupon.status.toUpperCase()}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400">
-                        Expires: {new Date(coupon.expiresAt).toLocaleDateString()}
+                      <span className="text-[10px] font-bold text-slate-400"><LocaleText value={"Expires:"}/>{new Date(coupon.expiresAt).toLocaleDateString()}
                       </span>
                     </div>
 
@@ -932,9 +875,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-1">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Voucher Redemption Code
-                    </div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Voucher Redemption Code"}/></div>
                     <div className="font-mono text-sm font-black text-slate-900 tracking-wider">
                       {coupon.code}
                     </div>
@@ -944,7 +885,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                     onClick={() => handleShowCouponQr(coupon)}
                     className="w-full py-2.5 bg-[#1D6FE0] hover:bg-[#0B3D75] text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                   >
-                    <span>View Venue QR Pass</span>
+                    <span><LocaleText value={"View Venue QR Pass"}/></span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -965,9 +906,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
       </div>
     )}
 
-    <div className="text-center text-[11px] text-slate-400 font-medium py-2">
-      SpoteraDeals • Version 2.5.0
-    </div>
+    <div className="text-center text-[11px] text-slate-400 font-medium py-2"><LocaleText value={"SpoteraDeals • Version 2.5.0"}/></div>
   </div>
 
       {/* -------------------------------------------------------------------------- */}
@@ -979,7 +918,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl animate-scale-up">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Edit Profile</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Edit Profile"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -993,7 +932,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="pt-1">
                   <label className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-full cursor-pointer transition-colors inline-flex items-center gap-1">
                     <Camera className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Upload Picture</span>
+                    <span><LocaleText value={"Upload Picture"}/></span>
                     <input
                       type="file"
                       accept="image/*"
@@ -1016,7 +955,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Full Name</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Full Name"}/></label>
                 <input
                   type="text"
                   required
@@ -1027,7 +966,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Username</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Username"}/></label>
                 <input
                   type="text"
                   required
@@ -1038,7 +977,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Email Address</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Email Address"}/></label>
                 <input
                   type="email"
                   required
@@ -1049,7 +988,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Phone Number</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Phone Number"}/></label>
                 <input
                   type="tel"
                   value={phoneInput}
@@ -1063,15 +1002,11 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   type="button"
                   onClick={() => setActiveModal(null)}
                   className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   className="flex-1 py-2.5 bg-[#1D6FE0] hover:bg-[#0B3D75] text-white rounded-xl font-bold shadow-sm"
-                >
-                  Save Changes
-                </button>
+                ><LocaleText value={"Save Changes"}/></button>
               </div>
             </form>
           </div>
@@ -1088,7 +1023,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-[#1FAE7B]">
                   <Wallet className="w-4 h-4" />
                 </div>
-                <span>Wallet & Referral Rewards</span>
+                <span><LocaleText value={"Wallet & Referral Rewards"}/></span>
               </h3>
               <button
                 onClick={() => setActiveModal(null)}
@@ -1103,18 +1038,14 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-[11px] font-bold text-emerald-100 uppercase tracking-wider">
-                    Available Wallet Credit
-                  </div>
+                  <div className="text-[11px] font-bold text-emerald-100 uppercase tracking-wider"><LocaleText value={"Available Wallet Credit"}/></div>
                   <div className="text-3xl font-black font-sans tracking-tight">{walletBalance} AED</div>
                 </div>
                 <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl text-white">
                   <Gift className="w-5 h-5" />
                 </div>
               </div>
-              <p className="text-[11px] text-emerald-100 pt-2 border-t border-emerald-400/30 font-medium">
-                Automatically applied at checkout for all UAE staycations, buffets, & activity deals.
-              </p>
+              <p className="text-[11px] text-emerald-100 pt-2 border-t border-emerald-400/30 font-medium"><LocaleText value={"Automatically applied at checkout for all UAE staycations, buffets, & activity deals."}/></p>
             </div>
 
             {/* Referral Share Box */}
@@ -1122,11 +1053,9 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="space-y-0.5">
                 <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#1FAE7B]" />
-                  <span>Your Referral Code</span>
+                  <span><LocaleText value={"Your Referral Code"}/></span>
                 </div>
-                <p className="text-[11px] text-slate-600 font-medium">
-                  Share & earn <span className="font-extrabold text-[#1FAE7B]">+20 AED</span> for every friend who joins!
-                </p>
+                <p className="text-[11px] text-slate-600 font-medium"><LocaleText value={"Share & earn"}/><span className="font-extrabold text-[#1FAE7B]"><LocaleText value={"+20 AED"}/></span><LocaleText value={"for every friend who joins!"}/></p>
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -1140,12 +1069,12 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   {copiedCode ? (
                     <>
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Copied</span>
+                      <span><LocaleText value={"Copied"}/></span>
                     </>
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copy</span>
+                      <span><LocaleText value={"Copy"}/></span>
                     </>
                   )}
                 </button>
@@ -1157,11 +1086,10 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-extrabold text-slate-900 font-sans flex items-center gap-1.5">
                   <Gift className="w-4 h-4 text-[#1FAE7B]" />
-                  <span>Recent Referral History</span>
+                  <span><LocaleText value={"Recent Referral History"}/></span>
                 </h4>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  {referralHistory.length} Entries
-                </span>
+                  {referralHistory.length}<LocaleText value={"Entries"}/></span>
               </div>
 
               {/* Scrollable Table / List View */}
@@ -1169,10 +1097,10 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 <div className="max-h-56 overflow-y-auto divide-y divide-slate-100 custom-scrollbar">
                   {/* Table Header */}
                   <div className="bg-slate-50/80 px-3.5 py-2 grid grid-cols-12 gap-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider sticky top-0 z-10 border-b border-slate-200/80">
-                    <div className="col-span-5">Activity</div>
-                    <div className="col-span-3 text-center">Date</div>
-                    <div className="col-span-2 text-center">Status</div>
-                    <div className="col-span-2 text-right">Reward</div>
+                    <div className="col-span-5"><LocaleText value={"Activity"}/></div>
+                    <div className="col-span-3 text-center"><LocaleText value={"Date"}/></div>
+                    <div className="col-span-2 text-center"><LocaleText value={"Status"}/></div>
+                    <div className="col-span-2 text-right"><LocaleText value={"Reward"}/></div>
                   </div>
 
                   {/* List Rows */}
@@ -1201,19 +1129,13 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                         {/* Status */}
                         <div className="col-span-2 flex justify-center">
                           {item.status === 'Completed' && (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-50 text-[#1FAE7B] border border-emerald-200/80 inline-block text-center">
-                              Completed
-                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-50 text-[#1FAE7B] border border-emerald-200/80 inline-block text-center"><LocaleText value={"Completed"}/></span>
                           )}
                           {item.status === 'Pending' && (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/80 inline-block text-center">
-                              Pending
-                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/80 inline-block text-center"><LocaleText value={"Pending"}/></span>
                           )}
                           {item.status === 'Redeemed' && (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200 inline-block text-center">
-                              Redeemed
-                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200 inline-block text-center"><LocaleText value={"Redeemed"}/></span>
                           )}
                         </div>
 
@@ -1241,9 +1163,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <button
                 onClick={() => setActiveModal(null)}
                 className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors shadow-xs"
-              >
-                Close
-              </button>
+              ><LocaleText value={"Close"}/></button>
             </div>
           </div>
         </div>
@@ -1256,7 +1176,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-base font-extrabold font-sans text-slate-900 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#1D6FE0]" />
-                <span>Edit Location</span>
+                <span><LocaleText value={"Edit Location"}/></span>
               </h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
@@ -1265,24 +1185,24 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
 
             <div className="space-y-4 text-xs font-bold">
               <div>
-                <label className="text-slate-800 block mb-1">Emirate City</label>
+                <label className="text-slate-800 block mb-1"><LocaleText value={"Emirate City"}/></label>
                 <select
                   value={cityInput}
                   onChange={(e) => setCityInput(e.target.value as City)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none"
                 >
-                  <option value="Dubai">Dubai</option>
-                  <option value="Abu Dhabi">Abu Dhabi</option>
-                  <option value="Sharjah">Sharjah</option>
-                  <option value="Ajman">Ajman</option>
-                  <option value="Ras Al Khaimah">Ras Al Khaimah</option>
-                  <option value="Fujairah">Fujairah</option>
-                  <option value="Umm Al Quwain">Umm Al Quwain</option>
+                  <option value="Dubai">{"Dubai"}</option>
+                  <option value="Abu Dhabi">{"Abu Dhabi"}</option>
+                  <option value="Sharjah">{"Sharjah"}</option>
+                  <option value="Ajman">{"Ajman"}</option>
+                  <option value="Ras Al Khaimah">{"Ras Al Khaimah"}</option>
+                  <option value="Fujairah">{"Fujairah"}</option>
+                  <option value="Umm Al Quwain">{"Umm Al Quwain"}</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-slate-800 block mb-1">Full Business / Home Address</label>
+                <label className="text-slate-800 block mb-1"><LocaleText value={"Full Business / Home Address"}/></label>
                 <input
                   type="text"
                   value={addressInput}
@@ -1297,9 +1217,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   showToast.success(t('toastSavedSuccess'));
                 }}
                 className="w-full py-2.5 bg-[#1D6FE0] text-white rounded-xl text-xs font-bold"
-              >
-                Save Location
-              </button>
+              ><LocaleText value={"Save Location"}/></button>
             </div>
           </div>
         </div>
@@ -1310,7 +1228,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">My Bookings & Vouchers</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"My Bookings & Vouchers"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1340,8 +1258,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                       </span>
                     </div>
                     <div className="font-bold text-slate-900">{c.dealTitle}</div>
-                    <div className="p-2.5 bg-white rounded-xl text-center font-mono font-bold border border-slate-200 text-slate-800">
-                      Code: {c.code}
+                    <div className="p-2.5 bg-white rounded-xl text-center font-mono font-bold border border-slate-200 text-slate-800"><LocaleText value={"Code:"}/>{c.code}
                     </div>
                   </div>
                 ))}
@@ -1356,7 +1273,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Wishlist & Saved Deals</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Wishlist & Saved Deals"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1391,7 +1308,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Select Nationality</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Select Nationality"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1412,9 +1329,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   showToast.success(t('toastSavedSuccess'));
                 }}
                 className="w-full py-2.5 bg-[#1D6FE0] text-white rounded-xl text-xs font-bold"
-              >
-                Save
-              </button>
+              ><LocaleText value={"Save"}/></button>
             </div>
           </div>
         </div>
@@ -1425,7 +1340,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Manage Kids Profiles</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Manage Kids Profiles"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1447,7 +1362,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                     className="bg-white text-xs font-bold border border-slate-200 rounded-xl p-2 flex-1 focus:outline-none"
                   />
                   <div className="flex items-center gap-1">
-                    <span className="font-bold text-slate-600">Age:</span>
+                    <span className="font-bold text-slate-600"><LocaleText value={"Age:"}/></span>
                     <input
                       type="number"
                       min={0}
@@ -1469,8 +1384,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 onClick={() => setChildrenAges([...childrenAges, { id: `ch_${Date.now()}`, age: 4, name: 'Child' }])}
                 className="text-xs font-bold text-[#1D6FE0] hover:underline flex items-center gap-1"
               >
-                <Plus className="w-3.5 h-3.5" /> Add Child
-              </button>
+                <Plus className="w-3.5 h-3.5" /><LocaleText value={"Add Child"}/></button>
 
               <button
                 onClick={() => {
@@ -1478,9 +1392,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                   showToast.success(t('toastSavedSuccess'));
                 }}
                 className="w-full py-2.5 bg-[#1D6FE0] text-white rounded-xl text-xs font-bold mt-2"
-              >
-                Save Changes
-              </button>
+              ><LocaleText value={"Save Changes"}/></button>
             </div>
           </div>
         </div>
@@ -1491,14 +1403,12 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center">
             <CreditCard className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-base font-extrabold font-sans text-slate-900">Saved Payment Cards</h3>
-            <p className="text-xs text-slate-500 font-medium">No saved credit or debit cards on file. Spotera does not store payment card information directly.</p>
+            <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Saved Payment Cards"}/></h3>
+            <p className="text-xs text-slate-500 font-medium"><LocaleText value={"No saved credit or debit cards on file. Spotera does not store payment card information directly."}/></p>
             <button
               onClick={() => setActiveModal(null)}
               className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold"
-            >
-              Close
-            </button>
+            ><LocaleText value={"Close"}/></button>
           </div>
         </div>
       )}
@@ -1550,7 +1460,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Our Story</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Our Story"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1558,19 +1468,14 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
 
             <div className="space-y-3 text-xs text-slate-600 leading-relaxed font-medium">
               <p>
-                <strong>SpoteraDeals</strong> was created in the United Arab Emirates to connect families and activity enthusiasts with authentic, 100% verified experiences at exclusive discounted rates.
-              </p>
-              <p>
-                From waterparks in Dubai and desert safaris in Abu Dhabi to cozy family brunches and creative workshops, our mission is to make leisure and dining rewarding for everyone across all 7 Emirates.
-              </p>
+                <strong>SpoteraDeals</strong><LocaleText value={"was created in the United Arab Emirates to connect families and activity enthusiasts with authentic, 100% verified experiences at exclusive discounted rates."}/></p>
+              <p><LocaleText value={"From waterparks in Dubai and desert safaris in Abu Dhabi to cozy family brunches and creative workshops, our mission is to make leisure and dining rewarding for everyone across all 7 Emirates."}/></p>
             </div>
 
             <button
               onClick={() => setActiveModal(null)}
               className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold"
-            >
-              Close
-            </button>
+            ><LocaleText value={"Close"}/></button>
           </div>
         </div>
       )}
@@ -1580,40 +1485,30 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Terms & Conditions</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Terms & Conditions"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs text-slate-600 leading-relaxed font-medium">
-              <h4 className="font-extrabold text-slate-900 text-sm">1. Voucher Redemption Terms</h4>
-              <p>
-                All digital coupons and vouchers generated through Spotera are subject to venue capacity and merchant rules. Vouchers must be presented at the venue entrance via smartphone screen or printed copy prior to service order.
-              </p>
+              <h4 className="font-extrabold text-slate-900 text-sm"><LocaleText value={"1. Voucher Redemption Terms"}/></h4>
+              <p><LocaleText value={"All digital coupons and vouchers generated through Spotera are subject to venue capacity and merchant rules. Vouchers must be presented at the venue entrance via smartphone screen or printed copy prior to service order."}/></p>
 
-              <h4 className="font-extrabold text-slate-900 text-sm">2. Buy 1 Get 1 Free Offers</h4>
-              <p>
-                Buy 1 Get 1 Free (2-for-1) offers apply to the item of equal or lesser value. Unless explicitly stated, offers cannot be combined with existing merchant promotions, festive holidays, or private events.
-              </p>
+              <h4 className="font-extrabold text-slate-900 text-sm"><LocaleText value={"2. Buy 1 Get 1 Free Offers"}/></h4>
+              <p><LocaleText value={"Buy 1 Get 1 Free (2-for-1) offers apply to the item of equal or lesser value. Unless explicitly stated, offers cannot be combined with existing merchant promotions, festive holidays, or private events."}/></p>
 
-              <h4 className="font-extrabold text-slate-900 text-sm">3. Wallet Credits & Referral Rewards</h4>
-              <p>
-                Spotera Wallet credits are non-transferable for cash and are valid for 12 months from issuance. Referral rewards are credited once the referred user claims their first verified venue deal.
-              </p>
+              <h4 className="font-extrabold text-slate-900 text-sm"><LocaleText value={"3. Wallet Credits & Referral Rewards"}/></h4>
+              <p><LocaleText value={"Spotera Wallet credits are non-transferable for cash and are valid for 12 months from issuance. Referral rewards are credited once the referred user claims their first verified venue deal."}/></p>
 
-              <h4 className="font-extrabold text-slate-900 text-sm">4. Cancellation & Refunds</h4>
-              <p>
-                Eligible cancellations are credited as Spotera refund points, not cash. 100 points = AED 1. Refund points can pay in full for future Spotera bookings and are separate from loyalty points. Refunds required by law are unaffected. Contact support for help with a cancellation.
-              </p>
+              <h4 className="font-extrabold text-slate-900 text-sm"><LocaleText value={"4. Cancellation & Refunds"}/></h4>
+              <p><LocaleText value={"Eligible cancellations are credited as Spotera refund points, not cash. 100 points = AED 1. Refund points can pay in full for future Spotera bookings and are separate from loyalty points. Refunds required by law are unaffected. Contact support for help with a cancellation."}/></p>
             </div>
 
             <button
               onClick={() => setActiveModal(null)}
               className="w-full py-2.5 bg-[#1D6FE0] text-white rounded-xl text-xs font-bold"
-            >
-              I Understand & Accept
-            </button>
+            ><LocaleText value={"I Understand & Accept"}/></button>
           </div>
         </div>
       )}
@@ -1623,27 +1518,21 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Privacy Policy</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Privacy Policy"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs text-slate-600 leading-relaxed font-medium">
-              <p>
-                SpoteraDeals values your family's privacy. We collect minimal personal information (such as name, email address, and general location) strictly to personalize deal recommendations and process voucher redemptions.
-              </p>
-              <p>
-                We never sell or share your personal data with third-party advertisers. All location telemetry is kept client-side and encrypted.
-              </p>
+              <p><LocaleText value={"SpoteraDeals values your family's privacy. We collect minimal personal information (such as name, email address, and general location) strictly to personalize deal recommendations and process voucher redemptions."}/></p>
+              <p><LocaleText value={"We never sell or share your personal data with third-party advertisers. All location telemetry is kept client-side and encrypted."}/></p>
             </div>
 
             <button
               onClick={() => setActiveModal(null)}
               className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold"
-            >
-              Close
-            </button>
+            ><LocaleText value={"Close"}/></button>
           </div>
         </div>
       )}
@@ -1653,7 +1542,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-extrabold font-sans text-slate-900">Contact Spotera Support</h3>
+              <h3 className="text-base font-extrabold font-sans text-slate-900"><LocaleText value={"Contact Spotera Support"}/></h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
@@ -1672,7 +1561,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               className="space-y-3 text-xs"
             >
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Subject</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Subject"}/></label>
                 <input
                   type="text"
                   required
@@ -1684,7 +1573,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Message</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Message"}/></label>
                 <textarea
                   rows={4}
                   required
@@ -1704,9 +1593,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
               <button
                 type="submit"
                 className="w-full py-2.5 bg-[#1FAE7B] hover:bg-emerald-700 text-white rounded-xl text-xs font-bold"
-              >
-                Send Message
-              </button>
+              ><LocaleText value={"Send Message"}/></button>
             </form>
           </div>
         </div>
@@ -1731,11 +1618,11 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 className="inline-flex items-center gap-1 text-xs font-bold text-[#0C5CAB] hover:text-[#094887] p-1 -ml-1 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
+                <span><LocaleText value={"Back"}/></span>
               </button>
               <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-800">
                 <QrCode className="w-4 h-4 text-[#0C5CAB]" />
-                <span>Digital Pass</span>
+                <span><LocaleText value={"Digital Pass"}/></span>
               </div>
               <button
                 onClick={() => setSelectedCouponQr(null)}
@@ -1747,9 +1634,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
             </div>
 
             <div className="space-y-1">
-              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
-                Active Pass • Ready to Redeem
-              </span>
+              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full"><LocaleText value={"Active Pass • Ready to Redeem"}/></span>
               <h4 className="font-black text-slate-900 text-base leading-tight pt-1">
                 {selectedCouponQr.coupon.dealTitle}
               </h4>
@@ -1768,9 +1653,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
 
             <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
               <div className="text-left">
-                <div className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400">
-                  Voucher / Pass Code
-                </div>
+                <div className="text-[9px] uppercase tracking-wider font-extrabold text-slate-400"><LocaleText value={"Voucher / Pass Code"}/></div>
                 <div className="font-mono text-sm font-black text-slate-900 tracking-wider">
                   {selectedCouponQr.coupon.code}
                 </div>
@@ -1784,21 +1667,17 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClaimCoupon,
                 className="px-2.5 py-1.5 bg-white hover:bg-blue-50 text-[#0C5CAB] border border-blue-200 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
               >
                 <Copy className="w-3.5 h-3.5" />
-                <span>Copy</span>
+                <span><LocaleText value={"Copy"}/></span>
               </button>
             </div>
 
-            <p className="text-[11px] font-bold text-slate-600">
-              📲 Show this QR code to the cashier at the venue
-            </p>
+            <p className="text-[11px] font-bold text-slate-600"><LocaleText value={"📲 Show this QR code to the cashier at the venue"}/></p>
 
             <button
               type="button"
               onClick={() => setSelectedCouponQr(null)}
               className="w-full py-3 bg-[#0C5CAB] hover:bg-[#094887] text-white rounded-xl text-xs font-extrabold transition-colors cursor-pointer min-h-[44px]"
-            >
-              Done & Return to Passes
-            </button>
+            ><LocaleText value={"Done & Return to Passes"}/></button>
           </div>
         </div>
       )}

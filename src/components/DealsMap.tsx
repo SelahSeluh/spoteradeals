@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import {
@@ -350,7 +351,7 @@ export const DealsMap: React.FC<DealsMapProps> = ({
         <div className="pointer-events-auto flex items-center bg-white/95 backdrop-blur-md px-1 py-1 rounded-full border border-slate-200/80 shadow-md">
           <div className="px-2.5 text-[11px] font-bold text-slate-500 flex items-center gap-1">
             <Compass className="w-3.5 h-3.5 text-[#0D9CFD]" />
-            <span className="hidden sm:inline">Radius:</span>
+            <span className="hidden sm:inline"><LocaleText value={"Radius:"}/></span>
           </div>
           {(['all', 5, 10, 25] as ProximityFilter[]).map((r) => {
             const isSelected = proximityRadius === r;
@@ -493,7 +494,7 @@ export const DealsMap: React.FC<DealsMapProps> = ({
                 onClick={() => onSelectDeal(activeDeal)}
                 className="flex-1 min-h-[38px] px-3 bg-[#0D9CFD] hover:bg-[#0284C7] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
               >
-                <span>View Deal</span>
+                <span><LocaleText value={"View Deal"}/></span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
 
@@ -504,7 +505,7 @@ export const DealsMap: React.FC<DealsMapProps> = ({
                 className="min-h-[38px] px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-colors cursor-pointer"
               >
                 <Navigation className="w-3.5 h-3.5 text-[#0D9CFD]" />
-                <span className="hidden sm:inline">Directions</span>
+                <span className="hidden sm:inline"><LocaleText value={"Directions"}/></span>
               </button>
             </div>
           </div>

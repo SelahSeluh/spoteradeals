@@ -1,3 +1,6 @@
+import {LocaleText} from '../components/LocaleText';
+import {LanguagePicker,useDesignText} from '../components/DesignPrimitives';
+import {PaperWordmark} from '../components/Navbar';
 import {AuthPage} from './AuthPage';
 import {BusinessOperations} from '../components/BusinessOperations';
 import React, { useState, useEffect } from 'react';
@@ -103,6 +106,7 @@ export const AdminDashboard: React.FC = () => {
     t,
   } = useApp();
   const { showToast } = useToast();
+  const d=useDesignText();
 
   const [adminEmail, setAdminEmail] = useState(storedAdminEmail || '');
   const [adminPasscode, setAdminPasscode] = useState('');
@@ -295,46 +299,12 @@ export const AdminDashboard: React.FC = () => {
   const totalRedemptions = coupons.filter((c) => c.status === 'redeemed').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div role="status" className="rounded-lg border bg-white p-3 text-sm">{cmsSaveStatus} <button type="button" className="underline ml-2" onClick={retryCmsSave}>Retry publishing</button></div>
-      <BusinessOperations admin />
-      {/* Top Banner */}
-      <div className="bg-slate-900 text-white rounded-3xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-        <div className="space-y-2">
-          <span className="text-amber-400 font-extrabold text-xs uppercase tracking-widest flex items-center gap-1.5">
-            <ShieldAlert className="w-4 h-4" /> admin.SpoteraDeals.com • Admin System
-          </span>
-          <h1 className="text-3xl font-black font-sans">Marketplace Control Center</h1>
-          <p className="text-xs text-slate-300">
-            Manage businesses, approve deals, verify coupons, and analyze UAE family deal transactions.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-400/30">
-            Owner session verified
-          </span>
-          <button
-            onClick={() => {
-              setShowSettingsModal(true);
-              setSettingsNotice(null);
-            }}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl font-bold text-xs transition-all shadow-md flex items-center gap-1.5"
-          >
-            <Lock className="w-3.5 h-3.5 text-amber-400" />
-            <span>Password Settings</span>
-          </button>
-          <button
-            onClick={adminLogout}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 rounded-xl font-bold text-xs transition-all shadow-md"
-          >
-            Log Out Admin
-          </button>
-        </div>
-      </div>
-
+    <div className="fn-admin-layout max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div role="status" className="rounded-lg border bg-white p-3 text-sm">{cmsSaveStatus} <button type="button" className="underline ml-2" onClick={retryCmsSave}><LocaleText value={"Retry publishing"}/></button></div>
+      {activeTab==='businesses'&&<BusinessOperations admin/>}
+      <header className="fn-admin-header"><div><PaperWordmark/><h1>{d('admin')}</h1><p>{d('partner')}<LocaleText value={"· SpoteraDeals"}/></p></div><LanguagePicker/></header>
       {/* Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 no-scrollbar">
+      <div className="fn-admin-sidebar flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 no-scrollbar">
         {/* CMS & Content Section */}
         <button
           onClick={() => setActiveTab('hero')}
@@ -342,8 +312,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'hero' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-amber-400" /> Hero & Skyline
-        </button>
+          <Sparkles className="w-4 h-4 text-amber-400" /><LocaleText value={"Hero & Skyline"}/></button>
 
         <button
           onClick={() => setActiveTab('sections')}
@@ -351,8 +320,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'sections' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <LayoutList className="w-4 h-4 text-blue-400" /> Homepage Sections
-        </button>
+          <LayoutList className="w-4 h-4 text-blue-400" /><LocaleText value={"Homepage Sections"}/></button>
 
         <button
           onClick={() => setActiveTab('deals')}
@@ -360,7 +328,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'deals' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Tag className="w-4 h-4 text-[#0D9CFD]" /> Deals & Passes ({deals.length})
+          <Tag className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Deals & Passes ("}/>{deals.length})
         </button>
 
         <button
@@ -369,8 +337,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'categories' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Filter className="w-4 h-4 text-indigo-400" /> Categories
-        </button>
+          <Filter className="w-4 h-4 text-indigo-400" /><LocaleText value={"Categories"}/></button>
 
         <button
           onClick={() => setActiveTab('locations')}
@@ -378,8 +345,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'locations' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <MapPin className="w-4 h-4 text-[#FD9302]" /> UAE Locations
-        </button>
+          <MapPin className="w-4 h-4 text-[#FD9302]" /><LocaleText value={"UAE Locations"}/></button>
 
         <button
           onClick={() => setActiveTab('media')}
@@ -387,8 +353,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'media' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Globe className="w-4 h-4 text-emerald-400" /> Media Library
-        </button>
+          <Globe className="w-4 h-4 text-emerald-400" /><LocaleText value={"Media Library"}/></button>
 
         <button
           onClick={() => setActiveTab('branding')}
@@ -396,8 +361,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'branding' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Building2 className="w-4 h-4 text-amber-400" /> Site Branding
-        </button>
+          <Building2 className="w-4 h-4 text-amber-400" /><LocaleText value={"Site Branding"}/></button>
 
         <button
           onClick={() => setActiveTab('intro')}
@@ -405,8 +369,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'intro' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-[#FD9302]" /> Intro Animation
-        </button>
+          <Sparkles className="w-4 h-4 text-[#FD9302]" /><LocaleText value={"Intro Animation"}/></button>
 
         {/* Operations & Bookings */}
         <button
@@ -415,7 +378,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'bookings' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <CalendarCheck className="w-4 h-4 text-emerald-400" /> Bookings ({bookings.length})
+          <CalendarCheck className="w-4 h-4 text-emerald-400" /><LocaleText value={"Bookings ("}/>{bookings.length})
         </button>
 
         <button
@@ -424,8 +387,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <BarChart3 className="w-4 h-4 text-cyan-400" /> Analytics
-        </button>
+          <BarChart3 className="w-4 h-4 text-cyan-400" /><LocaleText value={"Analytics"}/></button>
 
         <button
           onClick={() => setActiveTab('businesses')}
@@ -433,7 +395,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'businesses' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Building2 className="w-4 h-4 text-blue-400" /> Businesses ({businesses.length})
+          <Building2 className="w-4 h-4 text-blue-400" /><LocaleText value={"Businesses ("}/>{businesses.length})
         </button>
 
         <button
@@ -442,8 +404,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'coupons' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <QrCode className="w-4 h-4 text-emerald-400" /> Scanner & Codes
-        </button>
+          <QrCode className="w-4 h-4 text-emerald-400" /><LocaleText value={"Scanner & Codes"}/></button>
 
         <button
           onClick={() => setActiveTab('users')}
@@ -451,8 +412,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'users' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Users className="w-4 h-4 text-indigo-400" /> Users
-        </button>
+          <Users className="w-4 h-4 text-indigo-400" /><LocaleText value={"Users"}/></button>
 
         <button
           onClick={() => setActiveTab('reviews')}
@@ -460,7 +420,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'reviews' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Star className="w-4 h-4 text-amber-400" /> Reviews ({reviews.length})
+          <Star className="w-4 h-4 text-amber-400" /><LocaleText value={"Reviews ("}/>{reviews.length})
         </button>
 
         <button
@@ -469,8 +429,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'footer' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Globe className="w-4 h-4 text-cyan-400" /> Footer
-        </button>
+          <Globe className="w-4 h-4 text-cyan-400" /><LocaleText value={"Footer"}/></button>
 
         <button
           onClick={() => setActiveTab('support')}
@@ -478,7 +437,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'support' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Mail className="w-4 h-4 text-emerald-400" /> Support Desk ({supportMessages.length})
+          <Mail className="w-4 h-4 text-emerald-400" /><LocaleText value={"Support Desk ("}/>{supportMessages.length})
           {supportMessages.some((m) => m.status === 'pending') && (
             <span className="w-2 h-2 rounded-full bg-rose-500" />
           )}
@@ -490,8 +449,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'referrals' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-amber-400" /> Referrals
-        </button>
+          <Sparkles className="w-4 h-4 text-amber-400" /><LocaleText value={"Referrals"}/></button>
 
         <button
           onClick={() => setActiveTab('holidays')}
@@ -499,7 +457,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'holidays' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <CalendarCheck className="w-4 h-4 text-emerald-400" /> UAE Holidays ({holidays.length})
+          <CalendarCheck className="w-4 h-4 text-emerald-400" /><LocaleText value={"UAE Holidays ("}/>{holidays.length})
         </button>
 
         <button
@@ -508,8 +466,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'loyalty' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Trophy className="w-4 h-4 text-amber-400" /> Loyalty & VIP Points
-        </button>
+          <Trophy className="w-4 h-4 text-amber-400" /><LocaleText value={"Loyalty & VIP Points"}/></button>
 
         <button
           onClick={() => setActiveTab('backups')}
@@ -517,8 +474,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'backups' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <Database className="w-4 h-4 text-[#0D9CFD]" /> Backups & Recovery
-        </button>
+          <Database className="w-4 h-4 text-[#0D9CFD]" /><LocaleText value={"Backups & Recovery"}/></button>
 
         <button
           onClick={() => setActiveTab('audit-logs')}
@@ -526,8 +482,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'audit-logs' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <ShieldAlert className="w-4 h-4 text-emerald-400" /> Security & Audits
-        </button>
+          <ShieldAlert className="w-4 h-4 text-emerald-400" /><LocaleText value={"Security & Audits"}/></button>
 
         <button
           onClick={() => setActiveTab('rbac')}
@@ -535,8 +490,7 @@ export const AdminDashboard: React.FC = () => {
             activeTab === 'rbac' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'
           }`}
         >
-          <UserCog className="w-4 h-4 text-purple-400" /> RBAC Permissions
-        </button>
+          <UserCog className="w-4 h-4 text-purple-400" /><LocaleText value={"RBAC Permissions"}/></button>
       </div>
 
       {/* TAB: Bookings & Redemptions Ledger */}
@@ -545,27 +499,26 @@ export const AdminDashboard: React.FC = () => {
           {/* Summary Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Bookings</div>
+              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider"><LocaleText value={"Total Bookings"}/></div>
               <div className="text-2xl font-black text-slate-900">{bookings.length}</div>
-              <div className="text-[10px] text-blue-600 font-bold">
-                Value: AED {bookings.reduce((acc, b) => acc + b.totalPrice, 0)}
+              <div className="text-[10px] text-blue-600 font-bold"><LocaleText value={"Value: AED"}/>{bookings.reduce((acc, b) => acc + b.totalPrice, 0)}
               </div>
             </div>
 
             <div className="bg-emerald-50 p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Redeemed / Completed</div>
+              <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider"><LocaleText value={"Redeemed / Completed"}/></div>
               <div className="text-2xl font-black text-emerald-950">
                 {bookings.filter((b) => b.status === 'completed').length}
               </div>
-              <div className="text-[10px] text-emerald-700 font-bold">Scanned at partner venues</div>
+              <div className="text-[10px] text-emerald-700 font-bold"><LocaleText value={"Scanned at partner venues"}/></div>
             </div>
 
             <div className="bg-amber-50 p-5 rounded-3xl border border-amber-100 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-amber-800 uppercase tracking-wider">Pending Redemption</div>
+              <div className="text-xs font-bold text-amber-800 uppercase tracking-wider"><LocaleText value={"Pending Redemption"}/></div>
               <div className="text-2xl font-black text-amber-950">
                 {bookings.filter((b) => b.status === 'confirmed').length}
               </div>
-              <div className="text-[10px] text-amber-700 font-bold">Awaiting QR scan on arrival</div>
+              <div className="text-[10px] text-amber-700 font-bold"><LocaleText value={"Awaiting QR scan on arrival"}/></div>
             </div>
           </div>
 
@@ -573,18 +526,15 @@ export const AdminDashboard: React.FC = () => {
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <h2 className="text-lg font-bold text-slate-900 font-sans">Customer Bookings & Redemption Tracker</h2>
-                <p className="text-xs text-slate-500">
-                  Real-time administration log of customer bookings, contact details, and venue redemptions.
-                </p>
+                <h2 className="text-lg font-bold text-slate-900 font-sans"><LocaleText value={"Customer Bookings & Redemption Tracker"}/></h2>
+                <p className="text-xs text-slate-500"><LocaleText value={"Real-time administration log of customer bookings, contact details, and venue redemptions."}/></p>
               </div>
 
               <button
                 onClick={() => setActiveTab('coupons')}
                 className="px-4 py-2 bg-slate-900 hover:bg-black text-cyan-300 font-extrabold text-xs rounded-2xl flex items-center gap-1.5 shadow-md"
               >
-                <QrCode className="w-4 h-4 text-cyan-400" /> Open QR Scanner Tool
-              </button>
+                <QrCode className="w-4 h-4 text-cyan-400" /><LocaleText value={"Open QR Scanner Tool"}/></button>
             </div>
 
             {/* Filter & Search Bar */}
@@ -606,24 +556,21 @@ export const AdminDashboard: React.FC = () => {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     bookingFilterStatus === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
-                >
-                  All ({bookings.length})
+                ><LocaleText value={"All ("}/>{bookings.length})
                 </button>
                 <button
                   onClick={() => setBookingFilterStatus('confirmed')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     bookingFilterStatus === 'confirmed' ? 'bg-amber-500 text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
-                >
-                  Pending ({bookings.filter((b) => b.status === 'confirmed').length})
+                ><LocaleText value={"Pending ("}/>{bookings.filter((b) => b.status === 'confirmed').length})
                 </button>
                 <button
                   onClick={() => setBookingFilterStatus('completed')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     bookingFilterStatus === 'completed' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
-                >
-                  Redeemed ({bookings.filter((b) => b.status === 'completed').length})
+                ><LocaleText value={"Redeemed ("}/>{bookings.filter((b) => b.status === 'completed').length})
                 </button>
               </div>
             </div>
@@ -633,13 +580,13 @@ export const AdminDashboard: React.FC = () => {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]">
                   <tr>
-                    <th className="p-3">Ref Code</th>
-                    <th className="p-3">Customer Info</th>
-                    <th className="p-3">Venue & Activity</th>
-                    <th className="p-3">Date & Time Slot</th>
-                    <th className="p-3">Amount</th>
-                    <th className="p-3">Redemption Status</th>
-                    <th className="p-3 text-right">Actions</th>
+                    <th className="p-3"><LocaleText value={"Ref Code"}/></th>
+                    <th className="p-3"><LocaleText value={"Customer Info"}/></th>
+                    <th className="p-3"><LocaleText value={"Venue & Activity"}/></th>
+                    <th className="p-3"><LocaleText value={"Date & Time Slot"}/></th>
+                    <th className="p-3"><LocaleText value={"Amount"}/></th>
+                    <th className="p-3"><LocaleText value={"Redemption Status"}/></th>
+                    <th className="p-3 text-right"><LocaleText value={"Actions"}/></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -694,8 +641,7 @@ export const AdminDashboard: React.FC = () => {
                               {b.status === 'completed' ? 'Redeemed' : 'Pending Scan'}
                             </span>
                             {b.redeemedAt && (
-                              <div className="text-[9px] text-emerald-700 font-bold">
-                                On: {b.redeemedAt}
+                              <div className="text-[9px] text-emerald-700 font-bold"><LocaleText value={"On:"}/>{b.redeemedAt}
                               </div>
                             )}
                           </div>
@@ -705,13 +651,10 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => redeemCode(b.bookingCode, 'Admin Console')}
                               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[10px] shadow-sm transition-all"
-                            >
-                              Mark Redeemed
-                            </button>
+                            ><LocaleText value={"Mark Redeemed"}/></button>
                           ) : (
                             <span className="text-[10px] text-slate-400 font-bold flex items-center justify-end gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Redeemed
-                            </span>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /><LocaleText value={"Redeemed"}/></span>
                           )}
                         </td>
                       </tr>
@@ -732,40 +675,38 @@ export const AdminDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Verified card booking value</span>
+                <span><LocaleText value={"Verified card booking value"}/></span>
                 <DollarSign className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">AED {totalRevenue}</div>
-              <div className="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1">
-                Paid by card · before Stripe fees and partner settlement
-              </div>
+              <div className="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1"><LocaleText value={"Paid by card · before Stripe fees and partner settlement"}/></div>
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Coupons Claimed</span>
+                <span><LocaleText value={"Coupons Claimed"}/></span>
                 <Ticket className="w-5 h-5 text-blue-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">{coupons.length}</div>
-              <div className="text-[10px] text-blue-600 font-bold">{totalRedemptions} Venue Redemptions</div>
+              <div className="text-[10px] text-blue-600 font-bold">{totalRedemptions}<LocaleText value={"Venue Redemptions"}/></div>
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Activity Bookings</span>
+                <span><LocaleText value={"Activity Bookings"}/></span>
                 <Users className="w-5 h-5 text-amber-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">{bookings.length}</div>
-              <div className="text-[10px] text-amber-700 font-bold">Confirmed Reservations</div>
+              <div className="text-[10px] text-amber-700 font-bold"><LocaleText value={"Confirmed Reservations"}/></div>
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-slate-400 text-xs font-bold">
-                <span>Partner Businesses</span>
+                <span><LocaleText value={"Partner Businesses"}/></span>
                 <Building2 className="w-5 h-5 text-purple-600" />
               </div>
               <div className="text-2xl font-black text-slate-900">{businesses.length}</div>
-              <div className="text-[10px] text-purple-600 font-bold">Across 7 UAE Cities</div>
+              <div className="text-[10px] text-purple-600 font-bold"><LocaleText value={"Across 7 UAE Cities"}/></div>
             </div>
           </div>
         </div>
@@ -775,25 +716,24 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'businesses' && (
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 font-sans">UAE Business Partners</h2>
+            <h2 className="text-lg font-bold text-slate-900 font-sans"><LocaleText value={"UAE Business Partners"}/></h2>
             <button
               onClick={() => setShowAddBizModal(true)}
               className="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md"
             >
-              <Plus className="w-4 h-4" /> Add Partner Business
-            </button>
+              <Plus className="w-4 h-4" /><LocaleText value={"Add Partner Business"}/></button>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700">
               <thead className="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]">
                 <tr>
-                  <th className="p-3">Business Name</th>
-                  <th className="p-3">City</th>
-                  <th className="p-3">Category</th>
-                  <th className="p-3">Contact</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3 text-right">Actions</th>
+                  <th className="p-3"><LocaleText value={"Business Name"}/></th>
+                  <th className="p-3"><LocaleText value={"City"}/></th>
+                  <th className="p-3"><LocaleText value={"Category"}/></th>
+                  <th className="p-3"><LocaleText value={"Contact"}/></th>
+                  <th className="p-3"><LocaleText value={"Status"}/></th>
+                  <th className="p-3 text-right"><LocaleText value={"Actions"}/></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -836,9 +776,7 @@ export const AdminDashboard: React.FC = () => {
                         <button
                           onClick={() => updateBusinessStatus(b.id, 'approved', true)}
                           className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] cursor-pointer"
-                        >
-                          Approve
-                        </button>
+                        ><LocaleText value={"Approve"}/></button>
                       )}
                     </td>
                   </tr>
@@ -880,7 +818,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* All Coupons List */}
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm">Issued Coupons Ledger ({coupons.length})</h3>
+            <h3 className="font-bold text-slate-900 text-sm"><LocaleText value={"Issued Coupons Ledger ("}/>{coupons.length})</h3>
             <div className="space-y-3">
               {coupons.map((c) => (
                 <div key={c.id} className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
@@ -888,8 +826,7 @@ export const AdminDashboard: React.FC = () => {
                     <div className="font-mono font-bold text-slate-900">{c.code}</div>
                     <div className="text-[11px] text-slate-500">{c.userName} • {c.businessName}</div>
                     {c.redeemedAt && (
-                      <div className="text-[10px] text-emerald-700 font-bold">
-                        Redeemed on {c.redeemedAt}
+                      <div className="text-[10px] text-emerald-700 font-bold"><LocaleText value={"Redeemed on"}/>{c.redeemedAt}
                       </div>
                     )}
                   </div>
@@ -911,10 +848,10 @@ export const AdminDashboard: React.FC = () => {
       {showAddBizModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-3xl max-w-md w-full space-y-4 border border-slate-100 shadow-2xl">
-            <h3 className="font-bold text-slate-900 text-base">Add New Partner Business</h3>
+            <h3 className="font-bold text-slate-900 text-base"><LocaleText value={"Add New Partner Business"}/></h3>
             <form onSubmit={handleCreateBusiness} className="space-y-3 text-xs">
               <div>
-                <label className="font-bold block mb-1">Business Name</label>
+                <label className="font-bold block mb-1"><LocaleText value={"Business Name"}/></label>
                 <input
                   type="text"
                   required
@@ -925,33 +862,33 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-bold block mb-1">City</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"City"}/></label>
                   <select
                     value={newBizCity}
                     onChange={(e) => setNewBizCity(e.target.value as any)}
                     className="w-full bg-slate-50 border p-2.5 rounded-xl font-semibold"
                   >
-                    <option value="Dubai">Dubai</option>
-                    <option value="Abu Dhabi">Abu Dhabi</option>
-                    <option value="Sharjah">Sharjah</option>
+                    <option value="Dubai">{"Dubai"}</option>
+                    <option value="Abu Dhabi">{"Abu Dhabi"}</option>
+                    <option value="Sharjah">{"Sharjah"}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="font-bold block mb-1">Category</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"Category"}/></label>
                   <select
                     value={newBizCat}
                     onChange={(e) => setNewBizCat(e.target.value as any)}
                     className="w-full bg-slate-50 border p-2.5 rounded-xl font-semibold"
                   >
-                    <option value="Kids Play Areas">Kids Play Areas</option>
-                    <option value="Birthday Parties">Birthday Parties</option>
-                    <option value="Summer Camps">Summer Camps</option>
+                    <option value="Kids Play Areas">{"Kids Play Areas"}</option>
+                    <option value="Birthday Parties">{"Birthday Parties"}</option>
+                    <option value="Summer Camps">{"Summer Camps"}</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-bold block mb-1">Phone</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"Phone"}/></label>
                   <input
                     type="text"
                     value={newBizPhone}
@@ -960,7 +897,7 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold block mb-1">Email</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"Email"}/></label>
                   <input
                     type="email"
                     value={newBizEmail}
@@ -974,12 +911,8 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   onClick={() => setShowAddBizModal(false)}
                   className="py-2 px-4 bg-slate-100 rounded-xl font-bold"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-xl font-bold">
-                  Save Business
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
+                <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-xl font-bold"><LocaleText value={"Save Business"}/></button>
               </div>
             </form>
           </div>
@@ -990,10 +923,10 @@ export const AdminDashboard: React.FC = () => {
       {showAddDealModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-3xl max-w-md w-full space-y-4 border border-slate-100 shadow-2xl">
-            <h3 className="font-bold text-slate-900 text-base">Create New Marketplace Deal</h3>
+            <h3 className="font-bold text-slate-900 text-base"><LocaleText value={"Create New Marketplace Deal"}/></h3>
             <form onSubmit={handleCreateDeal} className="space-y-3 text-xs">
               <div>
-                <label className="font-bold block mb-1">Select Partner Business</label>
+                <label className="font-bold block mb-1"><LocaleText value={"Select Partner Business"}/></label>
                 <select
                   value={newDealBizId}
                   onChange={(e) => setNewDealBizId(e.target.value)}
@@ -1007,7 +940,7 @@ export const AdminDashboard: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="font-bold block mb-1">Deal Title</label>
+                <label className="font-bold block mb-1"><LocaleText value={"Deal Title"}/></label>
                 <input
                   type="text"
                   required
@@ -1018,7 +951,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-bold block mb-1">Original Price (AED)</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"Original Price (AED)"}/></label>
                   <input
                     type="number"
                     value={newDealOrigPrice}
@@ -1027,7 +960,7 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold block mb-1">Discount Price (AED)</label>
+                  <label className="font-bold block mb-1"><LocaleText value={"Discount Price (AED)"}/></label>
                   <input
                     type="number"
                     value={newDealDiscPrice}
@@ -1041,12 +974,8 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   onClick={() => setShowAddDealModal(false)}
                   className="py-2 px-4 bg-slate-100 rounded-xl font-bold"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-xl font-bold">
-                  Publish Deal
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
+                <button type="submit" className="py-2 px-4 bg-blue-600 text-white rounded-xl font-bold"><LocaleText value={"Publish Deal"}/></button>
               </div>
             </form>
           </div>
@@ -1060,12 +989,10 @@ export const AdminDashboard: React.FC = () => {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 text-cyan-800 text-[11px] font-bold border border-cyan-100 mb-2">
                 <Globe className="w-3.5 h-3.5 text-cyan-600" />
-                <span>Live Website Contact & Footer Control</span>
+                <span><LocaleText value={"Live Website Contact & Footer Control"}/></span>
               </div>
-              <h2 className="text-xl font-extrabold font-sans text-slate-900">Contact Information & Footer Settings</h2>
-              <p className="text-xs text-slate-500">
-                Update phone number, email, business location/address, and footer links. Changes instantly appear on the Contact page.
-              </p>
+              <h2 className="text-xl font-extrabold font-sans text-slate-900"><LocaleText value={"Contact Information & Footer Settings"}/></h2>
+              <p className="text-xs text-slate-500"><LocaleText value={"Update phone number, email, business location/address, and footer links. Changes instantly appear on the Contact page."}/></p>
             </div>
 
             <button
@@ -1077,7 +1004,7 @@ export const AdminDashboard: React.FC = () => {
               className="px-6 py-3 bg-[#1D6FE0] hover:bg-[#0B3D75] text-white font-extrabold rounded-2xl text-xs shadow-lg transition-all flex items-center gap-2 shrink-0"
             >
               <Save className="w-4 h-4 text-white" />
-              <span>Save / Update Contact Details</span>
+              <span><LocaleText value={"Save / Update Contact Details"}/></span>
             </button>
           </div>
 
@@ -1094,11 +1021,9 @@ export const AdminDashboard: React.FC = () => {
               <div>
                 <h3 className="font-black text-slate-900 text-base flex items-center gap-2 font-sans">
                   <Phone className="w-5 h-5 text-[#1D6FE0]" />
-                  <span>Contact Information & Business Location</span>
+                  <span><LocaleText value={"Contact Information & Business Location"}/></span>
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  These details automatically populate the Contact Page, App Header, and Footer.
-                </p>
+                <p className="text-xs text-slate-500 font-medium mt-0.5"><LocaleText value={"These details automatically populate the Contact Page, App Header, and Footer."}/></p>
               </div>
 
               <button
@@ -1110,7 +1035,7 @@ export const AdminDashboard: React.FC = () => {
                 className="px-4 py-2 bg-[#1FAE7B] hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
               >
                 <Check className="w-4 h-4" />
-                <span>Save Changes</span>
+                <span><LocaleText value={"Save Changes"}/></span>
               </button>
             </div>
 
@@ -1119,7 +1044,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                 <label className="font-extrabold text-slate-900 block flex items-center gap-2 text-xs">
                   <Phone className="w-4 h-4 text-[#1D6FE0]" />
-                  <span>Phone Number</span>
+                  <span><LocaleText value={"Phone Number"}/></span>
                 </label>
                 <input
                   type="text"
@@ -1128,14 +1053,14 @@ export const AdminDashboard: React.FC = () => {
                   onChange={(e) => setLocalFooter({ ...localFooter, contactPhone: e.target.value })}
                   className="w-full bg-white border border-slate-300 rounded-xl p-3 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1D6FE0]"
                 />
-                <p className="text-[11px] text-slate-500">Official UAE contact number displayed for customer inquiries.</p>
+                <p className="text-[11px] text-slate-500"><LocaleText value={"Official UAE contact number displayed for customer inquiries."}/></p>
               </div>
 
               {/* Separate Editable Field: Email Address */}
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                 <label className="font-extrabold text-slate-900 block flex items-center gap-2 text-xs">
                   <Mail className="w-4 h-4 text-[#1D6FE0]" />
-                  <span>Email Address</span>
+                  <span><LocaleText value={"Email Address"}/></span>
                 </label>
                 <input
                   type="email"
@@ -1144,14 +1069,14 @@ export const AdminDashboard: React.FC = () => {
                   onChange={(e) => setLocalFooter({ ...localFooter, contactEmail: e.target.value })}
                   className="w-full bg-white border border-slate-300 rounded-xl p-3 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1D6FE0]"
                 />
-                <p className="text-[11px] text-slate-500">Official support email for general support and vendor inquiries.</p>
+                <p className="text-[11px] text-slate-500"><LocaleText value={"Official support email for general support and vendor inquiries."}/></p>
               </div>
 
               {/* Separate Editable Field: Location / Address */}
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                 <label className="font-extrabold text-slate-900 block flex items-center gap-2 text-xs">
                   <MapPin className="w-4 h-4 text-[#1D6FE0]" />
-                  <span>Business Location / Address</span>
+                  <span><LocaleText value={"Business Location / Address"}/></span>
                 </label>
                 <input
                   type="text"
@@ -1160,7 +1085,7 @@ export const AdminDashboard: React.FC = () => {
                   onChange={(e) => setLocalFooter({ ...localFooter, businessAddress: e.target.value })}
                   className="w-full bg-white border border-slate-300 rounded-xl p-3 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1D6FE0]"
                 />
-                <p className="text-[11px] text-slate-500">Physical office or hub location shown on the contact page.</p>
+                <p className="text-[11px] text-slate-500"><LocaleText value={"Physical office or hub location shown on the contact page."}/></p>
               </div>
             </div>
           </div>
@@ -1169,12 +1094,11 @@ export const AdminDashboard: React.FC = () => {
             {/* Brand & Additional Info */}
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Building2 className="w-4 h-4 text-[#1D6FE0]" /> Company Details & Copyright
-              </h3>
+                <Building2 className="w-4 h-4 text-[#1D6FE0]" /><LocaleText value={"Company Details & Copyright"}/></h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Company Display Name</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Company Display Name"}/></label>
                   <input
                     type="text"
                     value={localFooter.companyName}
@@ -1184,7 +1108,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Company Description</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Company Description"}/></label>
                   <textarea
                     rows={3}
                     value={localFooter.description}
@@ -1194,7 +1118,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Copyright Line</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Copyright Line"}/></label>
                   <input
                     type="text"
                     value={localFooter.copyrightText}
@@ -1210,11 +1134,10 @@ export const AdminDashboard: React.FC = () => {
               {/* Social Media Links */}
               <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <Globe className="w-4 h-4 text-cyan-600" /> Social Media Links
-                </h3>
+                  <Globe className="w-4 h-4 text-cyan-600" /><LocaleText value={"Social Media Links"}/></h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Instagram URL</label>
+                    <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Instagram URL"}/></label>
                     <input
                       type="text"
                       placeholder="https://instagram.com/..."
@@ -1229,7 +1152,7 @@ export const AdminDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Facebook URL</label>
+                    <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Facebook URL"}/></label>
                     <input
                       type="text"
                       placeholder="https://facebook.com/..."
@@ -1244,7 +1167,7 @@ export const AdminDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">LinkedIn URL</label>
+                    <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"LinkedIn URL"}/></label>
                     <input
                       type="text"
                       placeholder="https://linkedin.com/..."
@@ -1259,7 +1182,7 @@ export const AdminDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-slate-700 block mb-1">Twitter/X URL</label>
+                    <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Twitter/X URL"}/></label>
                     <input
                       type="text"
                       placeholder="https://x.com/..."
@@ -1279,8 +1202,7 @@ export const AdminDashboard: React.FC = () => {
               {/* Section Visibility Toggles */}
               <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <LayoutList className="w-4 h-4 text-indigo-600" /> Enable / Disable Footer Sections
-                </h3>
+                  <LayoutList className="w-4 h-4 text-indigo-600" /><LocaleText value={"Enable / Disable Footer Sections"}/></h3>
 
                 <div className="space-y-3 text-xs">
                   {[
@@ -1317,11 +1239,8 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-cyan-600" /> Footer Navigation Links
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Add, reorder, or edit links shown in the Footer column.
-                </p>
+                  <Globe className="w-4 h-4 text-cyan-600" /><LocaleText value={"Footer Navigation Links"}/></h3>
+                <p className="text-xs text-slate-500"><LocaleText value={"Add, reorder, or edit links shown in the Footer column."}/></p>
               </div>
             </div>
 
@@ -1338,8 +1257,7 @@ export const AdminDashboard: React.FC = () => {
                     </span>
                     <div>
                       <div className="font-bold text-slate-900">{link.label}</div>
-                      <div className="text-[11px] text-slate-500 font-mono">
-                        URL: {link.url} {link.targetView ? `(Target View: ${link.targetView})` : ''}
+                      <div className="text-[11px] text-slate-500 font-mono"><LocaleText value={"URL:"}/>{link.url} {link.targetView ? `(Target View: ${link.targetView})` : ''}
                       </div>
                     </div>
                   </div>
@@ -1411,10 +1329,10 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Add New Link Form */}
             <div className="pt-4 border-t border-slate-100 space-y-3">
-              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Add New Footer Navigation Link</h4>
+              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider"><LocaleText value={"Add New Footer Navigation Link"}/></h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Link Title</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Link Title"}/></label>
                   <input
                     type="text"
                     placeholder="e.g. Partner Support"
@@ -1424,7 +1342,7 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">URL or Hash Target</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"URL or Hash Target"}/></label>
                   <input
                     type="text"
                     placeholder="e.g. #contact or https://..."
@@ -1434,19 +1352,19 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Target View (Optional)</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Target View (Optional)"}/></label>
                   <select
                     value={newLinkTargetView}
                     onChange={(e) => setNewLinkTargetView(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-semibold"
                   >
-                    <option value="">-- None (use URL) --</option>
-                    <option value="about">About Page (#about)</option>
-                    <option value="faq">FAQ Page (#faq)</option>
-                    <option value="contact">Contact Support (#contact)</option>
-                    <option value="privacy">Privacy Policy (#privacy)</option>
-                    <option value="terms">Terms & Conditions (#terms)</option>
-                    <option value="partners">Partner Portal (#partners)</option>
+                    <option value="">{"-- None (use URL) --"}</option>
+                    <option value="about">{"About Page (#about)"}</option>
+                    <option value="faq">{"FAQ Page (#faq)"}</option>
+                    <option value="contact">{"Contact Support (#contact)"}</option>
+                    <option value="privacy">{"Privacy Policy (#privacy)"}</option>
+                    <option value="terms">{"Terms & Conditions (#terms)"}</option>
+                    <option value="partners">{"Partner Portal (#partners)"}</option>
                   </select>
                 </div>
               </div>
@@ -1472,7 +1390,7 @@ export const AdminDashboard: React.FC = () => {
                 className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-xs shadow-md disabled:opacity-40 transition-all flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Footer Link</span>
+                <span><LocaleText value={"Add Footer Link"}/></span>
               </button>
             </div>
           </div>
@@ -1487,7 +1405,7 @@ export const AdminDashboard: React.FC = () => {
               className="px-8 py-3.5 bg-slate-900 hover:bg-black text-amber-300 font-extrabold rounded-2xl text-xs shadow-xl transition-all flex items-center gap-2"
             >
               <Save className="w-4 h-4 text-emerald-400" />
-              <span>Save & Publish All Footer Changes</span>
+              <span><LocaleText value={"Save & Publish All Footer Changes"}/></span>
             </button>
           </div>
         </div>
@@ -1498,17 +1416,16 @@ export const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold font-sans text-slate-900">Customer & Partner Support Helpdesk</h2>
-              <p className="text-xs text-slate-500">View inquiries from family customers and partner venues and reply directly.</p>
+              <h2 className="text-lg font-bold font-sans text-slate-900"><LocaleText value={"Customer & Partner Support Helpdesk"}/></h2>
+              <p className="text-xs text-slate-500"><LocaleText value={"View inquiries from family customers and partner venues and reply directly."}/></p>
             </div>
             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              {supportMessages.filter((m) => m.status === 'pending').length} Unanswered Messages
-            </span>
+              {supportMessages.filter((m) => m.status === 'pending').length}<LocaleText value={"Unanswered Messages"}/></span>
           </div>
 
           <div className="space-y-4">
             {supportMessages.length === 0 ? (
-              <p className="text-xs text-slate-400 italic">No support messages yet.</p>
+              <p className="text-xs text-slate-400 italic"><LocaleText value={"No support messages yet."}/></p>
             ) : (
               supportMessages.map((msg) => (
                 <div key={msg.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
@@ -1526,8 +1443,7 @@ export const AdminDashboard: React.FC = () => {
                       <p className="text-[11px] text-slate-500 font-medium">{msg.userEmail}</p>
                     </div>
 
-                    <div className="text-[10px] font-bold text-slate-400">
-                      Sent on {msg.createdAt}
+                    <div className="text-[10px] font-bold text-slate-400"><LocaleText value={"Sent on"}/>{msg.createdAt}
                     </div>
                   </div>
 
@@ -1537,9 +1453,7 @@ export const AdminDashboard: React.FC = () => {
 
                   {msg.adminReply ? (
                     <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs space-y-1">
-                      <span className="font-extrabold text-emerald-800 text-[10px] uppercase tracking-wider block">
-                        Admin Reply Sent:
-                      </span>
+                      <span className="font-extrabold text-emerald-800 text-[10px] uppercase tracking-wider block"><LocaleText value={"Admin Reply Sent:"}/></span>
                       <p className="text-emerald-950 font-medium">{msg.adminReply}</p>
                     </div>
                   ) : (
@@ -1561,9 +1475,7 @@ export const AdminDashboard: React.FC = () => {
                           showToast.success('Official reply sent to user.');
                         }}
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition-all"
-                      >
-                        Send Official Reply
-                      </button>
+                      ><LocaleText value={"Send Official Reply"}/></button>
                     </div>
                   )}
                 </div>
@@ -1578,12 +1490,12 @@ export const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold font-sans text-slate-900">Family Referral Program Control</h2>
-              <p className="text-xs text-slate-500">Configure viral referral incentives, reward AED amount, and anti-abuse limits.</p>
+              <h2 className="text-lg font-bold font-sans text-slate-900"><LocaleText value={"Family Referral Program Control"}/></h2>
+              <p className="text-xs text-slate-500"><LocaleText value={"Configure viral referral incentives, reward AED amount, and anti-abuse limits."}/></p>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-600">Status:</span>
+              <span className="text-xs font-bold text-slate-600"><LocaleText value={"Status:"}/></span>
               <button
                 onClick={() => {
                   const updated = !referralConfig.enabled;
@@ -1601,7 +1513,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold text-slate-800 block">Referral Voucher Reward (AED)</label>
+              <label className="text-xs font-extrabold text-slate-800 block"><LocaleText value={"Referral Voucher Reward (AED)"}/></label>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500">AED</span>
                 <input
@@ -1616,17 +1528,15 @@ export const AdminDashboard: React.FC = () => {
                   className="bg-white border border-slate-200 text-xs font-black text-slate-900 p-2.5 rounded-xl w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Both the inviting family and the invited friend receive this voucher credit.
-              </p>
+              <p className="text-[11px] text-slate-500 font-medium"><LocaleText value={"Both the inviting family and the invited friend receive this voucher credit."}/></p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold text-slate-800 block">Anti-Abuse Safeguards</label>
+              <label className="text-xs font-extrabold text-slate-800 block"><LocaleText value={"Anti-Abuse Safeguards"}/></label>
               <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs font-medium text-slate-700 space-y-1">
-                <p>✓ Duplicate email invitation block active</p>
-                <p>✓ One voucher per family account rule active</p>
-                <p>✓ Requires valid booking redemption before cashout</p>
+                <p><LocaleText value={"✓ Duplicate email invitation block active"}/></p>
+                <p><LocaleText value={"✓ One voucher per family account rule active"}/></p>
+                <p><LocaleText value={"✓ Requires valid booking redemption before cashout"}/></p>
               </div>
             </div>
           </div>
@@ -1661,12 +1571,10 @@ export const AdminDashboard: React.FC = () => {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0C5CAB] text-[11px] font-extrabold uppercase tracking-wide mb-1">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Visual CMS Engine</span>
+                <span><LocaleText value={"Visual CMS Engine"}/></span>
               </div>
-              <h2 className="text-xl font-black text-slate-900 font-sans">Homepage & Hero Visual Control</h2>
-              <p className="text-xs text-slate-500 font-medium">
-                Customize titles, slogans, badges, announcement banners, and toggle AI features in real-time.
-              </p>
+              <h2 className="text-xl font-black text-slate-900 font-sans"><LocaleText value={"Homepage & Hero Visual Control"}/></h2>
+              <p className="text-xs text-slate-500 font-medium"><LocaleText value={"Customize titles, slogans, badges, announcement banners, and toggle AI features in real-time."}/></p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -1677,9 +1585,7 @@ export const AdminDashboard: React.FC = () => {
                   showToast.info('Homepage settings reset to defaults.');
                 }}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-              >
-                Reset Defaults
-              </button>
+              ><LocaleText value={"Reset Defaults"}/></button>
               <button
                 onClick={() => {
                   updateHomepageConfig(localHomepage);
@@ -1688,7 +1594,7 @@ export const AdminDashboard: React.FC = () => {
                 className="px-5 py-2.5 bg-[#0C5CAB] hover:bg-[#094887] text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Save className="w-4 h-4" />
-                <span>Save & Publish</span>
+                <span><LocaleText value={"Save & Publish"}/></span>
               </button>
             </div>
           </div>
@@ -1697,11 +1603,10 @@ export const AdminDashboard: React.FC = () => {
             {/* Left Column: Hero Controls */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                <Tag className="w-4 h-4 text-[#0C5CAB]" /> Primary Hero Banner
-              </h3>
+                <Tag className="w-4 h-4 text-[#0C5CAB]" /><LocaleText value={"Primary Hero Banner"}/></h3>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Hero Main Title (Prefix)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Hero Main Title (Prefix)"}/></label>
                 <input
                   type="text"
                   value={localHomepage.heroTitle}
@@ -1712,7 +1617,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Hero Highlight Word (Colored Gold)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Hero Highlight Word (Colored Gold)"}/></label>
                 <input
                   type="text"
                   value={localHomepage.heroHighlightText}
@@ -1723,7 +1628,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Hero Badge Pill Text</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Hero Badge Pill Text"}/></label>
                 <input
                   type="text"
                   value={localHomepage.heroBadgeText}
@@ -1734,7 +1639,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Hero Subtitle</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Hero Subtitle"}/></label>
                 <textarea
                   rows={2}
                   value={localHomepage.heroSubtitle}
@@ -1748,15 +1653,12 @@ export const AdminDashboard: React.FC = () => {
             {/* Right Column: AI Feature & Banner Toggles */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-500" /> Feature Widgets & VIP Banner
-              </h3>
+                <Sparkles className="w-4 h-4 text-amber-500" /><LocaleText value={"Feature Widgets & VIP Banner"}/></h3>
 
               <div className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-xs text-slate-900">AI Daily Family Spotlight</div>
-                  <div className="text-[11px] text-slate-500">
-                    Displays Gemini-curated daily family deals, savings math & local tips
-                  </div>
+                  <div className="font-bold text-xs text-slate-900"><LocaleText value={"AI Daily Family Spotlight"}/></div>
+                  <div className="text-[11px] text-slate-500"><LocaleText value={"Displays Gemini-curated daily family deals, savings math & local tips"}/></div>
                 </div>
                 <button
                   onClick={() =>
@@ -1777,10 +1679,8 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-xs text-slate-900">VIP Pass Free Trial Banner</div>
-                  <div className="text-[11px] text-slate-500">
-                    Displays the 14-day VIP pass promotion banner on the homepage
-                  </div>
+                  <div className="font-bold text-xs text-slate-900"><LocaleText value={"VIP Pass Free Trial Banner"}/></div>
+                  <div className="text-[11px] text-slate-500"><LocaleText value={"Displays the 14-day VIP pass promotion banner on the homepage"}/></div>
                 </div>
                 <button
                   onClick={() =>
@@ -1800,7 +1700,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Section Title: Featured Deals</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Section Title: Featured Deals"}/></label>
                 <input
                   type="text"
                   value={localHomepage.featuredSectionTitle || 'Trending & Exclusive Offers'}
@@ -1812,7 +1712,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Section Title: Kids Play Areas</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Section Title: Kids Play Areas"}/></label>
                 <input
                   type="text"
                   value={localHomepage.playAreaSectionTitle || 'Kids Play Areas & Soft Play Zones'}
@@ -1832,14 +1732,11 @@ export const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 font-sans">User Reviews Moderation</h2>
-              <p className="text-xs text-slate-500">
-                Audit verified customer ratings, reviews, and delete inappropriate content.
-              </p>
+              <h2 className="text-lg font-bold text-slate-900 font-sans"><LocaleText value={"User Reviews Moderation"}/></h2>
+              <p className="text-xs text-slate-500"><LocaleText value={"Audit verified customer ratings, reviews, and delete inappropriate content."}/></p>
             </div>
             <div className="text-xs font-extrabold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl">
-              {reviews.length} Total Reviews
-            </div>
+              {reviews.length}<LocaleText value={"Total Reviews"}/></div>
           </div>
 
           <div className="space-y-3">
@@ -1858,12 +1755,11 @@ export const AdminDashboard: React.FC = () => {
                     <span className="font-bold text-slate-900">{rev.userName}</span>
                     <span className="text-amber-500 font-bold flex items-center gap-0.5 ml-2">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      {rev.rating} Stars
-                    </span>
+                      {rev.rating}<LocaleText value={"Stars"}/></span>
                     <span className="text-slate-400 text-[11px]">({rev.date})</span>
                   </div>
                   <p className="text-slate-700 italic">"{rev.comment}"</p>
-                  <div className="text-[10px] text-slate-400 font-mono">Deal ID: {rev.dealId}</div>
+                  <div className="text-[10px] text-slate-400 font-mono"><LocaleText value={"Deal ID:"}/>{rev.dealId}</div>
                 </div>
 
                 <button
@@ -1876,7 +1772,7 @@ export const AdminDashboard: React.FC = () => {
                   className="self-end sm:self-center px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete</span>
+                  <span><LocaleText value={"Delete"}/></span>
                 </button>
               </div>
             ))}
@@ -1889,7 +1785,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-extrabold text-base text-slate-900">Edit Business Partner</h3>
+              <h3 className="font-extrabold text-base text-slate-900"><LocaleText value={"Edit Business Partner"}/></h3>
               <button
                 onClick={() => setEditingBiz(null)}
                 className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold"
@@ -1900,7 +1796,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Business Name</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Business Name"}/></label>
                 <input
                   type="text"
                   value={editingBiz.name}
@@ -1911,7 +1807,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">City</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"City"}/></label>
                   <select
                     value={editingBiz.city}
                     onChange={(e) => setEditingBiz({ ...editingBiz, city: e.target.value as City })}
@@ -1923,7 +1819,7 @@ export const AdminDashboard: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Category</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Category"}/></label>
                   <select
                     value={editingBiz.category}
                     onChange={(e) => setEditingBiz({ ...editingBiz, category: e.target.value as Category })}
@@ -1937,7 +1833,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Contact Phone</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Contact Phone"}/></label>
                 <input
                   type="text"
                   value={editingBiz.phone}
@@ -1947,7 +1843,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Email</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Email"}/></label>
                 <input
                   type="email"
                   value={editingBiz.email}
@@ -1957,7 +1853,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Physical Address</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Physical Address"}/></label>
                 <input
                   type="text"
                   value={editingBiz.address}
@@ -1970,9 +1866,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   onClick={() => setEditingBiz(null)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   onClick={() => {
                     editBusiness(editingBiz);
@@ -1980,9 +1874,7 @@ export const AdminDashboard: React.FC = () => {
                     setEditingBiz(null);
                   }}
                   className="px-5 py-2 bg-[#0C5CAB] hover:bg-[#094887] text-white font-extrabold rounded-xl shadow-md cursor-pointer"
-                >
-                  Save Changes
-                </button>
+                ><LocaleText value={"Save Changes"}/></button>
               </div>
             </div>
           </div>
@@ -1994,7 +1886,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-extrabold text-base text-slate-900">Edit Deal</h3>
+              <h3 className="font-extrabold text-base text-slate-900"><LocaleText value={"Edit Deal"}/></h3>
               <button
                 onClick={() => setEditingDeal(null)}
                 className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold"
@@ -2005,7 +1897,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Deal Title</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Deal Title"}/></label>
                 <input
                   type="text"
                   value={editingDeal.title}
@@ -2016,7 +1908,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Original Price (AED)</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Original Price (AED)"}/></label>
                   <input
                     type="number"
                     value={editingDeal.originalPrice}
@@ -2030,7 +1922,7 @@ export const AdminDashboard: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Discount Price (AED)</label>
+                  <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Discount Price (AED)"}/></label>
                   <input
                     type="number"
                     value={editingDeal.discountPrice}
@@ -2046,7 +1938,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Description</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Description"}/></label>
                 <textarea
                   rows={3}
                   value={editingDeal.description}
@@ -2059,9 +1951,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   onClick={() => setEditingDeal(null)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold cursor-pointer"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   onClick={() => {
                     editDeal(editingDeal);
@@ -2069,9 +1959,7 @@ export const AdminDashboard: React.FC = () => {
                     setEditingDeal(null);
                   }}
                   className="px-5 py-2 bg-[#0C5CAB] hover:bg-[#094887] text-white font-extrabold rounded-xl shadow-md cursor-pointer"
-                >
-                  Save Deal
-                </button>
+                ><LocaleText value={"Save Deal"}/></button>
               </div>
             </div>
           </div>
@@ -2113,7 +2001,7 @@ export const AdminDashboard: React.FC = () => {
                 <div className="w-8 h-8 bg-slate-900 text-amber-400 rounded-xl flex items-center justify-center font-bold">
                   <Lock className="w-4 h-4" />
                 </div>
-                <h3 className="font-extrabold text-base font-sans text-slate-900">Admin Password Settings</h3>
+                <h3 className="font-extrabold text-base font-sans text-slate-900"><LocaleText value={"Admin Password Settings"}/></h3>
               </div>
               <button
                 onClick={() => setShowSettingsModal(false)}
@@ -2125,20 +2013,18 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Master Admin Email</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Master Admin Email"}/></label>
                 <input
                   type="text"
                   readOnly
                   value={storedAdminEmail}
                   className="w-full bg-slate-100 border border-slate-200 rounded-xl p-3 font-semibold text-slate-600 cursor-not-allowed"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Managed internally inside SpoteraDeals application system.
-                </span>
+                <span className="text-[10px] text-slate-400 mt-1 block"><LocaleText value={"Managed internally inside SpoteraDeals application system."}/></span>
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Set New Master Password</label>
+                <label className="font-bold text-slate-700 block mb-1"><LocaleText value={"Set New Master Password"}/></label>
                 <input
                   type="password"
                   placeholder="Enter new master password (min 12 chars)"
@@ -2158,9 +2044,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   onClick={() => setShowSettingsModal(false)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold"
-                >
-                  Close
-                </button>
+                ><LocaleText value={"Close"}/></button>
                 <button
                   onClick={async () => {
                     if (!newPasswordInput.trim() || newPasswordInput.length < 12) {
@@ -2174,9 +2058,7 @@ export const AdminDashboard: React.FC = () => {
                     setNewPasswordInput('');
                   }}
                   className="px-5 py-2 bg-slate-900 hover:bg-black text-amber-300 font-extrabold rounded-xl shadow-md transition-all"
-                >
-                  Update Password
-                </button>
+                ><LocaleText value={"Update Password"}/></button>
               </div>
             </div>
           </div>

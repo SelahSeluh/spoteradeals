@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import React, { useState, useMemo } from 'react';
 import {
   X,
@@ -60,16 +61,12 @@ export const BookingConfirmPage: React.FC = () => {
           <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#0D9CFD] flex items-center justify-center mx-auto">
             <Ticket className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-black text-[#0D1B3E]">No Booking Found</h2>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            You do not have an active booking to display. Browse our verified family deals and activities across the UAE to book your passes.
-          </p>
+          <h2 className="text-xl font-black text-[#0D1B3E]"><LocaleText value={"No Booking Found"}/></h2>
+          <p className="text-xs text-slate-500 leading-relaxed"><LocaleText value={"You do not have an active booking to display. Browse our verified family deals and activities across the UAE to book your passes."}/></p>
           <button
             onClick={() => setActiveView('explore')}
             className="w-full py-3 px-6 bg-[#0D9CFD] hover:bg-[#0B8AE0] text-white text-xs font-extrabold rounded-2xl shadow-xs transition-all cursor-pointer"
-          >
-            Explore Verified Deals
-          </button>
+          ><LocaleText value={"Explore Verified Deals"}/></button>
         </div>
       </div>
     );
@@ -120,8 +117,7 @@ export const BookingConfirmPage: React.FC = () => {
           {/* Top Row: SpoteraDeals Logo & Ref Code */}
           <div className="flex items-center justify-between px-1">
             <SpoteraLogo size="sm" variant="light" showTagline={false} />
-            <span className="text-xs sm:text-sm font-bold text-[#1060E2] tracking-tight">
-              Ref: {bookingRef}
+            <span className="text-xs sm:text-sm font-bold text-[#1060E2] tracking-tight"><LocaleText value={"Ref:"}/>{bookingRef}
             </span>
           </div>
 
@@ -179,7 +175,7 @@ export const BookingConfirmPage: React.FC = () => {
                 <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
               <div className="flex items-center gap-1.5">
-                <span>Pay at venue:</span>
+                <span><LocaleText value={"Pay at venue:"}/></span>
                 <span className="font-black text-[#F5820A]">AED {paidPrice}</span>
               </div>
             </div>
@@ -193,9 +189,7 @@ export const BookingConfirmPage: React.FC = () => {
           <button
             onClick={() => setShowFullTicketModal(true)}
             className="w-full py-3.5 sm:py-4 rounded-2xl bg-[#1060E2] hover:bg-[#0C4EBD] text-white text-sm font-bold text-center transition-transform active:scale-95 shadow-md shadow-[#1060E2]/25 cursor-pointer"
-          >
-            View Ticket
-          </button>
+          ><LocaleText value={"View Ticket"}/></button>
 
           {/* Share Ticket Secondary Button */}
           <button
@@ -203,7 +197,7 @@ export const BookingConfirmPage: React.FC = () => {
             className="w-full py-3.5 sm:py-4 rounded-2xl bg-white border border-[#1060E2] text-[#1060E2] text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#F0F6FE] transition-colors cursor-pointer"
           >
             <Share2 className="w-4 h-4" />
-            <span>Share Ticket</span>
+            <span><LocaleText value={"Share Ticket"}/></span>
           </button>
 
           {/* Back Home Link */}
@@ -211,9 +205,7 @@ export const BookingConfirmPage: React.FC = () => {
             <button
               onClick={() => setActiveView('home')}
               className="text-xs sm:text-sm font-bold text-[#1060E2] hover:underline cursor-pointer"
-            >
-              Back Home
-            </button>
+            ><LocaleText value={"Back Home"}/></button>
           </div>
         </div>
       </div>
@@ -236,13 +228,11 @@ export const BookingConfirmPage: React.FC = () => {
             <div className="py-2">
               {presentation.canRedeem ? <BookingQr value={bookingRef} /> : <p role="status" className="text-red-700 text-center font-bold">{presentation.message}</p>}
             </div>
-            <p className="text-xs font-bold text-[#1060E2]">Ticket Reference: {bookingRef}</p>
+            <p className="text-xs font-bold text-[#1060E2]"><LocaleText value={"Ticket Reference:"}/>{bookingRef}</p>
             <button
               onClick={() => setShowFullTicketModal(false)}
               className="w-full py-3 rounded-2xl bg-[#1060E2] text-white text-xs font-bold"
-            >
-              Done
-            </button>
+            ><LocaleText value={"Done"}/></button>
           </div>
         </div>
       )}

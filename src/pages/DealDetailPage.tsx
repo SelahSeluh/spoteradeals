@@ -1,3 +1,4 @@
+import {LocaleText} from '../components/LocaleText';
 import {bookingTimeSlots,validBookingSchedule} from '../utils/bookingSchedule';
 import {PublicBusinessProfile} from '../components/BusinessOperations';
 import {PaymentPolicy} from '../components/PaymentPolicy';
@@ -296,7 +297,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
         <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
           {/* LEFT COLUMN: Media & Information */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-            <button className="text-blue-700 underline font-bold" onClick={()=>setShowBusiness(true)}>View {deal.businessName} profile & all offers</button>
+            <button className="text-blue-700 underline font-bold" onClick={()=>setShowBusiness(true)}><LocaleText value={"View"}/>{deal.businessName}<LocaleText value={"profile & all offers"}/></button>
             {showBusiness&&<PublicBusinessProfile businessId={deal.businessId} onClose={()=>setShowBusiness(false)}/>}
             {/* 2. IMAGE CAROUSEL: Kids on yellow inflatable water raft */}
             <div className="space-y-2">
@@ -353,26 +354,26 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                 <span>{deal.businessName || 'AquaPlay Waterpark'}</span>
                 <span>·</span>
                 <span>{deal.district || deal.city || 'Dubai Marina'}</span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#1060E2] fill-[#1060E2]/15 ml-0.5" />
+
               </div>
 
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5F6B82] font-semibold pt-0.5">
+              {deal.reviewCount>0&&deal.rating>0&&<div className="flex items-center gap-2 text-xs sm:text-sm text-[#5F6B82] font-semibold pt-0.5">
                 <div className="flex items-center gap-1 text-[#F59E0B] font-bold">
                   <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
-                  <span>4.8</span>
+                  <span>{deal.rating}</span>
                 </div>
-                <span>({deal.reviewCount || 412} {t('verifiedReviews')})</span>
-              </div>
+                <span>({deal.reviewCount} {t('reviews')})</span>
+              </div>}
 
               <div className="flex items-center gap-2.5 pt-1">
                 <span className="text-sm sm:text-base text-slate-400 line-through">
-                  AED {deal.originalPrice || 160}
+                  AED {deal.originalPrice}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-[#F5820A]">
                   AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#FFF3E8] text-[#F5820A] border border-[#F5820A]/30 text-xs font-bold">
-                  {t('save')} {deal.discountPercent || 38}%
+                  {t('save')} {deal.discountPercent}%
                 </span>
               </div>
             </div>
@@ -455,11 +456,11 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{t('specialPassRate')}</span>
                   <div className="flex items-baseline gap-2 mt-1">
                     <span className="text-3xl font-black text-[#0D1B3E]">AED {deal.discountPrice * (deal.priceMode==='guest'?guestsCount:1)}</span>
-                    <span className="text-sm text-slate-400 line-through">AED {deal.originalPrice || 160}</span>
+                    <span className="text-sm text-slate-400 line-through">AED {deal.originalPrice}</span>
                   </div>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-[#FFF3E8] text-[#F5820A] text-xs font-black border border-[#F5820A]/30">
-                  {t('save')} {deal.discountPercent || 38}%
+                  {t('save')} {deal.discountPercent}%
                 </span>
               </div>
 

@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import {uploadAdminMedia} from './MediaUploadField';
 import React, { useState } from 'react';
 import {
@@ -147,7 +148,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             className="fixed top-5 left-5 z-[210] px-4 py-2 bg-black/60 hover:bg-black/80 text-white text-xs font-bold rounded-full border border-white/20 backdrop-blur-md flex items-center gap-1.5 cursor-pointer shadow-lg"
           >
             <X className="w-4 h-4" />
-            <span>Close Preview</span>
+            <span><LocaleText value={"Close Preview"}/></span>
           </button>
         </div>
       )}
@@ -157,7 +158,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[#FD9302]" />
-            <h2 className="text-lg font-bold text-slate-900">Intro & Opening Animation CMS</h2>
+            <h2 className="text-lg font-bold text-slate-900"><LocaleText value={"Intro & Opening Animation CMS"}/></h2>
             <span
               className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                 formData.enabled ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'
@@ -166,9 +167,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               {formData.enabled ? 'Enabled' : 'Disabled'}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Customize the entry splash screen: duration (1–10s), background modes (solid gradient with skyline, image, slideshow, video), logo placement, and multilingual slogans.
-          </p>
+          <p className="text-xs text-slate-500 mt-1"><LocaleText value={"Customize the entry splash screen: duration (1–10s), background modes (solid gradient with skyline, image, slideshow, video), logo placement, and multilingual slogans."}/></p>
         </div>
 
         <div className="flex items-center flex-wrap gap-2.5">
@@ -178,7 +177,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-800 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer transition-all"
           >
             <Eye className="w-3.5 h-3.5 text-slate-600" />
-            <span>Fullscreen Preview</span>
+            <span><LocaleText value={"Fullscreen Preview"}/></span>
           </button>
 
           <button
@@ -187,7 +186,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white flex items-center gap-1.5 cursor-pointer shadow-xs transition-all"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>Save Draft</span>
+            <span><LocaleText value={"Save Draft"}/></span>
           </button>
 
           <button
@@ -209,7 +208,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
               <Eye className="w-4 h-4 text-[#0D9CFD]" />
-              <span>Live Phone Simulator</span>
+              <span><LocaleText value={"Live Phone Simulator"}/></span>
             </h3>
             <button
               type="button"
@@ -217,7 +216,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               className="text-[11px] font-bold text-[#0D9CFD] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>Replay Screen</span>
+              <span><LocaleText value={"Replay Screen"}/></span>
             </button>
           </div>
 
@@ -227,15 +226,13 @@ export const AdminIntroAnimationManager: React.FC = () => {
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-900 rounded-full z-50 pointer-events-none" />
 
             <div key={simulatorKey} className="w-full h-full relative">
-              {simulatorPlaying ? <OpeningAnimation embedded previewConfig={formData} onPreviewClose={()=>setSimulatorPlaying(false)} /> : <div className="h-full flex items-center justify-center text-white text-sm">Preview finished. Select Replay Screen to play again.</div>}
+              {simulatorPlaying ? <OpeningAnimation embedded previewConfig={formData} onPreviewClose={()=>setSimulatorPlaying(false)} /> : <div className="h-full flex items-center justify-center text-white text-sm"><LocaleText value={"Preview finished. Select Replay Screen to play again."}/></div>}
             </div>
           </div>
 
           <div className="text-center pt-2">
-            <p className="text-[11px] text-slate-500">
-              Showing active settings with <span className="font-bold text-slate-700">{formData.durationSeconds}s</span> duration &{' '}
-              <span className="font-bold text-slate-700">{formData.backgroundType}</span> background.
-            </p>
+            <p className="text-[11px] text-slate-500"><LocaleText value={"Showing active settings with"}/><span className="font-bold text-slate-700">{formData.durationSeconds}<LocaleText value={"s"}/></span><LocaleText value={"duration &"}/>{' '}
+              <span className="font-bold text-slate-700">{formData.backgroundType}</span><LocaleText value={"background."}/></p>
           </div>
         </div>
 
@@ -245,14 +242,14 @@ export const AdminIntroAnimationManager: React.FC = () => {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
               <Sliders className="w-4 h-4 text-[#0D9CFD]" />
-              <span>Timing & Animation Transitions</span>
+              <span><LocaleText value={"Timing & Animation Transitions"}/></span>
             </h3>
 
             {/* Toggle Enable */}
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
               <div>
-                <label className="text-xs font-bold text-slate-800">Enable Intro Animation</label>
-                <p className="text-[11px] text-slate-500">Shows opening branding screen when users first visit the app</p>
+                <label className="text-xs font-bold text-slate-800"><LocaleText value={"Enable Intro Animation"}/></label>
+                <p className="text-[11px] text-slate-500"><LocaleText value={"Shows opening branding screen when users first visit the app"}/></p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -268,10 +265,9 @@ export const AdminIntroAnimationManager: React.FC = () => {
             {/* Duration Slider (1s to 10s) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700">Display Duration: {formData.durationSeconds} Seconds</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Display Duration:"}/>{formData.durationSeconds}<LocaleText value={"Seconds"}/></label>
                 <span className="text-xs font-mono font-bold text-[#0D9CFD] px-2 py-0.5 rounded-md bg-blue-50">
-                  {formData.durationSeconds}s
-                </span>
+                  {formData.durationSeconds}<LocaleText value={"s"}/></span>
               </div>
               <input
                 type="range"
@@ -283,26 +279,26 @@ export const AdminIntroAnimationManager: React.FC = () => {
                 className="w-full accent-[#0D9CFD] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>1s (Snappy)</span>
-                <span>2s (Recommended)</span>
-                <span>5s (Branded)</span>
-                <span>10s (Cinema)</span>
+                <span><LocaleText value={"1s (Snappy)"}/></span>
+                <span><LocaleText value={"2s (Recommended)"}/></span>
+                <span><LocaleText value={"5s (Branded)"}/></span>
+                <span><LocaleText value={"10s (Cinema)"}/></span>
               </div>
             </div>
 
             {/* Animation Style */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700">Entrance Animation Style</label>
+              <label className="text-xs font-bold text-slate-700"><LocaleText value={"Entrance Animation Style"}/></label>
               <select
                 value={formData.animationStyle}
                 onChange={(e) => handleChange('animationStyle', e.target.value as any)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
               >
-                <option value="smooth-combined">Smooth Combined (Scale + Fade + Up)</option>
-                <option value="fade-in">Classic Smooth Fade In</option>
-                <option value="scale-in">Scale In / Pop Reveal</option>
-                <option value="slide-up">Slide In from Bottom</option>
-                <option value="logo-reveal">Cinematic Logo Zoom Reveal</option>
+                <option value="smooth-combined">{"Smooth Combined (Scale + Fade + Up)"}</option>
+                <option value="fade-in">{"Classic Smooth Fade In"}</option>
+                <option value="scale-in">{"Scale In / Pop Reveal"}</option>
+                <option value="slide-up">{"Slide In from Bottom"}</option>
+                <option value="logo-reveal">{"Cinematic Logo Zoom Reveal"}</option>
               </select>
             </div>
           </div>
@@ -311,7 +307,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#FD9302]" />
-              <span>Background Canvas & Media</span>
+              <span><LocaleText value={"Background Canvas & Media"}/></span>
             </h3>
 
             {/* Background Type Pills */}
@@ -348,7 +344,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             {formData.backgroundType === 'solid' && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-4 animate-in fade-in">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-700">Gradient Colors (Vertical Blend)</span>
+                  <span className="text-xs font-bold text-slate-700"><LocaleText value={"Gradient Colors (Vertical Blend)"}/></span>
                   <div
                     className="w-16 h-5 rounded-md border border-slate-300"
                     style={{
@@ -359,7 +355,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600">Top Color</label>
+                    <label className="text-[11px] font-bold text-slate-600"><LocaleText value={"Top Color"}/></label>
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
@@ -377,7 +373,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600">Middle Color</label>
+                    <label className="text-[11px] font-bold text-slate-600"><LocaleText value={"Middle Color"}/></label>
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
@@ -395,7 +391,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-600">Bottom Color</label>
+                    <label className="text-[11px] font-bold text-slate-600"><LocaleText value={"Bottom Color"}/></label>
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
@@ -415,8 +411,8 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
                 <div className="flex items-center justify-between pt-2 border-t border-slate-200">
                   <div>
-                    <label className="text-xs font-bold text-slate-700">Display UAE Landmarks Skyline</label>
-                    <p className="text-[11px] text-slate-500">Includes Burj Khalifa, Dubai Frame, Burj Al Arab silhouettes</p>
+                    <label className="text-xs font-bold text-slate-700"><LocaleText value={"Display UAE Landmarks Skyline"}/></label>
+                    <p className="text-[11px] text-slate-500"><LocaleText value={"Includes Burj Khalifa, Dubai Frame, Burj Al Arab silhouettes"}/></p>
                   </div>
                   <input
                     type="checkbox"
@@ -432,7 +428,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             {formData.backgroundType === 'image' && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 animate-in fade-in">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Image URL</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Image URL"}/></label>
                   <input
                     type="text"
                     value={formData.backgroundImageUrl || ''}
@@ -445,7 +441,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <label className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-pointer">
                     <Upload className="w-3.5 h-3.5" />
-                    <span>Upload Image</span>
+                    <span><LocaleText value={"Upload Image"}/></span>
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'background')} />
                   </label>
 
@@ -458,9 +454,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                       )
                     }
                     className="text-[11px] text-[#0D9CFD] hover:underline"
-                  >
-                    Use Dubai Skyline Preset
-                  </button>
+                  ><LocaleText value={"Use Dubai Skyline Preset"}/></button>
                 </div>
               </div>
             )}
@@ -469,8 +463,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             {formData.backgroundType === 'slideshow' && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-4 animate-in fade-in">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-700">
-                    Slideshow Images ({(formData.slideshowImages || []).length})
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Slideshow Images ("}/>{(formData.slideshowImages || []).length})
                   </label>
                   <div className="grid grid-cols-3 gap-2.5">
                     {(formData.slideshowImages || []).map((imgUrl, idx) => (
@@ -527,7 +520,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                     className="px-3 py-1.5 bg-[#0D9CFD] text-white rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add</span>
+                    <span><LocaleText value={"Add"}/></span>
                   </button>
                   <label className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1 cursor-pointer">
                     <Upload className="w-3.5 h-3.5" />
@@ -536,7 +529,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Slide Interval: {formData.slideshowIntervalSeconds}s</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Slide Interval:"}/>{formData.slideshowIntervalSeconds}<LocaleText value={"s"}/></label>
                   <input
                     type="range"
                     min="0.8"
@@ -554,7 +547,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
             {formData.backgroundType === 'video' && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 animate-in fade-in">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Video Clip URL (MP4 / WebM)</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Video Clip URL (MP4 / WebM)"}/></label>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -565,7 +558,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                     />
                     <label className="px-3 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1 cursor-pointer shrink-0">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>Upload Video</span>
+                      <span><LocaleText value={"Upload Video"}/></span>
                       <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={(e) => handleFileUpload(e, 'video')} />
                     </label>
                   </div>
@@ -579,7 +572,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                       onChange={(e) => handleChange('videoMuted', e.target.checked)}
                       className="w-4 h-4 accent-[#0D9CFD]"
                     />
-                    <span>Start Muted</span>
+                    <span><LocaleText value={"Start Muted"}/></span>
                   </label>
 
                   <label className="flex items-center gap-1.5 cursor-pointer">
@@ -589,7 +582,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                       onChange={(e) => handleChange('videoLoop', e.target.checked)}
                       className="w-4 h-4 accent-[#0D9CFD]"
                     />
-                    <span>Loop Playback</span>
+                    <span><LocaleText value={"Loop Playback"}/></span>
                   </label>
                 </div>
               </div>
@@ -600,7 +593,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#0D9CFD]" />
-              <span>Brand Logo & Dimensions</span>
+              <span><LocaleText value={"Brand Logo & Dimensions"}/></span>
             </h3>
 
             <div className="flex items-center gap-4">
@@ -616,7 +609,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               </div>
 
               <div className="flex-1 space-y-1">
-                <label className="text-xs font-bold text-slate-700">Logo Source URL</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Logo Source URL"}/></label>
                 <input
                   type="text"
                   value={formData.logoUrl}
@@ -627,36 +620,36 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
               <label className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0">
                 <Upload className="w-3.5 h-3.5" />
-                <span>Upload</span>
+                <span><LocaleText value={"Upload"}/></span>
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'logo')} />
               </label>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Logo Size</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Logo Size"}/></label>
                 <select
                   value={formData.logoSize}
                   onChange={(e) => handleChange('logoSize', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="small">Small (64px)</option>
-                  <option value="medium">Medium (112px - Recommended)</option>
-                  <option value="large">Large (144px)</option>
-                  <option value="xlarge">Extra Large (192px)</option>
+                  <option value="small">{"Small (64px)"}</option>
+                  <option value="medium">{"Medium (112px - Recommended)"}</option>
+                  <option value="large">{"Large (144px)"}</option>
+                  <option value="xlarge">{"Extra Large (192px)"}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Vertical Position</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Vertical Position"}/></label>
                 <select
                   value={formData.logoPosition}
                   onChange={(e) => handleChange('logoPosition', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="center">Center Viewport (Balanced)</option>
-                  <option value="upper-third">Upper-Third (Cinema Look)</option>
-                  <option value="top">Top Anchored</option>
+                  <option value="center">{"Center Viewport (Balanced)"}</option>
+                  <option value="upper-third">{"Upper-Third (Cinema Look)"}</option>
+                  <option value="top">{"Top Anchored"}</option>
                 </select>
               </div>
             </div>
@@ -666,14 +659,14 @@ export const AdminIntroAnimationManager: React.FC = () => {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
             <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
               <Globe className="w-4 h-4 text-emerald-500" />
-              <span>Slogan & Multilingual Text</span>
+              <span><LocaleText value={"Slogan & Multilingual Text"}/></span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span>English Slogan (Default)</span>
+                  <span><LocaleText value={"English Slogan (Default)"}/></span>
                 </label>
                 <input
                   type="text"
@@ -686,7 +679,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Arabic Slogan (العربية)</span>
+                  <span><LocaleText value={"Arabic Slogan (العربية)"}/></span>
                 </label>
                 <input
                   type="text"
@@ -700,7 +693,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                  <span>French Slogan (Français)</span>
+                  <span><LocaleText value={"French Slogan (Français)"}/></span>
                 </label>
                 <input
                   type="text"
@@ -713,7 +706,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-purple-500" />
-                  <span>Russian Slogan (Русский)</span>
+                  <span><LocaleText value={"Russian Slogan (Русский)"}/></span>
                 </label>
                 <input
                   type="text"
@@ -726,68 +719,68 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Font Family</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Font Family"}/></label>
                 <select
                   value={formData.fontFamily || 'Outfit'}
                   onChange={(e) => handleChange('fontFamily', e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="Outfit">Outfit (Default Modern)</option>
-                  <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
-                  <option value="Poppins">Poppins</option>
-                  <option value="Inter">Inter</option>
-                  <option value="Montserrat">Montserrat</option>
-                  <option value="Playfair Display">Playfair Display (Luxury)</option>
-                  <option value="Cairo">Cairo (Arabic Optimized)</option>
+                  <option value="Outfit">{"Outfit (Default Modern)"}</option>
+                  <option value="Plus Jakarta Sans">{"Plus Jakarta Sans"}</option>
+                  <option value="Poppins">{"Poppins"}</option>
+                  <option value="Inter">{"Inter"}</option>
+                  <option value="Montserrat">{"Montserrat"}</option>
+                  <option value="Playfair Display">{"Playfair Display (Luxury)"}</option>
+                  <option value="Cairo">{"Cairo (Arabic Optimized)"}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Font Weight</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Font Weight"}/></label>
                 <select
                   value={formData.fontWeight || 'bold'}
                   onChange={(e) => handleChange('fontWeight', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="normal">Normal (400)</option>
-                  <option value="medium">Medium (500)</option>
-                  <option value="semibold">Semibold (600)</option>
-                  <option value="bold">Bold (700)</option>
-                  <option value="extrabold">Extra Bold (800)</option>
-                  <option value="black">Black (900)</option>
+                  <option value="normal">{"Normal (400)"}</option>
+                  <option value="medium">{"Medium (500)"}</option>
+                  <option value="semibold">{"Semibold (600)"}</option>
+                  <option value="bold">{"Bold (700)"}</option>
+                  <option value="extrabold">{"Extra Bold (800)"}</option>
+                  <option value="black">{"Black (900)"}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Font Style</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Font Style"}/></label>
                 <select
                   value={formData.fontStyle || 'normal'}
                   onChange={(e) => handleChange('fontStyle', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="normal">Normal</option>
-                  <option value="italic">Italic</option>
+                  <option value="normal">{"Normal"}</option>
+                  <option value="italic">{"Italic"}</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Preset Size</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Preset Size"}/></label>
                 <select
                   value={formData.textSize}
                   onChange={(e) => handleChange('textSize', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="small">Small</option>
-                  <option value="medium">Medium (Recommended)</option>
-                  <option value="large">Large</option>
-                  <option value="xlarge">Extra Large</option>
+                  <option value="small">{"Small"}</option>
+                  <option value="medium">{"Medium (Recommended)"}</option>
+                  <option value="large">{"Large"}</option>
+                  <option value="xlarge">{"Extra Large"}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Text Color</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Text Color"}/></label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -805,7 +798,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Brand Accent Color</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Brand Accent Color"}/></label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -825,21 +818,21 @@ export const AdminIntroAnimationManager: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Text Animation</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Text Animation"}/></label>
                 <select
                   value={formData.textAnimationStyle}
                   onChange={(e) => handleChange('textAnimationStyle', e.target.value as any)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 outline-none focus:border-[#0D9CFD]"
                 >
-                  <option value="fade-in">Fade In</option>
-                  <option value="slide-up">Slide Up</option>
-                  <option value="typewriter">Typewriter Style</option>
-                  <option value="glow-pulse">Glow Pulse</option>
+                  <option value="fade-in">{"Fade In"}</option>
+                  <option value="slide-up">{"Slide Up"}</option>
+                  <option value="typewriter">{"Typewriter Style"}</option>
+                  <option value="glow-pulse">{"Glow Pulse"}</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Custom Font Size (Optional px)</label>
+                <label className="text-xs font-bold text-slate-700"><LocaleText value={"Custom Font Size (Optional px)"}/></label>
                 <input
                   type="number"
                   min="14"
@@ -861,7 +854,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
               className="text-xs text-slate-500 hover:text-red-600 font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset to Defaults</span>
+              <span><LocaleText value={"Reset to Defaults"}/></span>
             </button>
 
             <div className="flex items-center gap-2">
@@ -871,7 +864,7 @@ export const AdminIntroAnimationManager: React.FC = () => {
                 className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white flex items-center gap-1.5 cursor-pointer shadow-xs transition-all"
               >
                 <Save className="w-3.5 h-3.5" />
-                <span>Save Draft</span>
+                <span><LocaleText value={"Save Draft"}/></span>
               </button>
 
               <button

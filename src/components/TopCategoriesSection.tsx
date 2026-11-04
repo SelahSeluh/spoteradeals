@@ -1,3 +1,4 @@
+import {LocaleText} from './LocaleText';
 import { expeditionImage } from '../utils/expeditionImages';
 import React from 'react';
 import {
@@ -71,15 +72,13 @@ export const TopCategoriesSection: React.FC = () => {
     <section className="space-y-4 font-sans select-none">
       {/* Section Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-          Top Categories
-        </h2>
+        <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight"><LocaleText value={"Top Categories"}/></h2>
 
         <button
           onClick={() => setActiveView('categories')}
           className="text-xs sm:text-sm font-bold text-slate-600 hover:text-[#0D9CFD] flex items-center gap-1 transition-colors cursor-pointer group"
         >
-          <span>View all</span>
+          <span><LocaleText value={"View all"}/></span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>

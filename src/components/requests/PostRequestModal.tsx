@@ -1,3 +1,4 @@
+import {LocaleText} from '../LocaleText';
 import React, { useState } from 'react';
 import {
   X,
@@ -119,26 +120,20 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-                Request Broadcasted
-              </span>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans">
-                We're on it!
-              </h3>
-              <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Your request <strong className="text-slate-900">"{title}"</strong> has been transmitted to verified businesses and suppliers in {city}. You will receive competitive quotes with pricing, availability, and delivery terms directly in your dashboard.
-              </p>
+              <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200"><LocaleText value={"Request Broadcasted"}/></span>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans"><LocaleText value={"We're on it!"}/></h3>
+              <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed"><LocaleText value={"Your request"}/><strong className="text-slate-900">"{title}"</strong><LocaleText value={"has been transmitted to verified businesses and suppliers in"}/>{city}<LocaleText value={". You will receive competitive quotes with pricing, availability, and delivery terms directly in your dashboard."}/></p>
             </div>
 
             <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100 text-left text-xs text-slate-700 space-y-1.5">
               <div className="font-bold text-[#1060E2] flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" />
-                <span>What happens next?</span>
+                <span><LocaleText value={"What happens next?"}/></span>
               </div>
               <ul className="list-disc pl-4 space-y-1 text-slate-600">
-                <li>Local suppliers review your details and requirements</li>
-                <li>Multiple tailored quotes will appear in your Requests Hub</li>
-                <li>Compare prices, read ratings, and choose the best offer or chat directly</li>
+                <li><LocaleText value={"Local suppliers review your details and requirements"}/></li>
+                <li><LocaleText value={"Multiple tailored quotes will appear in your Requests Hub"}/></li>
+                <li><LocaleText value={"Compare prices, read ratings, and choose the best offer or chat directly"}/></li>
               </ul>
             </div>
 
@@ -147,9 +142,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                 type="button"
                 onClick={handleFinishAndTrack}
                 className="w-full sm:w-auto px-6 py-3 bg-[#1060E2] hover:bg-[#0A43A3] text-white font-bold rounded-xl text-sm transition-all shadow-md active:scale-95"
-              >
-                View My Requests & Quotes
-              </button>
+              ><LocaleText value={"View My Requests & Quotes"}/></button>
               <button
                 type="button"
                 onClick={() => {
@@ -157,9 +150,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                   onClose();
                 }}
                 className="w-full sm:w-auto px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-all"
-              >
-                Back to Discovery
-              </button>
+              ><LocaleText value={"Back to Discovery"}/></button>
             </div>
           </div>
         ) : (
@@ -177,15 +168,11 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
 
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-2">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Universal Discovery Sourcing</span>
+                <span><LocaleText value={"Universal Discovery Sourcing"}/></span>
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
-                Tell Us What You Need.
-              </h2>
-              <p className="text-blue-100 text-xs sm:text-sm mt-1">
-                We'll match your request with vetted local businesses, suppliers, and artisans who provide competitive quotes.
-              </p>
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug"><LocaleText value={"Tell Us What You Need."}/></h2>
+              <p className="text-blue-100 text-xs sm:text-sm mt-1"><LocaleText value={"We'll match your request with vetted local businesses, suppliers, and artisans who provide competitive quotes."}/></p>
             </div>
 
             {/* Modal Form */}
@@ -193,8 +180,8 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
               {/* Request Title */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-                  <span>What are you looking for? *</span>
-                  <span className="text-[11px] font-normal text-slate-400">e.g., 300 croissants, AC repair, balloon backdrop</span>
+                  <span><LocaleText value={"What are you looking for? *"}/></span>
+                  <span className="text-[11px] font-normal text-slate-400"><LocaleText value={"e.g., 300 croissants, AC repair, balloon backdrop"}/></span>
                 </label>
                 <input
                   type="text"
@@ -211,7 +198,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Tag className="w-3.5 h-3.5 text-[#1060E2]" />
-                    <span>Category</span>
+                    <span><LocaleText value={"Category"}/></span>
                   </label>
                   <select
                     value={category}
@@ -229,7 +216,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#1060E2]" />
-                    <span>Emirate / City</span>
+                    <span><LocaleText value={"Emirate / City"}/></span>
                   </label>
                   <select
                     value={city}
@@ -248,7 +235,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
               {/* District & Urgency */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Neighborhood / Area (Optional)</label>
+                  <label className="text-xs font-bold text-slate-700"><LocaleText value={"Neighborhood / Area (Optional)"}/></label>
                   <input
                     type="text"
                     value={district}
@@ -261,18 +248,18 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-[#1060E2]" />
-                    <span>When do you need it?</span>
+                    <span><LocaleText value={"When do you need it?"}/></span>
                   </label>
                   <select
                     value={neededDate}
                     onChange={(e) => setNeededDate(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 outline-none focus:border-[#1060E2] cursor-pointer"
                   >
-                    <option value="Urgent (Today)">Urgent (Today / ASAP)</option>
-                    <option value="Tomorrow">Tomorrow</option>
-                    <option value="This week">Within 3-5 days</option>
-                    <option value="This weekend">This coming weekend</option>
-                    <option value="Flexible">Flexible / Planning ahead</option>
+                    <option value="Urgent (Today)">{"Urgent (Today / ASAP)"}</option>
+                    <option value="Tomorrow">{"Tomorrow"}</option>
+                    <option value="This week">{"Within 3-5 days"}</option>
+                    <option value="This weekend">{"This coming weekend"}</option>
+                    <option value="Flexible">{"Flexible / Planning ahead"}</option>
                   </select>
                 </div>
               </div>
@@ -282,9 +269,9 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                 <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
                   <span className="flex items-center gap-1">
                     <DollarSign className="w-3.5 h-3.5 text-[#F5820A]" />
-                    <span>Estimated Budget (AED, Optional)</span>
+                    <span><LocaleText value={"Estimated Budget (AED, Optional)"}/></span>
                   </span>
-                  <span className="text-[11px] text-slate-400">Leave blank for open bids</span>
+                  <span className="text-[11px] text-slate-400"><LocaleText value={"Leave blank for open bids"}/></span>
                 </label>
                 <div className="relative">
                   <input
@@ -306,7 +293,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                   <FileText className="w-3.5 h-3.5 text-[#1060E2]" />
-                  <span>Specific Requirements, Quantities or Preferences</span>
+                  <span><LocaleText value={"Specific Requirements, Quantities or Preferences"}/></span>
                 </label>
                 <textarea
                   rows={3}
@@ -319,9 +306,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
 
               {/* Contact Information */}
               <div className="pt-2 border-t border-slate-100">
-                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Contact Information (For Supplier Quotes)
-                </div>
+                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2"><LocaleText value={"Contact Information (For Supplier Quotes)"}/></div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   <input
                     type="text"
@@ -355,9 +340,7 @@ export const PostRequestModal: React.FC<PostRequestModalProps> = ({
                   type="button"
                   onClick={onClose}
                   className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-                >
-                  Cancel
-                </button>
+                ><LocaleText value={"Cancel"}/></button>
                 <button
                   type="submit"
                   disabled={isSubmitting}

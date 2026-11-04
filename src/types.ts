@@ -99,7 +99,7 @@ export interface FindMeService {
   tags: string[];
 }
 
-export type Language = 'en' | 'ar' | 'zh' | 'ru' | 'fr' | 'am';
+export type Language = 'en' | 'ar' | 'zh' | 'ru' | 'fr' | 'am' | 'ur' | 'af';
 
 export type FamilyTheme = 'sunshine' | 'oasis' | 'cosmic' | 'pastel';
 
@@ -299,11 +299,15 @@ export interface Deal {
   businessId: string;
   businessName: string;
   title: string;
+  title_ur?: string;
+  title_af?: string;
   title_ar?: string;
   title_ru?: string;
   title_fr?: string;
   title_zh?: string;
   description: string;
+  description_ur?: string;
+  description_af?: string;
   description_ar?: string;
   description_ru?: string;
   description_fr?: string;
