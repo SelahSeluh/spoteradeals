@@ -1,3 +1,4 @@
+import {catalogTranslations} from '../lib/catalogTranslations';
 import { Deal, Language } from '../types';
 import { translations } from '../lib/translations';
 
@@ -53,7 +54,7 @@ export function getLocalizedTitle(deal: Deal, lang: Language): string {
   if (lang === 'ru' && deal.title_ru?.trim()) return deal.title_ru;
   if (lang === 'fr' && deal.title_fr?.trim()) return deal.title_fr;
   if (lang === 'zh' && deal.title_zh?.trim()) return deal.title_zh;
-  return deal.title;
+  return catalogTranslations[deal.title]?.[lang]?.title || deal.title;
 }
 
 /**
@@ -67,7 +68,8 @@ export function getLocalizedDescription(deal: Deal, lang: Language): string {
   if (lang === 'ru' && deal.description_ru?.trim()) return deal.description_ru;
   if (lang === 'fr' && deal.description_fr?.trim()) return deal.description_fr;
   if (lang === 'zh' && deal.description_zh?.trim()) return deal.description_zh;
-  return deal.description;
+  const entry=catalogTranslations[deal.title];
+  return entry?.sourceDescription===deal.description ? entry[lang]?.description || deal.description : deal.description;
 }
 
 /**
@@ -75,4 +77,9 @@ export function getLocalizedDescription(deal: Deal, lang: Language): string {
  */
 export function formatAED(amount: number): string {
   return `AED ${Math.round(amount).toLocaleString('en-US')}`;
+}
+
+/** Search source copy and every supported translation, including catalogue defaults. */
+export function offerSearchText(deal:Deal):string {
+ return [deal.title,deal.description,deal.businessName,deal.city,deal.category,deal.district,...(deal.tags||[]),...SUPPORTED_LANGUAGES.flatMap(({code})=>[getLocalizedTitle(deal,code),getLocalizedDescription(deal,code)])].filter(Boolean).join(' ').toLocaleLowerCase();
 }

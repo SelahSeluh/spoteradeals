@@ -1,3 +1,4 @@
+import {offerSearchText} from '../utils/i18nHelper';
 import {isOfferAvailable} from '../utils/offerAvailability';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
@@ -75,19 +76,7 @@ export const SearchPage: React.FC = () => {
     if (q) {
       const keywords = q.split(/\s+/).filter((k) => k.length > 0);
       list = list.filter((deal) => {
-        const haystack = [
-          deal.title,
-          ...Object.entries(deal).filter(([key])=>/^(title|description)_/.test(key)).map(([,value])=>String(value)),
-          deal.category,
-          deal.city,
-          deal.district || '',
-          deal.businessName,
-          deal.description,
-          deal.description_ar || '',
-          ...(deal.tags || []),
-        ]
-          .join(' ')
-          .toLowerCase();
+        const haystack = offerSearchText(deal);
 
         return keywords.every((kw) => haystack.includes(kw));
       });

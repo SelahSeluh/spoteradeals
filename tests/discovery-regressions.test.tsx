@@ -69,3 +69,16 @@ test('main customer pages render without crashing in every supported language',a
   }
  }}finally{dom.window.close()}
 });
+
+test('every default offer has translated title and description and can be searched in all seven languages',async()=>{
+ const {initialDeals}=await import('../src/lib/mockData');const {getLocalizedTitle,getLocalizedDescription,offerSearchText}=await import('../src/utils/i18nHelper');
+ for(const deal of initialDeals)for(const {code} of SUPPORTED_LANGUAGES){
+  const title=getLocalizedTitle(deal,code),description=getLocalizedDescription(deal,code);
+  assert.ok(title.trim()&&description.trim(),`${deal.id} ${code}`);
+  if(code!=='en'){assert.notEqual(title,deal.title,`${deal.id} ${code}`);assert.notEqual(description,deal.description,`${deal.id} ${code}`);}
+  assert.ok(offerSearchText(deal).includes(title.toLocaleLowerCase()));
+ }
+ const source=initialDeals[0];assert.equal(getLocalizedTitle({...source,title_ar:'عنوان المكان'},'ar'),'عنوان المكان');
+ assert.equal(getLocalizedDescription({...source,description:'Edited venue content'},'ar'),'Edited venue content');
+ assert.equal(getLocalizedTitle({...source,title:'New venue offer'},'fr'),'New venue offer');
+});

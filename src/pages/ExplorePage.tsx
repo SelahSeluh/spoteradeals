@@ -1,3 +1,4 @@
+import {offerSearchText} from '../utils/i18nHelper';
 import {translateLiteral} from '../components/LocaleText';
 import {useDesignText} from '../components/DesignPrimitives';
 import React, { useState, useMemo } from 'react';
@@ -70,7 +71,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
       list = list.filter(d => d.city.toLowerCase() === String(selectedCity).toLowerCase());
     }
 
-    if(query.trim())list=list.filter(d=>Object.entries(d).filter(([key])=>/^(title|description)(_|$)|^(businessName|city|category)$/.test(key)).map(([,value])=>String(value)).join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+    if(query.trim())list=list.filter(d=>offerSearchText(d).includes(query.trim().toLocaleLowerCase()));
     // 2. Favorites only toggle
     if (onlyFavorites) {
       list = list.filter((deal) => savedDealIds.includes(deal.id));
