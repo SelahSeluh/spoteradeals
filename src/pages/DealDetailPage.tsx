@@ -1,3 +1,4 @@
+import {translateLiteral} from '../components/LocaleText';
 import {LocaleText} from '../components/LocaleText';
 import {bookingTimeSlots,validBookingSchedule} from '../utils/bookingSchedule';
 import {PublicBusinessProfile} from '../components/BusinessOperations';
@@ -385,7 +386,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               </h3>
 
               <p className="text-sm leading-relaxed whitespace-pre-line">{getLocalizedDescription(deal,language)}</p>
-              {deal.terms?.length ? <ul className="space-y-2 text-xs">{deal.terms.map((term,index)=><li key={index} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 shrink-0"/>{term}</li>)}</ul> : null}
+              {deal.terms?.length ? <ul className="space-y-2 text-xs">{deal.terms.map((term,index)=><li key={index} className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 shrink-0"/>{translateLiteral(term,language)}</li>)}</ul> : null}
             </div>
 
             {/* 5. KEY INFO ROWS */}
@@ -407,7 +408,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0F6FE] text-[#1060E2] flex items-center justify-center shrink-0">
                     <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <span>{deal.targetAgeGroup || deal.ageRange || 'See the venue’s age policy'}</span>
+                  <span>{translateLiteral(deal.targetAgeGroup || deal.ageRange || 'See the venue’s age policy',language)}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 rtl:rotate-180" />
               </div>
@@ -523,7 +524,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 font-medium">{t('vatIncluded')}</span>
-                    <span className="text-slate-500 font-medium">{t('included') || '5%'}</span>
+                    <span className="text-slate-500 font-medium">{translateLiteral('Included',language)}</span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-sm">
                     <span className="font-bold text-[#0D1B3E]">{t('totalDue')}</span>
