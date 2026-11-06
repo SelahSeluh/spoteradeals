@@ -225,3 +225,72 @@
 /* Official supplied SpoteraDeals mark. */
 .official-brand-icon{display:block;width:48px;height:48px;object-fit:contain;flex-shrink:0;border-radius:8px}
 @media(max-width:600px){.paper-nav .official-brand-icon{width:34px;height:34px}}
+
+
+/* Shared customer/admin identity and responsive admin workspace. */
+.spotera-admin-app {
+  --admin-primary: var(--color-spotera-blue);
+  --admin-accent: var(--color-spotera-orange);
+  background: linear-gradient(155deg,#d9ecff 0%,#f1f8ff 44%,#e6f6ff 100%);
+  min-height:100dvh;
+  color:var(--color-spotera-navy);
+}
+.spotera-admin-app .fn-admin-layout {
+  width:100%;
+  max-width:1320px;
+  min-width:0;
+  padding-inline:clamp(12px,3vw,36px);
+  padding-block:clamp(16px,3vw,32px);
+}
+.spotera-admin-app .fn-admin-header {
+  background:linear-gradient(115deg,#103fa9,#087ad3);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:20px;
+  box-shadow:0 12px 30px rgba(12,65,146,.18);
+  padding:clamp(16px,3vw,28px);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.spotera-admin-app .fn-admin-header h1,
+.spotera-admin-app .fn-admin-header p,
+.spotera-admin-app .fn-admin-header .paper-wordmark,
+.spotera-admin-app .fn-admin-header .paper-wordmark * {color:white!important}
+.spotera-admin-app .fn-admin-sidebar {
+  background:rgba(255,255,255,.88);
+  border:1px solid #b6d8f8;
+  border-radius:16px;
+  padding:10px;
+  max-width:100%;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.spotera-admin-app .fn-admin-sidebar button {
+  min-height:44px;
+  border:1px solid #d8e5f5;
+  border-radius:12px;
+  color:#103f87;
+  background:white;
+  white-space:nowrap;
+}
+.spotera-admin-app .fn-admin-sidebar button[class*="bg-slate-900"] {
+  background:#1455d9!important;
+  color:white!important;
+  border-color:#1455d9;
+  box-shadow:0 4px 12px rgba(20,85,217,.2);
+}
+.spotera-admin-app :is(input,select,textarea) {max-width:100%;min-width:0}
+.spotera-admin-app :is(button,a,input,select,textarea) {touch-action:manipulation}
+.spotera-admin-app :is(table,[role="table"]) {max-width:100%}
+@media(max-width:767px) {
+  .spotera-admin-app .fn-admin-layout {padding-inline:12px;padding-block:14px}
+  .spotera-admin-app .fn-admin-header {border-radius:16px}
+  .spotera-admin-app .fn-admin-sidebar {gap:6px;padding:8px}
+  .spotera-admin-app .fn-admin-sidebar button {padding:10px 12px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .spotera-admin-app *, .spotera-admin-app *::before, .spotera-admin-app *::after {scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
