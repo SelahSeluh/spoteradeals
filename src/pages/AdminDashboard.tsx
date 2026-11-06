@@ -202,7 +202,7 @@ export const AdminDashboard: React.FC = () => {
     setPassError(null);
 
     if (isSetupMode) {
-      if (!adminPasscode.trim() || adminPasscode.length < 6) {
+      if (!adminPasscode.trim() || adminPasscode.length < 12) {
         setPassError('Password must be at least 12 characters long.');
         return;
       }
