@@ -99,7 +99,7 @@ const MainAppContent: React.FC = () => {
   // 2. SECURE ADMIN APPLICATION: If signed in as Admin, strictly render the Admin Dashboard
   if (user && user.role === 'ADMIN') {
     return (
-      <div className="fn-admin-shell min-h-screen w-full flex flex-col font-sans bg-slate-50 text-slate-900">
+      <div className="fn-admin-shell spotera-admin-app spotera-mesh-canvas min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans text-slate-900">
         <AdminDashboard />
         <QrScannerModal />
         <ToastContainer />
