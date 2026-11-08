@@ -1,7 +1,32 @@
-import {LocaleText} from '../components/LocaleText';
 import React from 'react';
-import {Wallet,Gift,ReceiptText} from 'lucide-react';
+import {Wallet, Gift, ReceiptText, Sparkles, ArrowRight, Star} from 'lucide-react';
 import {useApp} from '../context/AppContext';
-import {MapArtwork,PageTitle,useDesignText} from '../components/DesignPrimitives';
+import {PageTitle,useDesignText} from '../components/DesignPrimitives';
 import {PaymentPolicy} from '../components/PaymentPolicy';
-export function RewardsPage(){const {user,bookings,language,loyaltyTiers,isLoggedIn,setActiveView}=useApp();const d=useDesignText();const points=user.rewardsPoints||0;const credit=user.refundPoints||0;const threshold=loyaltyTiers.vipThreshold||1000;const history=bookings.filter(b=>b.pointsCredited);return <section className="fn-narrow fn-wallet"><PageTitle title={d('wallet')} subtitle={d('tagline')}/>{!isLoggedIn&&<button className="fn-outline" onClick={()=>setActiveView('auth')}>{d('login')}</button>}<div className="fn-credit-card"><Wallet/><div><h2><LocaleText value={"My Points Balance"}/></h2><strong>{credit.toLocaleString()} <small><LocaleText value={"· AED"}/>{(credit/100).toFixed(2)}</small></strong><p>{d('conversion')}</p></div></div><div className="fn-loyalty-card"><Gift/><div><h2>{d('loyalty')}</h2><p>{d('exploreMore')}</p><progress max={threshold} value={Math.min(points,threshold)} aria-label={d('loyalty')}/><small>{points.toLocaleString()} / {threshold.toLocaleString()}</small></div></div><section className="fn-history-card"><h2><ReceiptText/><LocaleText value={"Points Activity"}/></h2>{history.length?<ul>{history.map(b=><li key={b.id}><span>{b.dealTitle}</span><strong>+{b.pointsCredited?.toLocaleString()}</strong></li>)}</ul>:<div className="fn-empty"><Wallet size={40}/><h3>{d('noTransactions')}</h3><p>{d('creditHistory')}</p></div>}<PaymentPolicy language={language}/></section><MapArtwork className="fn-profile-map"/></section>}
+
+export function RewardsPage(){
+  const {user,bookings,language,loyaltyTiers,isLoggedIn,setActiveView}=useApp();
+  const d=useDesignText();
+  const points=user.rewardsPoints||0;
+  const credit=user.refundPoints||0;
+  const threshold=Math.max(1,loyaltyTiers.vipThreshold||1000);
+  const history=bookings.filter(b=>b.pointsCredited);
+  const next=Math.max(0,threshold-points);
+  return <section className="fn-narrow fn-wallet paper-picnic-rewards">
+    <PageTitle title={d('wallet')} subtitle="Play more. Earn more."/>
+    {!isLoggedIn&&<button className="fn-outline" onClick={()=>setActiveView('auth')}>{d('login')}</button>}
+    <div className="paper-points-hero">
+      <span className="paper-points-sparkle" aria-hidden="true">✳</span>
+      <span className="paper-points-label">My points</span>
+      <strong className="paper-points-total">{points.toLocaleString()}</strong>
+      <span className="paper-points-caption">Collect points and enjoy more family perks</span>
+      <div className="paper-points-progress" role="progressbar" aria-label="Points toward next reward" aria-valuemin={0} aria-valuemax={threshold} aria-valuenow={Math.min(points,threshold)}><span style={{width:`${Math.min(100,points/threshold*100)}%`}}/></div>
+      <div className="paper-points-scale"><span>0</span><span>{threshold.toLocaleString()} points</span></div>
+      <div className="paper-points-next"><Gift size={16}/>{next===0?'Your next reward level is unlocked!':`${next.toLocaleString()} points until your next reward level`}</div>
+    </div>
+    <div className="paper-points-actions"><button onClick={()=>setActiveView('explore')}><Star size={17}/> Explore rewards <ArrowRight size={16}/></button><button onClick={()=>setActiveView('bookings')}><Wallet size={17}/> My passes</button></div>
+    <section className="paper-points-credit"><div className="paper-points-credit-icon"><Wallet size={21}/></div><div><h2>Available booking credit</h2><p>Credit issued as in-app points for eligible cancellations</p></div><strong>{credit.toLocaleString()} pts</strong></section>
+    <section className="paper-points-activity"><h2><ReceiptText size={20}/> Points activity</h2>{history.length?<ul>{history.map(b=><li key={b.id}><span>{b.dealTitle}</span><strong>+{b.pointsCredited?.toLocaleString()} pts</strong></li>)}</ul>:<div className="paper-points-empty"><Sparkles size={26}/><p>Your points activity will appear here after qualifying bookings.</p></div>}</section>
+    <PaymentPolicy language={language}/>
+  </section>;
+}
