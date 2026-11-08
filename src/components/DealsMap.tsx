@@ -104,19 +104,16 @@ export const DealsMap: React.FC<DealsMapProps> = ({
       center: [initialLat, initialLng],
       zoom: 12,
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
       scrollWheelZoom: true,
     });
 
     // Elegant CartoDB Voyager tile layer (crisp, beautiful colors for attractions/venues)
-    const tileUrl =
-      mapStyle === 'voyager'
-        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
     const tiles = L.tileLayer(tileUrl, {
       maxZoom: 19,
-      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap contributors',
     });
     tiles.addTo(map);
 
@@ -161,14 +158,11 @@ export const DealsMap: React.FC<DealsMapProps> = ({
         map.removeLayer(layer);
       }
     });
-    const tileUrl =
-      mapStyle === 'voyager'
-        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
     L.tileLayer(tileUrl, {
       maxZoom: 19,
-      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
   }, [mapStyle]);
 
