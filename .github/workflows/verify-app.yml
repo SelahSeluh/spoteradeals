@@ -14,9 +14,10 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '22'
+          node-version: '22.22.2'
           cache: npm
-      - run: npm ci
+      - name: Install locked dependencies
+        run: npm ci --fetch-retries=3 --fetch-retry-mintimeout=10000 --fetch-retry-maxtimeout=60000
       - name: Compile production serverless API
         run: npx esbuild api/status.ts --bundle --platform=node --format=esm --packages=external --outfile=/tmp/spotera-api-check.mjs
       - name: Check TypeScript
