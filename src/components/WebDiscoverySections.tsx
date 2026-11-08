@@ -59,13 +59,13 @@ export const WebDiscoverySections: React.FC = () => {
   if (installed || (typeof window!=='undefined' && window.self!==window.top)) return null;
   return <section className="spotera-footer-showcase" aria-label="SpoteraDeals app and community">
     <div className="spotera-footer-showcase-copy">
-      <span className="spotera-footer-kicker"><Smartphone size={17}/> SPOTERADEALS ON THE GO</span>
-      <h2>Your next family day out, right in your pocket.</h2>
-      <p>Discover experiences, compare family-friendly offers and plan something memorable across the UAE.</p>
+      <span className="spotera-footer-kicker"><Smartphone size={17}/> EXPLORE SPOTERADEALS</span>
+      <h2>Discover more. Enjoy more.</h2>
+      <p>Family experiences, local offers and great days out — all in one place.</p>
       <StoreLinks/>
       <Feedback/>
     </div>
-    <div className="spotera-device-wrap" aria-label="Live preview of the SpoteraDeals website">
+    <svg className="spotera-skyline" viewBox="0 0 700 130" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><path d="M0 128V100h35V76h22v52h24V88h24V60h20v68h28V92h28V44h15V21h7v23h15v84h22V81h18V63h24v65h18V91h28V70h16v58h20V54h13V32h9V12h5v20h9v22h13v74h27V84h20v44h25V66h28v62h23V99h35V76h18v52h24V88h25v40h27V97h20v31h30V104h30v24Z" fill="currentColor"/></svg><div className="spotera-device-wrap" aria-label="Live preview of the SpoteraDeals website">
       <div className="spotera-device">
         <div className="spotera-device-notch"/>
         <iframe title="SpoteraDeals live homepage preview" src="/?spotera_preview=1" loading="lazy" tabIndex={-1} aria-hidden="true"/>
