@@ -11,10 +11,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.22.2'
           cache: npm
-      - run: npm ci
+      - name: Install locked dependencies
+        run: npm ci --fetch-retries=3 --fetch-retry-mintimeout=10000 --fetch-retry-maxtimeout=60000
       - name: TypeScript checks
         run: npm run lint
+      - name: Automated regression tests
+        run: npm test
       - name: Web production build
         run: npm run build:web
