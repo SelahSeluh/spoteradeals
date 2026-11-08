@@ -9,6 +9,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
 import './find-your-next.css';
+import './paper-picnic-unified.css';
 
 // Safely unregister stale service workers in development to prevent caching issues in iframe preview
 if (import.meta.env.DEV) {
