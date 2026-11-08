@@ -12,10 +12,10 @@ export const OpeningAnimation:React.FC<OpeningAnimationProps>=({previewConfig,on
  useEffect(()=>{const id=window.setTimeout(()=>close.current(),config.enabled===false?0:duration*1000);return()=>clearTimeout(id)},[config.enabled,duration]);
  const customVideo=previewConfig&&config.backgroundType==='video'?safeMediaUrl(config.videoUrl):undefined;
  return <section className="fn-intro" style={embedded?{position:'absolute',zIndex:1}:undefined} aria-label="SpoteraDeals introduction">
-  <img className="fn-intro-map" src="/find-your-next/map-4k.webp" alt="" fetchPriority="high"/>
+  <div className="paper-intro-collage" aria-hidden="true"><div className="paper-intro-photo paper-intro-photo-main"/><div className="paper-intro-photo paper-intro-photo-small"/><span className="paper-intro-tape">Family days<br/>make brighter<br/>stories ♡</span></div>
   {customVideo&&<video className="fn-intro-video" src={customVideo} autoPlay muted playsInline/>}
-  <svg className="fn-intro-route" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M-100 950 C350 900 100 690 460 700 S650 560 820 580"/></svg>
-  <div className="fn-intro-brand"><img src={safeMediaUrl(config.logoUrl)||'/spoteradeals-logo.png'} alt="SpoteraDeals logo"/><h1>Spotera<span>Deals</span></h1><p>{previewConfig?config.text:d('tagline')}</p></div>
+  <div className="paper-intro-sun" aria-hidden="true">☀</div>
+  <div className="fn-intro-brand"><img src={safeMediaUrl(config.logoUrl)||'/spoteradeals-logo.png'} alt="SpoteraDeals logo"/><h1>Spotera<span>Deals</span></h1><p>{previewConfig?config.text:"More play for brighter tomorrows"}</p></div>
   <div className="fn-intro-bottom"><div className="fn-intro-progress" aria-hidden="true"><i/><i/><i/></div><button onClick={()=>close.current()}>{d('skip')} <span aria-hidden="true">→</span></button></div>
  </section>
 };
