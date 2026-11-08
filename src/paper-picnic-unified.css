@@ -62,3 +62,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .paper-menu{max-width:calc(100vw - 24px);z-index:60}
 }
 @media(min-width:768px){.paper-menu-language{display:none}}
+
+/* Paper Picnic opening screen: torn-paper postcard collage */
+.fn-intro{background:#fbf5e9!important;background-image:radial-gradient(#bda98922 .8px,transparent .8px)!important;background-size:9px 9px!important}
+.fn-intro:after{display:none!important}
+.paper-intro-collage{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.paper-intro-photo{position:absolute;background-position:center;background-size:cover;border:8px solid #fffdf7;box-shadow:0 12px 35px #665a4130}
+.paper-intro-photo-main{width:clamp(230px,34vw,480px);height:clamp(160px,28vh,310px);top:13%;left:6%;transform:rotate(-8deg);background-image:url('/sunshine-family.jpg');clip-path:polygon(0 2%,95% 0,100% 90%,7% 100%)}
+.paper-intro-photo-small{width:clamp(190px,28vw,390px);height:clamp(135px,24vh,270px);bottom:10%;right:5%;transform:rotate(7deg);background-image:url('/places/skyline.jpg');clip-path:polygon(3% 0,100% 5%,96% 100%,0 93%)}
+.paper-intro-tape{position:absolute;top:7%;right:9%;padding:13px 20px;background:#f98731;color:#153d7c;transform:rotate(8deg);font-family:'Kalam',system-ui,sans-serif;font-size:clamp(14px,2vw,23px);line-height:1.2;box-shadow:0 6px 12px #8e6b4a25}
+.paper-intro-sun{position:absolute;top:24%;right:25%;font-size:64px;color:#f47a22;z-index:1;transform:rotate(-14deg)}
+.fn-intro-brand{top:32%!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(88%,480px);padding:18px 12px!important;background:#fffaf1e8;border:1px solid #e9dbc6;border-radius:18px;box-shadow:0 10px 35px #5b4a2b20;animation:none!important}
+.fn-intro-brand img{height:clamp(60px,11vh,95px)!important}
+.fn-intro h1{font-family:'Kalam',system-ui,sans-serif!important;font-size:clamp(35px,5vw,60px)!important;margin:0!important;color:#13449b!important}
+.fn-intro p{font-family:'Kalam',system-ui,sans-serif!important;font-size:clamp(17px,2vw,24px)!important;color:#164595!important}
+.fn-intro-bottom button{background:#fffdf9!important;color:#17468c!important;border:1px solid #e4d9c5!important}
+@media(max-width:767px){.paper-intro-photo-main{top:8%;left:-9%;width:68%;height:26%;}.paper-intro-photo-small{bottom:11%;right:-7%;width:66%;height:24%}.paper-intro-tape{top:6%;right:4%;font-size:13px;padding:9px}.paper-intro-sun{top:29%;right:6%;font-size:38px}.fn-intro-brand{top:37%!important;width:90%;padding:14px 9px!important}.fn-intro-brand img{height:72px!important}.fn-intro h1{font-size:37px!important}.fn-intro p{font-size:17px!important}}
