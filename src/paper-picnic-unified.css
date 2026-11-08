@@ -1,0 +1,49 @@
+/* Paper Picnic — unified responsive skin, inspired by the approved design board.
+   Preserves all existing data, role permissions, payment and booking logic. */
+:root{--fn-ivory:#fffaf1;--fn-blue:#123c82;--fn-orange:#ff751b;--fn-border:#e8dfd0;--fn-shadow:0 8px 24px rgba(54,76,105,.075);--font-heading:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--font-body:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--font-button:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+html,body,#root{background:#fffaf1!important;color:#163a68}
+body{background-image:radial-gradient(#bba98816 .65px,transparent .65px)!important;background-size:7px 7px!important}
+main[data-paper-page]{background:transparent!important}
+.fn-home,.fn-narrow,.paper-explore,.paper-passes,.paper-profile,.fn-admin-shell{color:#173b70}
+.paper-nav{background:#fffaf2f5!important;border-bottom:1px solid #e9ddc9!important;box-shadow:0 3px 12px #6a53200d!important}
+.paper-nav-inner{min-height:72px}
+.paper-nav-inner>nav button.selected{background:#fff0db!important;color:#c65a06!important}
+.fn-home{max-width:1260px}
+.fn-hero{background:linear-gradient(125deg,#fffaf1 12%,#fff4e2 52%,#eaf7ff 100%)!important;border:1px solid #e7d9c3!important;border-radius:20px!important}
+.fn-hero:after{content:"";position:absolute;right:0;bottom:0;width:40%;height:85px;background:url('/expedition/skyline.svg') right bottom/contain no-repeat;opacity:.13;pointer-events:none}
+.fn-hero h1,.fn-page-title h1,.fn-section-heading h2,.fn-admin-header h1{color:#123c82!important;letter-spacing:-.025em!important;font-weight:800!important}
+.fn-hero h1{font-size:clamp(30px,3.6vw,46px)!important}
+.fn-search,.fn-category-grid button,.paper-deal-card,.fn-auth-card,.fn-menu-card,.fn-credit-card,.fn-loyalty-card,.fn-history-card,.fn-setting-row{background:#fffdf8!important;border:1px solid #e9dfcf!important;box-shadow:0 5px 18px #755b2910!important}
+.fn-search{border-radius:12px!important}
+.fn-category-grid button{border-radius:13px!important;transition:transform .15s ease}
+.fn-category-grid button:hover{transform:translateY(-2px)}
+.fn-search button,.fn-feedback-send,.fn-empty button,.fn-admin-layout button.bg-slate-900{background:#ff751b!important;color:white!important}
+.paper-deal-card{border-radius:14px!important}
+.paper-deal-card h3{color:#153d7b!important;font-weight:750!important}
+.fn-page-title{background:transparent!important;border-color:#e8ddc9!important}
+.fn-credit-card{background:linear-gradient(110deg,#1b65c6,#0e439b)!important;color:white!important;border:0!important;border-radius:16px!important;position:relative;overflow:hidden}
+.fn-credit-card:after{content:"";position:absolute;right:-25px;bottom:-35px;width:150px;height:115px;background:url('/expedition/skyline.svg') right bottom/contain no-repeat;opacity:.22;pointer-events:none}
+.fn-credit-card h2,.fn-credit-card p,.fn-credit-card strong{color:white!important}
+.fn-loyalty-card{border-radius:16px!important}
+.fn-loyalty-card progress{accent-color:#ff751b}
+.fn-auth{background:#fffaf1!important}
+.fn-auth-main{background:linear-gradient(145deg,#fffaf1,#e9f7ff)!important}
+.fn-auth-art{background:#fff2dc!important}
+.fn-auth-card input:not([type=checkbox]){background:#fffdf9!important;border-color:#decfba!important}
+.fn-admin-shell{background:#fffaf1!important}
+.fn-admin-shell aside,.fn-admin-sidebar{background:linear-gradient(180deg,#155aa7,#0b397a)!important}
+.fn-admin-shell main{background:#fffaf1!important}
+.fn-admin-layout .bg-white,.fn-admin-shell .bg-white{background:#fffdf8!important;border-color:#e9dfcf!important;border-radius:14px!important;box-shadow:0 5px 18px #755b2910!important}
+.fn-admin-header{background:url('/expedition/skyline.svg') 95% bottom/190px 65px no-repeat!important;border-color:#e7dccc!important}
+.fn-admin-layout input,.fn-admin-layout select,.fn-admin-layout textarea{border-radius:9px}
+.fn-admin-layout table{border-collapse:separate;border-spacing:0}
+.fn-admin-layout th{background:#f4f7fb;color:#173c70}
+.fn-footer{background:#fff8ed!important;color:#153d76!important;border-top:1px solid #e8d9c4!important}
+.spotera-footer-showcase{background:linear-gradient(115deg,#fffdf8,#fff4e3 62%,#eaf6ff)!important;border-color:#eadbc8!important}
+.spotera-footer-showcase h2{color:#123c82!important}
+.spotera-footer-showcase p{color:#5b718c!important}
+.spotera-skyline{color:#abc9e9!important;opacity:.32!important}
+button,a,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #ff8c3c!important;outline-offset:2px}
+@media(max-width:767px){.fn-home{padding:14px 13px 35px}.fn-hero{border:0!important;border-radius:0!important;background:transparent!important}.fn-hero:after{display:none}.fn-hero h1{font-size:31px!important}.fn-category-grid{gap:8px}.fn-category-grid button{min-height:75px}.fn-admin-layout{max-width:100vw!important}.fn-admin-layout table{display:block;max-width:100%;overflow-x:auto}.fn-credit-card,.fn-loyalty-card{border-radius:14px!important}.spotera-footer-showcase{margin-inline:8px!important}}
+@media(prefers-reduced-motion:reduce){.fn-category-grid button{transition:none}}
