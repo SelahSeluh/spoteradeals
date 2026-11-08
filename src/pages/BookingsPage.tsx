@@ -161,7 +161,7 @@ export const BookingsPage: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  {booking.pointsCredited ? <p className="text-xs text-blue-700">{booking.pointsCredited.toLocaleString()}<LocaleText value={"Spotera refund points credited · AED"}/>{(booking.pointsCredited/100).toFixed(2)}</p>:null}
+                  {booking.pointsCredited ? <p className="text-xs text-blue-700">{booking.pointsCredited.toLocaleString()}<LocaleText value={"Spotera points credited · AED"}/>{(booking.pointsCredited/100).toFixed(2)}</p>:null}
                 </div>
               );
             })}
