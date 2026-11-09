@@ -13,7 +13,7 @@ export function RewardsPage(){
   const history=bookings.filter(b=>b.pointsCredited);
   const next=Math.max(0,threshold-points);
   return <section className="fn-narrow fn-wallet paper-picnic-rewards">
-    <PageTitle title={d('wallet')} subtitle="Play more. Earn more."/>
+    <PageTitle title={language==='en'?'Play more. Earn more.':d('loyalty')} subtitle={language==='en'?'Collect points, unlock rewards and enjoy family perks.':d('tagline')}/>
     {!isLoggedIn&&<button className="fn-outline" onClick={()=>setActiveView('auth')}>{d('login')}</button>}
     <div className="paper-points-hero">
       <span className="paper-points-sparkle" aria-hidden="true">✳</span>

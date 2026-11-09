@@ -24,10 +24,10 @@ test('homepage respects visibility and order without mutating saved section arra
  const before=JSON.stringify(sections);assert.deepEqual(homepageLayout(sections).map(s=>s.id),['trending','categories']);assert.equal(JSON.stringify(sections),before);
 });
 
-test('shared sign-in opens email login immediately with recovery and no unavailable providers',async()=>{
+test('shared sign-in presents reference methods and retains email login and recovery',async()=>{
  const {AuthPage}=await import('../src/pages/AuthPage');
  const dom=new JSDOM('',{url:'https://spoteradeals.com/#auth'});Object.assign(globalThis,{window:dom.window,document:dom.window.document});
- try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><AuthPage/></AppProvider></ToastProvider>);assert.match(html,/autocomplete="current-password"/i);assert.match(html,/Forgot password/);assert.doesNotMatch(html,/Continue with Google|Continue with Apple|autocomplete="name"/i);}finally{dom.window.close()}
+ try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><AuthPage/></AppProvider></ToastProvider>);assert.match(html,/autocomplete="current-password"/i);assert.match(html,/Forgot password/);assert.match(html,/Continue with email/);assert.match(html,/Continue as guest/);assert.doesNotMatch(html,/autocomplete="name"/i);}finally{dom.window.close()}
 });
 
 test('used and cancelled passes do not present redeemable QR tickets',async()=>{

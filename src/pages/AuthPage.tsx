@@ -48,7 +48,7 @@ export const AuthPage: React.FC = () => {
   const targetDeal = selectedDealId ? deals.find((d) => d.id === selectedDealId) : null;
 
   const [activeTab, setActiveTab] = useState<'register' | 'login'>('login');
-  const [showOtherMethods, setShowOtherMethods] = useState(true);
+  const [showOtherMethods, setShowOtherMethods] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -167,15 +167,15 @@ export const AuthPage: React.FC = () => {
     showToast.info('Welcome! Browsing UAE family deals as a Guest.');
   };
 
-  return <div className="fn-auth">
-    <aside className="fn-auth-art"><MapArtwork/><div><PaperWordmark/><h2>{d('headline')}</h2><p>{d('tagline')}</p></div></aside>
+  return <div className="fn-auth pp-auth">
     <div className="fn-auth-main"><div className="fn-auth-toolbar"><button onClick={handleGuest}>← {d('guest')}</button><LanguagePicker/></div>
-      <section className="fn-auth-card"><div className="fn-auth-brand"><PaperWordmark/></div><h1>{resetToken?d('choosePassword'):resetMode?d('forgot'):activeTab==='login'?d('welcome'):d('createAccount')}</h1><p>{d('discovery')}</p>
+      <section className="fn-auth-card"><div className="pp-auth-collage"><div><PaperWordmark/><h2>{language==='en'?<>Good to<br/>see you<br/>again!</>:d('welcomeBack')}</h2><span aria-hidden="true">☀</span></div><div className="pp-family-photo" role="img" aria-label="Family enjoying a day out"/></div><h1 className={!showOtherMethods&&!resetMode&&!resetToken?'sr-only':''}>{resetToken?d('choosePassword'):resetMode?d('forgot'):activeTab==='login'?d('welcome'):d('createAccount')}</h1><p className="sr-only">{d('discovery')}</p>
       {targetDeal&&<p className="fn-notice">{targetDeal.title}</p>}{authModalReason&&<p className="fn-notice">{authModalReason}</p>}{errorMsg&&<p role="alert" className="fn-error">{errorMsg}</p>}
+      {!showOtherMethods&&!resetMode&&!resetToken&&<div className="pp-auth-methods"><GoogleSignInButton onSuccess={handleGoogleSuccess} onError={handleGoogleError}/><button className="pp-apple" onClick={handleAppleAuth}><svg aria-hidden="true" width="19" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.3.76 3.1.82 1.2-.24 2.35-.95 3.63-.86 1.53.12 2.68.73 3.44 1.83-3.15 1.89-2.4 6.04.49 7.2-.58 1.52-1.33 3.03-2.67 3.99ZM12.03 7.25c-.15-2.25 1.68-4.1 3.79-4.28.29 2.6-2.36 4.55-3.79 4.28Z"/></svg> Continue with Apple</button><div className="pp-auth-divider"><span>or</span></div><button className="fn-outline" onClick={()=>setShowOtherMethods(true)}><Mail size={18}/> Continue with email</button></div>}
       {(resetMode||resetToken)?<form onSubmit={handlePasswordRecovery}>
         {!resetToken?<label>{d('email')}<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>:<label>{d('newPassword')}<input type="password" required minLength={12} maxLength={128} autoComplete="new-password" value={resetPassword} onChange={e=>setResetPassword(e.target.value)}/></label>}
         <button className="fn-primary" disabled={isSubmitting}>{isSubmitting?d('wait'):resetToken?d('reset'):d('resetLink')}</button><button type="button" className="fn-text-button" onClick={()=>{setResetMode(false);setResetToken('');setErrorMsg(null)}}>{d('back')}</button>
-      </form>:<form onSubmit={handleSubmit}>
+      </form>:<form hidden={!showOtherMethods} onSubmit={handleSubmit}>
         {activeTab==='register'&&<label>{d('name')}<input required maxLength={120} autoComplete="name" value={fullName} onChange={e=>setFullName(e.target.value)}/></label>}
         <label>{d('email')}<input type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com" dir="ltr" value={email} onChange={e=>setEmail(e.target.value)}/></label>
         <label>{d('password')}<span className="fn-password"><input type={showPassword?'text':'password'} required minLength={activeTab==='register'?12:1} maxLength={128} autoComplete={activeTab==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?d('hidePassword'):d('showPassword')} onClick={()=>setShowPassword(!showPassword)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></span></label>
@@ -183,8 +183,8 @@ export const AuthPage: React.FC = () => {
         <button className="fn-primary" type="submit" disabled={isSubmitting}>{isSubmitting?d('wait'):activeTab==='login'?d('login'):d('register')}</button>
         {activeTab==='login'&&<button className="fn-text-button" type="button" onClick={()=>{setResetMode(true);setErrorMsg(null)}}>{d('forgot')}</button>}
       </form>}
-      {!resetMode&&!resetToken&&<div className="fn-auth-alternatives"><button className="fn-outline" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab(activeTab==='login'?'register':'login');setErrorMsg(null)}}>{activeTab==='login'?d('register'):d('login')}</button><button className="fn-guest" onClick={handleGuest}>{d('guest')}</button></div>}
-      <div className="fn-auth-legal"><button onClick={()=>setActiveView('terms')}>{d('terms')}</button><span> · </span><button onClick={()=>setActiveView('privacy')}>{d('privacy')}</button></div>
+      {!resetMode&&!resetToken&&<div className="fn-auth-alternatives"><button hidden={!showOtherMethods} className="fn-outline" aria-pressed={activeTab==='register'} onClick={()=>{setActiveTab(activeTab==='login'?'register':'login');setShowOtherMethods(true);setErrorMsg(null)}}>{activeTab==='login'?d('register'):d('login')}</button><button className="fn-guest" onClick={handleGuest}><Compass size={20}/>{language==='en'?'Continue as guest':d('guest')}</button></div>}
+      <p className="pp-guest-caption">{language==='en'?'Explore deals without an account':d('discovery')}</p><div className="fn-auth-legal"><button onClick={()=>setActiveView('terms')}>{d('terms')}</button><span> · </span><button onClick={()=>setActiveView('privacy')}>{d('privacy')}</button></div>
       </section><p className="fn-auth-caption">{d('tagline')}</p>
     </div>
   </div>;

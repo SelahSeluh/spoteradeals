@@ -12,10 +12,8 @@ export const OpeningAnimation:React.FC<OpeningAnimationProps>=({previewConfig,on
  useEffect(()=>{const id=window.setTimeout(()=>close.current(),config.enabled===false?0:duration*1000);return()=>clearTimeout(id)},[config.enabled,duration]);
  const customVideo=previewConfig&&config.backgroundType==='video'?safeMediaUrl(config.videoUrl):undefined;
  return <section className="fn-intro" style={embedded?{position:'absolute',zIndex:1}:undefined} aria-label="SpoteraDeals introduction">
-  <div className="paper-intro-collage" aria-hidden="true"><div className="paper-intro-photo paper-intro-photo-main"/><div className="paper-intro-photo paper-intro-photo-small"/><span className="paper-intro-tape">Family days<br/>make brighter<br/>stories ♡</span></div>
+  <div className="pp-intro-composition">{previewConfig&&safeMediaUrl(config.logoUrl)&&<img className="pp-custom-intro-logo" src={safeMediaUrl(config.logoUrl)} alt="SpoteraDeals logo"/>}<div className="pp-intro-water" role="img" aria-label="Waterpark adventure"/><span className="pp-intro-sun" aria-hidden="true">☀</span><h1>Spotera<span>Deals</span></h1><p>{previewConfig?config.text:<>More play<br/>for brighter<br/>tomorrows ♡</>}</p><div className="pp-intro-coast" aria-hidden="true"/></div>
   {customVideo&&<video className="fn-intro-video" src={customVideo} autoPlay muted playsInline/>}
-  <div className="paper-intro-sun" aria-hidden="true">☀</div>
-  <div className="fn-intro-brand"><img src={safeMediaUrl(config.logoUrl)||'/spoteradeals-logo.png'} alt="SpoteraDeals logo"/><h1>Spotera<span>Deals</span></h1><p>{previewConfig?config.text:"More play for brighter tomorrows"}</p></div>
   <div className="fn-intro-bottom"><div className="fn-intro-progress" aria-hidden="true"><i/><i/><i/></div><button onClick={()=>close.current()}>{d('skip')} <span aria-hidden="true">→</span></button></div>
  </section>
 };

@@ -11,6 +11,8 @@ import './index.css';
 import './find-your-next.css';
 import './paper-picnic.css';
 import './paper-picnic-unified.css';
+import './paper-reference.css';
+import {PaperArtwork} from './components/PaperArtwork';
 
 // Safely unregister stale service workers in development to prevent caching issues in iframe preview
 if (import.meta.env.DEV) {
@@ -63,6 +65,7 @@ if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
       <ErrorBoundary>
+        <PaperArtwork />
         <App />
       </ErrorBoundary>
     </StrictMode>

@@ -2,7 +2,7 @@ import {offerSearchText} from '../utils/i18nHelper';
 import {translateLiteral} from '../components/LocaleText';
 import {useDesignText} from '../components/DesignPrimitives';
 import React, { useState, useMemo } from 'react';
-import { SlidersHorizontal, Heart, CheckCircle2, Map, LayoutGrid } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, CheckCircle2, Map, LayoutGrid } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { PageHeader } from '../components/PageHeader';
 import { DealCard } from '../components/DealCard';
@@ -135,7 +135,8 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
 
   return (
     <div className="paper-explore min-h-screen bg-[#F5F7FA] pb-28">
-      <div className="fn-explore-search"><label className="fn-search"><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
+      <div className="pp-explore-title"><h1>{language==='en'?<>Explore<br/>Amazing Experiences</>:d('explore')}</h1><span aria-hidden="true">☀</span></div><div className="fn-explore-search"><label className="fn-search"><Search size={18}/><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
+      <div className="pp-city-chips" aria-label="Filter by city">{['All','Dubai','Abu Dhabi','Sharjah'].map(city=><button key={city} aria-pressed={selectedCity===city} onClick={()=>setSelectedCity(city as any)}>{city==='All'?t('filterAll'):translateLiteral(city,language)}</button>)}<label><span>{language==='en'?'More':d('allCities')}</span><select aria-label={translateLiteral('Choose city',language)} value={selectedCity} onChange={e=>setSelectedCity(e.target.value as any)}>{['All','Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'].map(city=><option key={city} value={city}>{city==='All'?d('allCities'):translateLiteral(city,language)}</option>)}</select></label></div>
       {/* Header */}
       <PageHeader
         title={onlyFavorites ? t('savedFavoritesTitle') : (selectedCategory && selectedCategory !== 'All' ? translateLiteral(selectedCategory,language) : d('explore'))}
@@ -260,7 +261,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
         </div>
 
         {/* Date Range & UAE Holiday Period Picker */}
-        <DateRangeFilter
+        <details className="pp-date-picker"><summary>{language==='en'?'Date':t('date')} <span>⌄</span></summary><DateRangeFilter
           key={filterResetKey}
           startDate={dateFilter.startDate}
           endDate={dateFilter.endDate}
@@ -277,7 +278,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
             })
           }
           resultsCount={filteredDeals.length}
-        />
+        /></details>
 
         {/* Result Row */}
         <div className="flex items-center justify-between text-[12px] text-[#5F6B82] px-0.5">
@@ -341,7 +342,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
       </div>
 
       {/* Floating View Switcher Pill for quick thumb access */}
-      <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-30">
+      <div className="pp-map-shortcut fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-30">
         <button
           type="button"
           onClick={() => setViewMode(viewMode === 'grid' ? 'map' : 'grid')}

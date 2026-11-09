@@ -32,16 +32,16 @@ test('sign-in renders a localized heading, safe password fields and no applicati
    assert.ok(doc.querySelector('input[type="password"][autocomplete="current-password"]'));
    assert.equal(doc.querySelector('nav'),null);
    assert.equal(doc.querySelectorAll('select option').length,7);
-   assert.doesNotMatch(html,/Continue with Google|Continue with Apple/);
+   assert.ok(doc.querySelector('.pp-auth-methods'));assert.ok(doc.querySelector('form[hidden]'));
   }finally{dom.window.close()}
  }
 });
-test('the map intro keeps text as sharp HTML and has a working skip control in every language',()=>{
+test('the Paper Picnic intro keeps text as sharp HTML and has a working skip control in every language',()=>{
  for(const {code} of SUPPORTED_LANGUAGES){
   const dom=new JSDOM('',{url:'http://localhost/'});Object.assign(globalThis,{window:dom.window,document:dom.window.document});dom.window.localStorage.setItem('spotera_lang',code);
   try{const html=renderToStaticMarkup(<ToastProvider><AppProvider><OpeningAnimation/></AppProvider></ToastProvider>);const doc=new JSDOM(html).window.document;
    assert.equal(doc.querySelector('h1')?.textContent,'SpoteraDeals');
-   assert.ok(doc.querySelector('img[src="/find-your-next/map-4k.webp"]'));
+   assert.ok(doc.querySelector('.pp-intro-water[role="img"]'));
    assert.ok(doc.querySelector('button')?.textContent?.includes(designText(code,'skip')));
    assert.equal(doc.querySelector('nav'),null);
   }finally{dom.window.close()}
