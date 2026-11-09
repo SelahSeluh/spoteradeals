@@ -24,12 +24,12 @@ export const AboutPage: React.FC = () => (
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
         <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-1">
-          <div className="font-extrabold text-[#0C5CAB] text-sm"><LocaleText value={"100% Verified"}/></div>
-          <div className="text-slate-600"><LocaleText value={"All venues and activity providers are thoroughly inspected."}/></div>
+          <div className="font-extrabold text-[#0C5CAB] text-sm"><LocaleText value={"Offer information"}/></div>
+          <div className="text-slate-600"><LocaleText value={"Review each venue’s published prices, availability and terms before booking."}/></div>
         </div>
         <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-1">
           <div className="font-extrabold text-emerald-600 text-sm"><LocaleText value={"Instant Digital Pass"}/></div>
-          <div className="text-slate-600"><LocaleText value={"Claim free coupons with QR codes ready for immediate venue redemption."}/></div>
+          <div className="text-slate-600"><LocaleText value={"Eligible confirmed bookings include a digital pass. Paid offers require verified payment before a redeemable QR is issued."}/></div>
         </div>
         <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-1">
           <div className="font-extrabold text-amber-600 text-sm"><LocaleText value={"7 Emirates Support"}/></div>

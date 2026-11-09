@@ -1,3 +1,4 @@
+import {PaymentAvailability} from '../components/PaymentAvailability';
 import {translateLiteral} from '../components/LocaleText';
 import {LocaleText} from '../components/LocaleText';
 import {bookingTimeSlots,validBookingSchedule} from '../utils/bookingSchedule';
@@ -379,6 +380,7 @@ export const DealDetailPage: React.FC<DealDetailPageProps> = ({ onClaimCoupon, o
               </div>
             </div>
 
+            <PaymentAvailability/>
             {/* 4. WHAT'S INCLUDED CARD */}
             <div className="bg-white rounded-2xl border border-[#E8EEF5] p-4 sm:p-5 shadow-2xs space-y-3">
               <h3 className="text-xs font-bold tracking-tight uppercase text-slate-400">

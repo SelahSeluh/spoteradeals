@@ -1,3 +1,4 @@
+import {PublicMetadata} from './components/PublicMetadata';
 import {DesignReview} from './components/DesignReview';
 import {DiscoveryHelpPage as FaqPage,DiscoveryContactPage as ContactPage} from './pages/DiscoveryHelpPage';
 import React, { useState } from 'react';
@@ -216,7 +217,7 @@ export default function App() {
   return (
     <AppProvider>
       <ToastProvider>
-        <DesignReview/>
+        <DesignReview/><PublicMetadata/>
         <MainAppContent />
       </ToastProvider>
     </AppProvider>

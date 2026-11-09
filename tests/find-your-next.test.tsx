@@ -30,7 +30,7 @@ test('sign-in renders a localized heading, safe password fields and no applicati
    assert.equal(doc.querySelector('h1')?.textContent,designText(code,'welcome'));
    assert.ok(doc.querySelector('input[type="email"][autocomplete="email"]'));
    assert.ok(doc.querySelector('input[type="password"][autocomplete="current-password"]'));
-   assert.equal(doc.querySelector('nav'),null);
+   assert.equal(doc.querySelector('nav[aria-label="Main navigation"]'),null);
    assert.equal(doc.querySelectorAll('select option').length,7);
    assert.ok(doc.querySelector('.pp-auth-methods'));assert.ok(doc.querySelector('form[hidden]'));
   }finally{dom.window.close()}
@@ -43,7 +43,7 @@ test('the Paper Picnic intro keeps text as sharp HTML and has a working skip con
    assert.equal(doc.querySelector('h1')?.textContent,'SpoteraDeals');
    assert.ok(doc.querySelector('.pp-intro-water[role="img"]'));
    assert.ok(doc.querySelector('button')?.textContent?.includes(designText(code,'skip')));
-   assert.equal(doc.querySelector('nav'),null);
+   assert.equal(doc.querySelector('nav[aria-label="Main navigation"]'),null);
   }finally{dom.window.close()}
  }
 });

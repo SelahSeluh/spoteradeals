@@ -1,3 +1,4 @@
+import {PaymentAvailability} from './PaymentAvailability';
 import {LocaleText} from './LocaleText';
 import {bookingTimeSlots,validBookingSchedule,OPEN_HOURS_SLOT} from '../utils/bookingSchedule';
 import React, { useState, useEffect, useRef } from 'react';
@@ -199,7 +200,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ deal, onClose }) => 
         {/* STEP 1: SELECT PACKAGE, DATE, TIME & GUESTS */}
         {/* ========================================================================= */}
         {step === 'select' && (
-          <form onSubmit={handleProceedToReview} className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+          <form onSubmit={handleProceedToReview} className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1"><PaymentAvailability/>
             <div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
                 {getLocalizedTitle(deal, language)}

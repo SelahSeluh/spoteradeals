@@ -204,7 +204,7 @@ export const DealCard: React.FC<DealCardProps> = ({
         <div>
           {/* Title (max 2 lines, bold, readable) */}
           <h3 className="text-[14px] font-bold text-[#0D1B3E] leading-snug line-clamp-2 group-hover:text-[#0C5CAB] transition-colors">
-            {displayTitle}
+            <a href={`/deal/${encodeURIComponent(deal.id)}`} onClick={e=>{e.stopPropagation();if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();handleCardClick()}}>{displayTitle}</a>
           </h3>
 
           {/* Location Indicator */}

@@ -6,6 +6,7 @@ interface GoogleSignInButtonProps {
   label?: string;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
 }
 
 export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
@@ -14,6 +15,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   label = 'Continue with Google',
   className = '',
   size = 'md',
+  disabled = false,
 }) => {
   const handleClick = () => {
     onError?.('Google sign-in is not configured yet. Please use email or continue as a guest.');
@@ -29,6 +31,8 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
     <>
       <button
         type="button"
+        disabled={disabled}
+        title={disabled?'Google sign-in is coming soon. Continue with email or as a guest.':undefined}
         onClick={handleClick}
         className={`w-full bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300/90 hover:border-slate-400 font-bold rounded-2xl shadow-xs hover:shadow-md active:scale-[0.99] flex items-center justify-center gap-3 transition-all duration-200 cursor-pointer disabled:opacity-60 select-none ${sizeClasses[size]} ${className}`}
       >

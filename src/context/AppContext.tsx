@@ -452,15 +452,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return safeStorage.getItem('spotera_has_entered') === 'true';
   });
 
+  const directPublicRoute = typeof window !== 'undefined' && /^\/(explore|about|faq|contact|privacy|terms|deal|deals)(\/|$)/.test(window.location.pathname);
   const directAdminRoute = typeof window !== 'undefined' && (window.location.hash.replace(/^#\/?/,'') === 'admin' || window.location.pathname === '/admin');
   const [startupPhase, setStartupPhase] = useState<StartupPhase>(() => {
     const alreadySeen = safeSessionStorage.getItem('spotera_animated');
-    return alreadySeen || directAdminRoute ? 'app' : 'intro';
+    return alreadySeen || directAdminRoute || directPublicRoute ? 'app' : 'intro';
   });
 
   const [showOpeningAnimation, setShowOpeningAnimation] = useState<boolean>(() => {
     const alreadySeen = safeSessionStorage.getItem('spotera_animated');
-    return !alreadySeen && !directAdminRoute;
+    return !alreadySeen && !directAdminRoute && !directPublicRoute;
   });
 
   const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(false);
@@ -664,6 +665,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeView, setActiveViewState] = useState<ViewMode>(() => {
     const locationView = parseViewFromLocation();
     if (locationView === 'admin') return 'admin';
+    // Explicit public URLs must be accessible without an account; private actions still require auth.
+    const explicitPublicUrl = Boolean(window.location.hash || window.location.pathname !== '/');
+    if (explicitPublicUrl && ['home','explore','deal-detail','about','faq','contact','privacy','terms','categories','search'].includes(locationView)) return locationView;
     if (initialAuthUser) return locationView || 'home';
     if (safeSessionStorage.getItem('paper_guest_entered') === 'true') return locationView;
     return 'auth';
@@ -948,9 +952,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActiveViewState((current) => {
       if (current !== view) {
         setPreviousView(current);
-        // Subtle view transition indicator
-        setIsViewLoading(true);
-        setTimeout(() => setIsViewLoading(false), 120);
+        // Local views are already loaded; switch immediately without an artificial loading flash.
+        setIsViewLoading(false);
       }
       return view;
     });
@@ -978,7 +981,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLocationChange = () => {
       const matched = parseViewFromLocation();
-      if (matched === 'admin' || initialAuthUser || safeSessionStorage.getItem('paper_guest_entered') === 'true') {
+      const publicLocation = ['home','explore','deal-detail','about','faq','contact','privacy','terms','categories','search'].includes(matched) && Boolean(window.location.hash || window.location.pathname !== '/');
+      if (publicLocation || matched === 'admin' || initialAuthUser || safeSessionStorage.getItem('paper_guest_entered') === 'true') {
         setActiveViewState(matched);
       }
 
