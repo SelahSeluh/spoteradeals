@@ -80,7 +80,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     // 3. Category filtering
     if (selectedCategory && selectedCategory !== 'All') {
       list = list.filter((deal) =>
-        deal.category.toLowerCase().includes(selectedCategory.toLowerCase())
+        String(selectedCategory)==='Waterparks' ? /waterpark|water park|aquatic|aquaplay/i.test(`${deal.title} ${deal.description} ${deal.category}`) : deal.category.toLowerCase().includes(selectedCategory.toLowerCase())
       );
     }
 
