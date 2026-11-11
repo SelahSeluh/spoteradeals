@@ -1,8 +1,8 @@
 import {useEffect} from 'react';
 import {useApp} from '../context/AppContext';
-import {publicPathForView,publicSeoPages} from '../lib/publicSeo';
-export function PublicMetadata(){const {activeView,selectedDealId,deals}=useApp();useEffect(()=>{
- const path=publicPathForView(activeView);
+import {publicPathForView,publicSeoPages,discoveryPathForFilters} from '../lib/publicSeo';
+export function PublicMetadata(){const {activeView,selectedDealId,deals,selectedCity,selectedCategory}=useApp();useEffect(()=>{
+ const path=activeView==='explore'?discoveryPathForFilters(selectedCity,selectedCategory):publicPathForView(activeView);
  const deal=activeView==='deal-detail'?deals.find(d=>d.id===selectedDealId):undefined;
  const rootAuth=activeView==='auth'&&window.location.pathname==='/'&&!window.location.hash;
  const meta=path?publicSeoPages[path]:rootAuth?publicSeoPages['/']:null;
@@ -17,4 +17,6 @@ export function PublicMetadata(){const {activeView,selectedDealId,deals}=useApp(
  document.querySelector('meta[property="og:title"]')?.setAttribute('content',document.title);
  document.querySelector('meta[property="og:url"]')?.setAttribute('content',`https://spoteradeals.com${canonical}`);
  if(description)document.querySelector('meta[property="og:description"]')?.setAttribute('content',description);
- },[activeView,selectedDealId,deals]);return null}
+ document.querySelector('meta[name="twitter:title"]')?.setAttribute('content',document.title);
+ if(description)document.querySelector('meta[name="twitter:description"]')?.setAttribute('content',description);
+ },[activeView,selectedDealId,deals,selectedCity,selectedCategory]);return null}

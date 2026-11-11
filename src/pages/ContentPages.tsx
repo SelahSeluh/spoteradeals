@@ -11,16 +11,16 @@ export const AboutPage: React.FC = () => (
         <span><LocaleText value={"Our Story"}/></span>
       </div>
       <h1 className="text-3xl font-black font-sans"><LocaleText value={"About SpoteraDeals"}/></h1>
-      <p className="text-xs text-blue-100/90"><LocaleText value={"Connecting families across Dubai, Abu Dhabi, and the 7 Emirates with verified, memorable activities and exclusive savings."}/></p>
+      <p className="text-xs text-blue-100/90"><LocaleText value={"Discovering great places, dining offers and experiences across Dubai, Abu Dhabi and the UAE — for individuals, couples, friends and families."}/></p>
     </div>
 
     <div className="bg-white p-8 rounded-3xl border border-blue-100 shadow-sm space-y-6 text-xs text-slate-700 leading-relaxed">
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-        <h2 className="text-base font-bold text-slate-900"><LocaleText value={"Empowering UAE Families to Make Lasting Memories"}/></h2>
+        <h2 className="text-base font-bold text-slate-900"><LocaleText value={"Find your next great day out in the UAE"}/></h2>
         <SpoteraLogo size="sm" withIcon={true} />
       </div>
 
-      <p><LocaleText value={"SpoteraDeals was founded with a single mission: to help parents discover high-quality, verified kids play areas, birthday venues, waterparks, summer camps, and family experiences across the United Arab Emirates at affordable prices."}/></p>
+      <p><LocaleText value={"SpoteraDeals helps you discover family-friendly dining, attractions, activities and experiences across the United Arab Emirates. Whether you are exploring on your own, planning time as a couple, meeting friends or taking the family out, browse offers and check each venue’s current prices, availability and booking terms."}/></p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
         <div className="p-4 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-1">

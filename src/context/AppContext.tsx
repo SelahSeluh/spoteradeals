@@ -1,3 +1,4 @@
+import {initialDiscoveryFilters} from '../lib/publicSeo';
 import {bookingTimeSlots} from '../utils/bookingSchedule';
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
@@ -452,7 +453,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return safeStorage.getItem('spotera_has_entered') === 'true';
   });
 
-  const directPublicRoute = typeof window !== 'undefined' && /^\/(explore|about|faq|contact|privacy|terms|deal|deals)(\/|$)/.test(window.location.pathname);
+  const directPublicRoute = typeof window !== 'undefined' && /^\/(explore|dubai|abu-dhabi|dining|about|faq|contact|privacy|terms|deal|deals)(\/|$)/.test(window.location.pathname);
   const directAdminRoute = typeof window !== 'undefined' && (window.location.hash.replace(/^#\/?/,'') === 'admin' || window.location.pathname === '/admin');
   const [startupPhase, setStartupPhase] = useState<StartupPhase>(() => {
     const alreadySeen = safeSessionStorage.getItem('spotera_animated');
@@ -627,7 +628,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (s === 'rewards' || s === 'points') return 'rewards';
       if (s === 'search') return 'search';
       if (s === 'booking/confirm' || s === 'booking-confirm' || s === 'booking_confirm') return 'booking-confirm';
-      if (s === 'deals') return 'explore';
+      if (['deals','dubai','abu-dhabi','dining'].includes(s)) return 'explore';
       if (s === 'favorites' || s === 'saved') return 'wishlist';
       const validViews: ViewMode[] = [
         'home',
@@ -932,8 +933,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCity, setSelectedCity] = useState<City | 'All'>('All');
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
+  const [selectedCity, setSelectedCity] = useState<City | 'All'>(()=>initialDiscoveryFilters(typeof window==='undefined'?'/':window.location.pathname).city);
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>(()=>initialDiscoveryFilters(typeof window==='undefined'?'/':window.location.pathname).category);
 
   const setSelectedDealId = (id: string | null) => {
     setSelectedDealIdState(id);
@@ -1485,7 +1486,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const parsed = JSON.parse(saved);
         if (parsed.siteName === 'FindMe') {
           parsed.siteName = 'SpoteraDeals';
-          parsed.tagline = 'UAE Family Deals & Experiences';
+          parsed.tagline = 'UAE Deals, Dining & Experiences';
           parsed.primaryColor = '#0D9CFD';
           parsed.accentColor = '#FD9302';
         }

@@ -1,3 +1,4 @@
+import {discoveryPathForFilters,publicSeoPages} from '../lib/publicSeo';
 import {offerSearchText} from '../utils/i18nHelper';
 import {translateLiteral} from '../components/LocaleText';
 import {useDesignText} from '../components/DesignPrimitives';
@@ -35,6 +36,8 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
   } = useApp();
 
   const d=useDesignText();
+  const discoveryPath=discoveryPathForFilters(selectedCity,selectedCategory);
+  const landing=publicSeoPages[discoveryPath];
   const [query,setQuery]=useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [filter, setFilter] = useState<'All' | 'Nearby' | 'Featured' | 'Popular'>('All');
@@ -80,7 +83,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
     // 3. Category filtering
     if (selectedCategory && selectedCategory !== 'All') {
       list = list.filter((deal) =>
-        String(selectedCategory)==='Waterparks' ? /waterpark|water park|aquatic|aquaplay/i.test(`${deal.title} ${deal.description} ${deal.category}`) : deal.category.toLowerCase().includes(selectedCategory.toLowerCase())
+        String(selectedCategory)==='Waterparks' ? /waterpark|water park|aquatic|aquaplay/i.test(`${deal.title} ${deal.description} ${deal.category}`) : selectedCategory==='Restaurants' ? /restaurant|cafe|café|dining|brunch|food & beverage/i.test(`${deal.title} ${deal.category}`) : deal.category.toLowerCase().includes(selectedCategory.toLowerCase())
       );
     }
 
@@ -135,7 +138,7 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
 
   return (
     <div className="paper-explore min-h-screen bg-[#F5F7FA] pb-28">
-      <div className="pp-explore-title"><h1>{language==='en'?<>Explore<br/>Amazing Experiences</>:d('explore')}</h1><span aria-hidden="true">☀</span></div><div className="fn-explore-search"><label className="fn-search"><Search size={18}/><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
+      <div className="pp-explore-title"><h1>{language==='en'?(discoveryPath==='/dubai'?<>Explore Dubai<br/>Deals & Experiences</>:discoveryPath==='/abu-dhabi'?<>Explore Abu Dhabi<br/>Deals & Experiences</>:discoveryPath==='/dining'?<>Discover<br/>Dining Offers</>:<>Explore<br/>Amazing Experiences</>):d('explore')}</h1><span aria-hidden="true">☀</span></div><p className="pp-discovery-description">{language==='en'?landing.description:d('discovery')}</p><div className="fn-explore-search"><label className="fn-search"><Search size={18}/><input aria-label={d('search')} placeholder={d('search')} value={query} onChange={e=>setQuery(e.target.value)}/></label></div>
       <div className="pp-city-chips" aria-label="Filter by city">{['All','Dubai','Abu Dhabi','Sharjah'].map(city=><button key={city} aria-pressed={selectedCity===city} onClick={()=>setSelectedCity(city as any)}>{city==='All'?t('filterAll'):translateLiteral(city,language)}</button>)}<label><span>{language==='en'?'More':d('allCities')}</span><select aria-label={translateLiteral('Choose city',language)} value={selectedCity} onChange={e=>setSelectedCity(e.target.value as any)}>{['All','Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'].map(city=><option key={city} value={city}>{city==='All'?d('allCities'):translateLiteral(city,language)}</option>)}</select></label></div>
       {/* Header */}
       <PageHeader

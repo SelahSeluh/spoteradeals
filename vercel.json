@@ -5,6 +5,18 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/dubai",
+      "destination": "/dubai/index.html"
+    },
+    {
+      "source": "/abu-dhabi",
+      "destination": "/abu-dhabi/index.html"
+    },
+    {
+      "source": "/dining",
+      "destination": "/dining/index.html"
+    },
+    {
       "source": "/explore",
       "destination": "/explore/index.html"
     },
