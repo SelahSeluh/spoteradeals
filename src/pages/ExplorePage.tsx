@@ -7,11 +7,12 @@ import { Search, SlidersHorizontal, Heart, CheckCircle2, Map, LayoutGrid } from 
 import { useApp } from '../context/AppContext';
 import { PageHeader } from '../components/PageHeader';
 import { DealCard } from '../components/DealCard';
-import { DealsMap } from '../components/DealsMap';
 import { EmptyState } from '../components/EmptyState';
 import { DateRangeFilter } from '../components/DateRangeFilter';
 import { Deal, DateFilterPreset } from '../types';
 import {isOfferAvailable} from '../utils/offerAvailability';
+
+const DealsMap = React.lazy(() => import('../components/DealsMap').then(module => ({ default: module.DealsMap })));
 
 interface ExplorePageProps {
   onClaimCoupon: (deal: Deal) => void;
@@ -294,16 +295,18 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({ onClaimCoupon, onBookN
         {/* View Mode Switching: Interactive Map or Deals Grid */}
         {viewMode === 'map' ? (
           <div className="w-full">
-            <DealsMap
-              deals={filteredDeals}
-              onSelectDeal={(deal) => {
-                setSelectedDealId(deal.id);
-                setActiveView('deal-detail');
-              }}
-              onClaimCoupon={onClaimCoupon}
-              onBookNow={onBookNow}
-              onCloseMap={() => setViewMode('grid')}
-            />
+            <React.Suspense fallback={<p role="status">{t('loading')}</p>}>
+              <DealsMap
+                deals={filteredDeals}
+                onSelectDeal={(deal) => {
+                  setSelectedDealId(deal.id);
+                  setActiveView('deal-detail');
+                }}
+                onClaimCoupon={onClaimCoupon}
+                onBookNow={onBookNow}
+                onCloseMap={() => setViewMode('grid')}
+              />
+            </React.Suspense>
           </div>
         ) : (
           /* Responsive Deals Grid (1 col mobile, 2 col tablet, 3-4 col desktop) */

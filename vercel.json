@@ -49,7 +49,15 @@
       "destination": "/api/status?route=:path*"
     },
     {
-      "source": "/((?!api/|assets/).*)",
+      "source": "/:view(deal|deals)/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/booking/confirm",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:view(home|deals|categories|deal-detail|business-detail|coupons|bookings|wishlist|membership|settings|profile|admin|partners|rewards|search|booking-confirm|auth|dashboard|admin-dashboard|partner|vendors|vendor|pwa|wallet|vouchers|vip|vip-pass|passport|points|booking_confirm|favorites|saved|login)",
       "destination": "/index.html"
     }
   ],

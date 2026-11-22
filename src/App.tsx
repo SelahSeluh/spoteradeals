@@ -9,34 +9,16 @@ import { OpeningAnimation } from './components/OpeningAnimation';
 import { Navbar } from './components/Navbar';
 import { ExpeditionSkyline } from './components/ExpeditionScenery';
 import { Footer } from './components/Footer';
-import { CouponModal } from './components/CouponModal';
-import { BookingModal } from './components/BookingModal';
 import { LinkShareModal } from './components/LinkShareModal';
 import { BottomNav } from './components/BottomNav';
 import { PaperChat } from './components/PaperChat';
 import { WelcomeAuthModal } from './components/WelcomeAuthModal';
-import { QrScannerModal } from './components/QrScannerModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineAlertBanner } from './components/OfflineAlertBanner';
 
-import { SettingsPage } from './pages/SettingsPage';
 import { HomePage } from './pages/HomePage';
 import { ExplorePage } from './pages/ExplorePage';
-import { FamilyPage } from './pages/FamilyPage';
-import { CategoriesPage } from './pages/CategoriesPage';
-import { FavoritesPage } from './pages/FavoritesPage';
-import { DealDetailPage } from './pages/DealDetailPage';
-import { UserProfilePage } from './pages/UserProfilePage';
-import { ProfilePage } from './pages/ProfilePage';
-import { BookingsPage } from './pages/BookingsPage';
-import { RewardsPage } from './pages/RewardsPage';
-import { SearchPage } from './pages/SearchPage';
-import { BookingConfirmPage } from './pages/BookingConfirmPage';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { PartnerDashboard } from './pages/PartnerDashboard';
-import { MembershipPage } from './pages/MembershipPage';
 import { AuthPage } from './pages/AuthPage';
-import { RequestsPage } from './pages/RequestsPage';
 import {
   AboutPage,
 
@@ -48,6 +30,25 @@ import { Deal, Coupon } from './types';
 import { safeSessionStorage } from './utils/storage';
 import { MainViewSkeleton } from './components/MainViewSkeleton';
 
+const CouponModal = React.lazy(() => import('./components/CouponModal').then(module => ({ default: module.CouponModal })));
+const BookingModal = React.lazy(() => import('./components/BookingModal').then(module => ({ default: module.BookingModal })));
+const QrScannerModal = React.lazy(() => import('./components/QrScannerModal').then(module => ({ default: module.QrScannerModal })));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const PartnerDashboard = React.lazy(() => import('./pages/PartnerDashboard').then(module => ({ default: module.PartnerDashboard })));
+const FamilyPage = React.lazy(() => import('./pages/FamilyPage').then(module => ({ default: module.FamilyPage })));
+const CategoriesPage = React.lazy(() => import('./pages/CategoriesPage').then(module => ({ default: module.CategoriesPage })));
+const FavoritesPage = React.lazy(() => import('./pages/FavoritesPage').then(module => ({ default: module.FavoritesPage })));
+const DealDetailPage = React.lazy(() => import('./pages/DealDetailPage').then(module => ({ default: module.DealDetailPage })));
+const UserProfilePage = React.lazy(() => import('./pages/UserProfilePage').then(module => ({ default: module.UserProfilePage })));
+const ProfilePage = React.lazy(() => import('./pages/ProfilePage').then(module => ({ default: module.ProfilePage })));
+const BookingsPage = React.lazy(() => import('./pages/BookingsPage').then(module => ({ default: module.BookingsPage })));
+const RewardsPage = React.lazy(() => import('./pages/RewardsPage').then(module => ({ default: module.RewardsPage })));
+const SearchPage = React.lazy(() => import('./pages/SearchPage').then(module => ({ default: module.SearchPage })));
+const BookingConfirmPage = React.lazy(() => import('./pages/BookingConfirmPage').then(module => ({ default: module.BookingConfirmPage })));
+const MembershipPage = React.lazy(() => import('./pages/MembershipPage').then(module => ({ default: module.MembershipPage })));
+const RequestsPage = React.lazy(() => import('./pages/RequestsPage').then(module => ({ default: module.RequestsPage })));
+const SettingsPage = React.lazy(() => import('./pages/SettingsPage').then(module => ({ default: module.SettingsPage })));
+
 const MainAppContent: React.FC = () => {
   const {
     user,
@@ -56,6 +57,9 @@ const MainAppContent: React.FC = () => {
     activeView,
     isAppInitializing,
     isViewLoading,
+    isQrScannerOpen,
+    isAdminAuthenticated,
+    isPartnerAuthenticated,
     startupPhase,
     showOpeningAnimation,
     dismissOpeningAnimation,
@@ -66,6 +70,14 @@ const MainAppContent: React.FC = () => {
     showWelcomeModal,
     setShowWelcomeModal,
   } = useApp();
+
+  const scanner = isQrScannerOpen && (isAdminAuthenticated || isPartnerAuthenticated) && (
+    <ErrorBoundary>
+      <React.Suspense fallback={null}>
+        <QrScannerModal />
+      </React.Suspense>
+    </ErrorBoundary>
+  );
 
   const [claimedCouponModalData, setClaimedCouponModalData] = useState<Coupon | null>(null);
   const [bookingModalDeal, setBookingModalDeal] = useState<Deal | null>(null);
@@ -101,8 +113,12 @@ const MainAppContent: React.FC = () => {
   if (user && user.role === 'ADMIN') {
     return (
       <div className="fn-admin-shell spotera-admin-app spotera-mesh-canvas min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans text-slate-900">
-        <AdminDashboard />
-        <QrScannerModal />
+        <ErrorBoundary>
+          <React.Suspense fallback={<MainViewSkeleton activeView="admin" />}>
+            <AdminDashboard />
+          </React.Suspense>
+        </ErrorBoundary>
+        {scanner}
         <ToastContainer />
       </div>
     );
@@ -167,21 +183,22 @@ const MainAppContent: React.FC = () => {
 
       </ErrorBoundary>
 
-      {/* Claimed Coupon Modal */}
-      {claimedCouponModalData && (
-        <CouponModal
-          coupon={claimedCouponModalData}
-          onClose={() => setClaimedCouponModalData(null)}
-        />
-      )}
-
-      {/* Activity Booking Modal */}
-      {bookingModalDeal && (
-        <BookingModal
-          deal={bookingModalDeal}
-          onClose={() => setBookingModalDeal(null)}
-        />
-      )}
+      <ErrorBoundary>
+        <React.Suspense fallback={null}>
+          {claimedCouponModalData && (
+            <CouponModal
+              coupon={claimedCouponModalData}
+              onClose={() => setClaimedCouponModalData(null)}
+            />
+          )}
+          {bookingModalDeal && (
+            <BookingModal
+              deal={bookingModalDeal}
+              onClose={() => setBookingModalDeal(null)}
+            />
+          )}
+        </React.Suspense>
+      </ErrorBoundary>
 
       {/* Access Links Modal for Users & Admin */}
       {showLinksModal && <LinkShareModal onClose={() => setShowLinksModal(false)} />}
@@ -199,7 +216,7 @@ const MainAppContent: React.FC = () => {
       <PaperChat />
 
       {/* Global QR Code Scanner Modal */}
-      <QrScannerModal />
+      {scanner}
 
       {/* Global Toast Notifications Container */}
       <ToastContainer />
